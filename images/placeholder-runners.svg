@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480" width="640" height="480" role="img" aria-label="Placeholder for event photography of runners">
+  <rect width="640" height="480" fill="#F4FAF2"/>
+  <rect x="8" y="8" width="624" height="464" fill="none" stroke="#128807" stroke-opacity=".4" stroke-width="2" stroke-dasharray="12 10" rx="12"/>
+
+  <g fill="none" stroke="#12295B" stroke-opacity=".4" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+    <g transform="translate(150 150) scale(1.5)">
+      <circle cx="36" cy="17" r="6"/>
+      <path d="M32 27l-7 11 7 6 2 13"/>
+      <path d="M32 27l11 4 5 10"/>
+      <path d="M25 38l-10 4"/>
+      <path d="M34 57l-10 6"/>
+    </g>
+    <g transform="translate(330 170) scale(1.2)" opacity=".7">
+      <circle cx="36" cy="17" r="6"/>
+      <path d="M32 27l-7 11 7 6 2 13"/>
+      <path d="M32 27l11 4 5 10"/>
+      <path d="M25 38l-10 4"/>
+      <path d="M34 57l-10 6"/>
+    </g>
+  </g>
+
+  <g stroke-width="3" stroke-linecap="round" fill="none">
+    <path d="M60 200h60" stroke="#FF9933" stroke-opacity=".6"/>
+    <path d="M40 230h44" stroke="#C7CDD8"/>
+    <path d="M64 260h48" stroke="#128807" stroke-opacity=".6"/>
+  </g>
+
+  <g font-family="Arial, sans-serif" text-anchor="middle">
+    <text x="320" y="370" font-size="24" font-weight="bold" fill="#0E6B06" letter-spacing="3">PLACEHOLDER IMAGE</text>
+    <text x="320" y="408" font-size="18" fill="#57616F">Event / runners photography · 640 × 480</text>
+    <text x="320" y="440" font-size="15" fill="#8B93A1">Use Chandigarh landmarks only — no India Gate or Delhi monuments.</text>
+  </g>
+</svg>

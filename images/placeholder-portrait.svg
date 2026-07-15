@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 800" width="640" height="800" role="img" aria-label="Placeholder for approved Milkha Singh portrait">
+  <rect width="640" height="800" fill="#FFF7ED"/>
+  <rect x="8" y="8" width="624" height="784" fill="none" stroke="#F97316" stroke-opacity=".45" stroke-width="2" stroke-dasharray="12 10" rx="12"/>
+
+  <g fill="none" stroke="#12295B" stroke-opacity=".45" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="320" cy="330" r="52"/>
+    <path d="M232 470c0-48 40-80 88-80s88 32 88 80"/>
+  </g>
+
+  <g font-family="Arial, sans-serif" text-anchor="middle">
+    <text x="320" y="560" font-size="26" font-weight="bold" fill="#F97316" letter-spacing="3">PLACEHOLDER IMAGE</text>
+    <text x="320" y="605" font-size="19" fill="#57616F">Approved Milkha Singh portrait</text>
+    <text x="320" y="638" font-size="19" fill="#57616F">640 × 800 · portrait</text>
+    <text x="320" y="695" font-size="16" fill="#8B93A1">Use ONE approved visual style or a</text>
+    <text x="320" y="722" font-size="16" fill="#8B93A1">properly licensed archival photograph.</text>
+    <text x="320" y="749" font-size="16" fill="#8B93A1">Keep the turban depiction consistent.</text>
+  </g>
+</svg>

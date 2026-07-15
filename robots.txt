@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# TODO: replace REPLACE-WITH-DOMAIN.com with the live domain before launch.
+Sitemap: https://REPLACE-WITH-DOMAIN.com/sitemap.xml
