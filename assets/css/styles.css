@@ -296,7 +296,7 @@ body::before {
 /* ---------- About ---------- */
 .about__grid {
   display: grid; grid-template-columns: 1.15fr .85fr;
-  gap: clamp(30px, 5vw, 64px); align-items: center;
+  gap: clamp(30px, 5vw, 64px); align-items: start;
 }
 .about__copy p { color: var(--ink-dim); }
 .about__copy .lead { color: var(--ink); }
