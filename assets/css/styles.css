@@ -602,6 +602,135 @@ body::before {
 .footer__bottom p { margin: 0; font-size: .86rem; color: #98A4BD; }
 .footer .muted { color: #98A4BD; }
 
+/* ---------- Subheadings (Gallery / Awards groups) ---------- */
+.subheading {
+  font-size: clamp(1.15rem, 2.6vw, 1.5rem);
+  font-weight: 700; color: var(--navy);
+  text-align: center;
+  margin: 48px 0 8px;
+}
+.subheading__note {
+  text-align: center; color: var(--ink-mute); font-size: .9rem;
+  max-width: 620px; margin: 0 auto 28px;
+}
+
+/* ---------- Media partners ---------- */
+.partners__grid {
+  display: grid; grid-template-columns: repeat(5, 1fr); gap: 18px;
+  margin-bottom: 20px;
+}
+.partner-card {
+  display: flex; flex-direction: column; align-items: center; gap: 14px;
+  padding: 26px 18px;
+  background: #fff; border: 1px solid var(--border); border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+}
+.partner-tile {
+  width: 100%; max-width: 150px; height: 64px;
+  display: grid; place-items: center;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--saffron) 0%, #FFC98A 100%);
+  color: #fff; font-weight: 800; font-size: 1.15rem; letter-spacing: .08em;
+}
+.partner-badge {
+  padding: 5px 14px; border-radius: 999px;
+  background: var(--green); color: #fff;
+  font-size: .74rem; font-weight: 700; letter-spacing: .02em;
+}
+
+/* ---------- Press coverage ---------- */
+.press__grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px;
+}
+.press-card {
+  display: flex; flex-direction: column;
+  padding: 24px 22px;
+  background: #fff; border: 1px solid var(--border); border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+}
+.press-card h4 {
+  font-size: .98rem; font-weight: 700; line-height: 1.5; color: var(--navy);
+  margin-bottom: 16px;
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+}
+.press-card__meta {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  margin-top: auto; margin-bottom: 14px;
+}
+.press-card__source {
+  padding: 4px 12px; border-radius: 999px;
+  background: #F3F5F9; border: 1px solid var(--border);
+  font-size: .78rem; font-weight: 600; color: var(--ink-dim);
+}
+.press-card__meta time { font-size: .8rem; color: var(--ink-mute); }
+.press-card__link { width: 100%; }
+
+/* ---------- Awards ---------- */
+.awards__grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px;
+  margin-bottom: 14px;
+}
+.award-card {
+  padding: 30px 26px; text-align: center;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+}
+.award-card--saffron { background: var(--bg-saffron); border-color: rgba(249,115,22,.22); }
+.award-card--navy    { background: #EFF3FB;          border-color: rgba(18,41,91,.16); }
+.award-card--green   { background: var(--bg-green);  border-color: rgba(18,136,7,.2); }
+
+.award-card__icon {
+  width: 54px; height: 54px; margin: 0 auto 16px;
+  display: grid; place-items: center;
+  background: #fff; border-radius: 50%;
+  box-shadow: var(--shadow-soft);
+}
+.award-card__icon svg {
+  width: 26px; height: 26px;
+  fill: none; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round;
+}
+.award-card--saffron .award-card__icon svg { stroke: var(--saffron-deep); }
+.award-card--navy    .award-card__icon svg { stroke: var(--navy); }
+.award-card--green   .award-card__icon svg { stroke: var(--green-deep); }
+
+.award-card h4 { font-size: 1.04rem; font-weight: 700; margin-bottom: 10px; }
+.award-card p { margin: 0; font-size: .92rem; color: var(--ink-dim); }
+
+.awards__note {
+  margin-top: 34px;
+  padding: 26px 28px; text-align: center;
+  background: #fff;
+  border: 1px dashed rgba(249,115,22,.4);
+  border-radius: var(--radius-lg);
+}
+.awards__note h3 { font-size: 1rem; font-weight: 800; color: var(--saffron-deep); margin-bottom: 10px; }
+.awards__note p { margin: 0 auto; max-width: 760px; color: var(--ink-dim); font-size: .94rem; }
+
+/* ---------- Sponsors ---------- */
+.sponsors__grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px;
+  margin-bottom: 40px;
+}
+.sponsor-tile {
+  min-height: 110px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+  padding: 18px;
+  background: #fff;
+  border: 1px dashed #CDD4DF;
+  border-radius: var(--radius);
+  text-align: center;
+}
+.sponsor-tile span { font-weight: 700; font-size: .92rem; color: var(--ink-mute); line-height: 1.35; }
+.sponsor-tile em { font-style: normal; font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--green-deep); }
+.sponsor-tile--org {
+  border: 1px solid rgba(18,136,7,.35);
+  background: var(--bg-green);
+}
+.sponsor-tile--org span { color: var(--navy); }
+
+.sponsors__cta { text-align: center; }
+.sponsors__cta p { color: var(--ink-dim); margin-bottom: 18px; }
+
 /* ---------- Policy pages ---------- */
 .policy { padding: 150px 0 90px; }
 .policy .section__title { margin-bottom: 10px; }
@@ -639,6 +768,14 @@ body::before {
   .info            { grid-template-columns: 1fr; }
   .notify__row     { grid-template-columns: 1fr 1fr; }
   .notify__row .btn { grid-column: 1 / -1; }
+  .partners__grid  { grid-template-columns: repeat(3, 1fr); }
+  .press__grid     { grid-template-columns: repeat(2, 1fr); }
+  .awards__grid    { grid-template-columns: repeat(3, 1fr); }
+  .sponsors__grid  { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 860px) and (min-width: 621px) {
+  .awards__grid    { grid-template-columns: 1fr 1fr; }
 }
 
 @media (max-width: 860px) {
@@ -666,7 +803,10 @@ body::before {
 
 @media (max-width: 620px) {
   body { font-size: 16px; }
-  .cards, .contact__grid, .reasons, .footer__inner { grid-template-columns: 1fr; }
+  .cards, .contact__grid, .reasons, .footer__inner,
+  .press__grid, .awards__grid { grid-template-columns: 1fr; }
+  .partners__grid  { grid-template-columns: repeat(2, 1fr); }
+  .sponsors__grid  { grid-template-columns: repeat(2, 1fr); }
   .countdown { grid-template-columns: repeat(4, 1fr); gap: 8px; }
   .countdown__unit { padding: 12px 4px; }
   .info__row { grid-template-columns: 1fr; gap: 4px; padding: 16px 20px; }
