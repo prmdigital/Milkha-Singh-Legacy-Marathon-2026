@@ -602,6 +602,74 @@ body::before {
 .footer__bottom p { margin: 0; font-size: .86rem; color: #98A4BD; }
 .footer .muted { color: #98A4BD; }
 
+/* ---------- Categories extras ---------- */
+.categories__note {
+  margin: 28px 0 0;
+  padding: 16px 22px;
+  background: #fff;
+  border-left: 4px solid var(--green);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  box-shadow: var(--shadow-soft);
+  font-size: .95rem; color: var(--ink-dim);
+}
+.categories__note strong { color: var(--green-deep); }
+
+.prize {
+  margin-top: 44px;
+  display: flex; align-items: center; gap: 22px; flex-wrap: wrap;
+  padding: 26px 28px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--saffron);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+}
+.prize__icon {
+  width: 56px; height: 56px; flex: none;
+  display: grid; place-items: center;
+  background: var(--bg-saffron); border-radius: 50%;
+}
+.prize__icon svg {
+  width: 28px; height: 28px;
+  fill: none; stroke: var(--saffron-deep); stroke-width: 1.9;
+  stroke-linecap: round; stroke-linejoin: round;
+}
+.prize__copy { flex: 1; min-width: 240px; }
+.prize__copy h3 { font-size: 1.08rem; font-weight: 700; margin-bottom: 6px; }
+.prize__copy p { margin: 0; color: var(--ink-dim); font-size: .94rem; }
+.prize .card__badge { margin: 0; }
+
+/* ---------- Ambassadors ---------- */
+.ambassadors__grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px;
+}
+.ambassador-card {
+  padding: 30px 20px; text-align: center;
+  background: #FAFBFC;
+  border: 1px dashed #CDD4DF;
+  border-radius: var(--radius-lg);
+}
+.ambassador-card__avatar {
+  width: 84px; height: 84px; margin: 0 auto 16px;
+  display: grid; place-items: center;
+  background: #fff; border: 1px solid var(--border); border-radius: 50%;
+}
+.ambassador-card__avatar svg {
+  width: 38px; height: 38px;
+  fill: none; stroke: #AEB6C2; stroke-width: 1.8;
+  stroke-linecap: round; stroke-linejoin: round;
+}
+.ambassador-card h4 { font-size: 1rem; font-weight: 700; color: var(--ink-mute); margin-bottom: 4px; }
+.ambassador-card p { margin: 0; font-size: .82rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--saffron-deep); }
+
+/* ---------- Footer stay connected ---------- */
+.footer__connect { color: #B9C2D6; font-size: .9rem; margin-bottom: 6px; }
+.footer__notify-link {
+  display: inline-block; margin-bottom: 16px;
+  color: var(--saffron); text-decoration: none; font-weight: 700; font-size: .92rem;
+}
+.footer__notify-link:hover { text-decoration: underline; }
+
 /* ---------- Subheadings (Gallery / Awards groups) ---------- */
 .subheading {
   font-size: clamp(1.15rem, 2.6vw, 1.5rem);
@@ -772,6 +840,7 @@ body::before {
   .press__grid     { grid-template-columns: repeat(2, 1fr); }
   .awards__grid    { grid-template-columns: repeat(3, 1fr); }
   .sponsors__grid  { grid-template-columns: repeat(3, 1fr); }
+  .ambassadors__grid { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (max-width: 860px) and (min-width: 621px) {
@@ -807,6 +876,7 @@ body::before {
   .press__grid, .awards__grid { grid-template-columns: 1fr; }
   .partners__grid  { grid-template-columns: repeat(2, 1fr); }
   .sponsors__grid  { grid-template-columns: repeat(2, 1fr); }
+  .ambassadors__grid { grid-template-columns: 1fr 1fr; }
   .countdown { grid-template-columns: repeat(4, 1fr); gap: 8px; }
   .countdown__unit { padding: 12px 4px; }
   .info__row { grid-template-columns: 1fr; gap: 4px; padding: 16px 20px; }
