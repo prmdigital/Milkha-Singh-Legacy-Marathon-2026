@@ -711,6 +711,13 @@ body::before {
   background: linear-gradient(135deg, var(--saffron) 0%, #FFC98A 100%);
   color: #fff; font-weight: 800; font-size: 1.15rem; letter-spacing: .08em;
 }
+.partner-tile--logo {
+  background: #fff;
+  border: 1px solid var(--border);
+  padding: 12px 16px;
+}
+.partner-tile--logo img { max-height: 38px; width: auto; object-fit: contain; }
+
 .partner-badge {
   padding: 5px 14px; border-radius: 999px;
   background: var(--green); color: #fff;
@@ -777,6 +784,9 @@ body::before {
   text-align: center;
 }
 .sponsor-tile span { font-weight: 700; font-size: .92rem; color: var(--ink-mute); line-height: 1.35; }
+.sponsor-tile img { width: 100%; height: auto; max-height: 76px; object-fit: contain; }
+.sponsor-tile--logo { background: #fff; border: 1px solid var(--border); }
+.sponsor-tile--org img { max-height: 84px; }
 .sponsor-tile em { font-style: normal; font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--green-deep); }
 .sponsor-tile--org {
   border: 1px solid rgba(18,136,7,.35);
