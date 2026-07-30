@@ -37,9 +37,9 @@
   });
 
   /* ---------- Countdown ----------
-     Event: 22 November 2026, 06:00 IST (+05:30).
+     Event: 20 December 2026, 06:00 IST (+05:30).
      Update this if the reporting time changes. */
-  var TARGET = new Date('2026-11-22T06:00:00+05:30').getTime();
+  var TARGET = new Date('2026-12-20T06:00:00+05:30').getTime();
   var cd = document.getElementById('countdown');
   var fields = {
     days:  cd.querySelector('[data-cd="days"]'),

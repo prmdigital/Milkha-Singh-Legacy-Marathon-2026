@@ -377,6 +377,7 @@ body::before {
 .cards .card:nth-child(2) { border-top-color: var(--navy); }
 .cards .card:nth-child(3) { border-top-color: var(--green); }
 .cards .card:nth-child(4) { border-top-color: var(--saffron); }
+.card--vijay { border-top-color: var(--navy); grid-column: 2 / 4; }
 .card:hover { transform: translateY(-6px); box-shadow: var(--shadow); }
 
 .card__icon {
@@ -388,6 +389,7 @@ body::before {
 }
 .cards .card:nth-child(2) .card__icon { background: #EFF3FB; border-color: rgba(18,41,91,.2); }
 .cards .card:nth-child(3) .card__icon { background: var(--bg-green); border-color: rgba(18,136,7,.25); }
+.card--vijay .card__icon { background: #EFF3FB; border-color: rgba(18,41,91,.25); }
 .card__icon svg {
   width: 25px; height: 25px;
   fill: none; stroke: var(--saffron-deep); stroke-width: 1.9;
@@ -395,6 +397,7 @@ body::before {
 }
 .cards .card:nth-child(2) .card__icon svg { stroke: var(--navy); }
 .cards .card:nth-child(3) .card__icon svg { stroke: var(--green-deep); }
+.card--vijay .card__icon svg { stroke: var(--navy); }
 
 .card h3 { font-size: 1.08rem; font-weight: 700; margin-bottom: 10px; }
 .card p { margin: 0; color: var(--ink-dim); font-size: .95rem; }
@@ -411,6 +414,43 @@ body::before {
   padding: 5px 12px; border-radius: 999px;
   background: var(--bg-saffron); border: 1px solid rgba(249,115,22,.3);
   font-size: .66rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--saffron-deep);
+}
+
+/* ---------- Race categories (confirmed) ---------- */
+.cards--race { grid-template-columns: repeat(3, 1fr); }
+
+.race-card {
+  padding: 34px 26px; text-align: center;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--saffron);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+  transition: transform .22s var(--ease), box-shadow .22s var(--ease);
+}
+.race-card:hover { transform: translateY(-6px); box-shadow: var(--shadow); }
+.cards--race .race-card:nth-child(2) { border-top-color: var(--navy); }
+.cards--race .race-card:nth-child(3) { border-top-color: var(--green); }
+
+.race-card__distance {
+  font-size: 3rem; font-weight: 800; line-height: 1;
+  color: var(--navy); margin-bottom: 14px;
+}
+.race-card__distance span {
+  font-size: .34em; font-weight: 700; letter-spacing: .06em;
+  color: var(--ink-mute); margin-left: 4px;
+}
+.race-card h3 { font-size: 1.08rem; font-weight: 700; margin-bottom: 14px; }
+
+.card__badge--live {
+  background: var(--bg-green);
+  border: 1px solid rgba(18,136,7,.3);
+  color: var(--green-deep);
+}
+.race-card--cause .card__badge--live {
+  background: var(--bg-saffron);
+  border-color: rgba(249,115,22,.3);
   color: var(--saffron-deep);
 }
 
@@ -834,6 +874,7 @@ body::before {
   .info            { grid-template-columns: 1fr; }
   .notify__row     { grid-template-columns: 1fr 1fr; }
   .notify__row .btn { grid-column: 1 / -1; }
+  .card--vijay     { grid-column: 1 / -1; }
   .partners__grid  { grid-template-columns: repeat(3, 1fr); }
   .press__grid     { grid-template-columns: repeat(2, 1fr); }
   .sponsors__grid  { grid-template-columns: repeat(3, 1fr); }
