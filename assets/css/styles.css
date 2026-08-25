@@ -22,7 +22,7 @@
 
   --radius:        6px;
   --radius-lg:     8px;
-  --wrap:          1180px;
+  --wrap:          1440px;
 
   --font: 'Archivo', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-display: var(--font);          /* single unified family */
@@ -60,7 +60,7 @@ a { color: inherit; }
 h1, h2, h3, h4 { margin: 0; line-height: 1.2; color: var(--navy); font-weight: 700; }
 p  { margin: 0 0 1.1em; }
 
-.wrap { width: 100%; max-width: var(--wrap); margin-inline: auto; padding-inline: 22px; }
+.wrap { width: 100%; max-width: var(--wrap); margin-inline: auto; padding-inline: clamp(22px, 3vw, 40px); }
 
 .sr-only {
   position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
@@ -200,11 +200,11 @@ body::before {
      lighter towards the bottom so the art shows through. */
   background:
     linear-gradient(180deg,
-      rgba(255,254,252,.94) 0%,
-      rgba(255,252,247,.88) 42%,
-      rgba(255,250,242,.74) 72%,
-      rgba(252,252,250,.62) 100%),
-    url('../../images/hero-bg.png') center 30% / cover no-repeat;
+      rgba(255,254,252,.95) 0%,
+      rgba(255,253,249,.93) 46%,
+      rgba(255,251,245,.84) 74%,
+      rgba(252,252,250,.70) 100%),
+    url('../../images/hero-bg.jpg') center 34% / cover no-repeat;
 }
 .hero__bg::after {
   content: ''; position: absolute; inset: 0;
