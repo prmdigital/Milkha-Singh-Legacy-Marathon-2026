@@ -4,28 +4,37 @@
 (function () {
   'use strict';
 
-  /* ---------- Sticky nav ---------- */
+  /* ---------- Sticky nav + back-to-top ---------- */
   var nav = document.getElementById('nav');
+  var toTop = document.getElementById('toTop');
+
   var onScroll = function () {
-    nav.classList.toggle('is-stuck', window.scrollY > 20);
+    var y = window.scrollY;
+    nav.classList.toggle('is-stuck', y > 20);
+    toTop.classList.toggle('is-visible', y > window.innerHeight);
   };
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
+
+  toTop.addEventListener('click', function () {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
 
   /* ---------- Mobile menu ---------- */
   var toggle = document.getElementById('navToggle');
   var links = document.getElementById('navLinks');
 
-  var closeMenu = function () {
-    links.classList.remove('is-open');
-    toggle.setAttribute('aria-expanded', 'false');
-    toggle.setAttribute('aria-label', 'Open menu');
-  };
-
-  toggle.addEventListener('click', function () {
-    var open = links.classList.toggle('is-open');
+  var setMenu = function (open) {
+    links.classList.toggle('is-open', open);
+    document.body.classList.toggle('is-nav-open', open);
     toggle.setAttribute('aria-expanded', String(open));
     toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+  };
+
+  var closeMenu = function () { setMenu(false); };
+
+  toggle.addEventListener('click', function () {
+    setMenu(!links.classList.contains('is-open'));
   });
 
   links.addEventListener('click', function (e) {
@@ -71,11 +80,49 @@
   tick();
   var timer = setInterval(tick, 1000);
 
+  /* ---------- Scroll spy ----------
+     Highlights the nav link for whatever section is currently under the top
+     third of the viewport, so you always know where you are on the page. */
+  var spyMap = {};
+  Array.prototype.forEach.call(
+    links.querySelectorAll('a[href^="#"]:not(.btn)'),
+    function (a) { spyMap[a.getAttribute('href').slice(1)] = a; }
+  );
+
+  /* Every section is observed, not just the linked ones. Sections such as
+     Registration have no nav link — landing on one must clear the highlight
+     rather than leave the previous link lit, which would point at the wrong
+     part of the page. */
+  var allSections = document.querySelectorAll('main section[id]');
+
+  if (allSections.length && 'IntersectionObserver' in window) {
+    var onScreen = {};
+
+    var paintSpy = function () {
+      var current = '';
+      Array.prototype.forEach.call(allSections, function (s) {
+        if (!current && onScreen[s.id]) current = s.id;
+      });
+      Object.keys(spyMap).forEach(function (id) {
+        if (id === current) spyMap[id].setAttribute('aria-current', 'true');
+        else spyMap[id].removeAttribute('aria-current');
+      });
+    };
+
+    var spy = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) { onScreen[e.target.id] = e.isIntersecting; });
+      paintSpy();
+    }, { rootMargin: '-30% 0px -60% 0px' });
+
+    Array.prototype.forEach.call(allSections, function (s) { spy.observe(s); });
+  }
+
   /* ---------- Reveal on scroll ---------- */
   var targets = document.querySelectorAll(
     '.section__title, .section__sub, .about__copy, .about__media, .tribute__copy, ' +
     '.tribute__slogan, .cause__copy, .cause__media, .card, .info__list, .info__note, ' +
-    '.reasons li, .notify, .contact__card, .route'
+    '.reasons li, .contact__card, .route, .race-card, .prize, .ambassador-card, ' +
+    '.sponsor-tile, .press-card, .sponsors__cta'
   );
 
   if ('IntersectionObserver' in window) {
@@ -94,48 +141,9 @@
     });
   }
 
-  /* ---------- Notify form ----------
-     TODO: wire this to a real endpoint (Google Form, Mailchimp, or a backend
-     route). Right now it validates and confirms locally — it does NOT store
-     or send the submission anywhere. Do not launch without connecting it. */
-  var form = document.getElementById('notify');
-  var status = document.getElementById('notifyStatus');
-
-  var setStatus = function (msg, ok) {
-    status.textContent = msg;
-    status.className = 'notify__status ' + (ok ? 'is-ok' : 'is-err');
-  };
-
-  form.addEventListener('submit', function (e) {
-    e.preventDefault();
-
-    var name = form.elements.name;
-    var email = form.elements.email;
-    var emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.value.trim());
-
-    [name, email].forEach(function (f) { f.removeAttribute('aria-invalid'); });
-
-    if (!name.value.trim()) {
-      name.setAttribute('aria-invalid', 'true');
-      name.focus();
-      setStatus('Please enter your name.', false);
-      return;
-    }
-
-    if (!emailOk) {
-      email.setAttribute('aria-invalid', 'true');
-      email.focus();
-      setStatus('Please enter a valid email address.', false);
-      return;
-    }
-
-    setStatus('Thank you. We will email you the moment registration opens.', true);
-    form.reset();
-  });
-
   /* ---------- Register CTA ----------
      Once the registration URL exists, set REGISTRATION_URL below and the
-     button will link straight out instead of scrolling to the notify form. */
+     button will link straight out instead of scrolling to the contact section. */
   var REGISTRATION_URL = '';
   if (REGISTRATION_URL) {
     document.querySelectorAll('a[href="#register"], #registerBtn').forEach(function (a) {
