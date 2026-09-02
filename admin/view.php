@@ -10,6 +10,39 @@ if ($id <= 0) {
     exit;
 }
 
+/* ---- Mark an offline payment as collected -------------------------------
+   Post-redirect-get: without the redirect a browser refresh would replay the
+   action, and the audit log would fill with duplicates of the same collection. */
+$flash = '';
+if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
+    csrf_check();
+
+    $action = (string) ($_POST['action'] ?? '');
+
+    if ($action === 'mark_paid') {
+        // Only an entry that is genuinely awaiting collection may be flipped, so
+        // this can never overwrite a real gateway payment or a free entry.
+        $upd = db()->prepare(
+            'UPDATE registrations
+                SET status = "paid", paid_at = CURRENT_TIMESTAMP
+              WHERE id = ? AND status = "awaiting"'
+        );
+        $upd->execute([$id]);
+
+        if ($upd->rowCount() > 0) {
+            $ref = db()->prepare('SELECT registration_id FROM registrations WHERE id = ?');
+            $ref->execute([$id]);
+            audit('mark_paid', (string) $ref->fetchColumn());
+            $flash = 'paid';
+        } else {
+            $flash = 'nochange';
+        }
+    }
+
+    header('Location: view.php?id=' . $id . ($flash !== '' ? '&done=' . $flash : ''));
+    exit;
+}
+
 $st = db()->prepare('SELECT * FROM registrations WHERE id = ?');
 $st->execute([$id]);
 $r = $st->fetch();
@@ -26,7 +59,7 @@ if (!$r) {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title><?= isset($notFound) ? 'Not found' : h($r['full_name']) ?> &middot; Marathon Admin</title>
-<link rel="stylesheet" href="assets/admin.css?v=20260902-1">
+<link rel="stylesheet" href="assets/admin.css?v=20260902-2">
 </head>
 <body>
 
@@ -50,7 +83,7 @@ if (!$r) {
         &middot; registered <?= h(when($r['created_at'])) ?>
       </p>
     </div>
-    <span class="pill pill--lg pill--<?= h($r['status']) ?>"><?= h(ucfirst($r['status'])) ?></span>
+    <span class="pill pill--lg pill--<?= h($r['status']) ?>"><?= h(status_label((string) $r['status'])) ?></span>
   </header>
 
   <div class="rec">
@@ -94,7 +127,7 @@ if (!$r) {
             <span class="muted">(early bird, <?= EARLY_BIRD_PERCENT ?>% off)</span>
           <?php endif; ?>
         </dd>
-        <dt>Status</dt><dd><span class="pill pill--<?= h($r['status']) ?>"><?= h(ucfirst($r['status'])) ?></span></dd>
+        <dt>Status</dt><dd><span class="pill pill--<?= h($r['status']) ?>"><?= h(status_label((string) $r['status'])) ?></span></dd>
         <dt>Paid at</dt><dd><?= h(when($r['paid_at'])) ?></dd>
         <dt>Razorpay order</dt>
         <dd><?= $r['razorpay_order_id'] ? '<code>' . h($r['razorpay_order_id']) . '</code>' : '<span class="muted">&mdash;</span>' ?></dd>
@@ -103,6 +136,26 @@ if (!$r) {
         <dt>Receipt emailed</dt>
         <dd><?= ((int) $r['receipt_emailed'] === 1) ? 'Yes' : 'No' ?></dd>
       </dl>
+
+      <?php if (($_GET['done'] ?? '') === 'paid'): ?>
+        <p class="alert alert--ok">Marked as paid.</p>
+      <?php endif; ?>
+
+      <?php if ($r['status'] === 'awaiting'): ?>
+        <p class="alert alert--warn">
+          <b><?= money((int) $r['amount_paise']) ?> still to collect.</b>
+          This runner registered while online payment was switched off. Call
+          <?= h($r['mobile']) ?> to take the fee, then record it here.
+        </p>
+        <form method="post" class="markpaid"
+              onsubmit="return confirm('Record <?= h(money((int) $r['amount_paise'])) ?> as received from <?= h($r['full_name']) ?>?');">
+          <input type="hidden" name="csrf" value="<?= h(csrf_token()) ?>">
+          <input type="hidden" name="action" value="mark_paid">
+          <button type="submit" class="btn btn--primary">
+            Mark <?= money((int) $r['amount_paise']) ?> as received
+          </button>
+        </form>
+      <?php endif; ?>
 
       <?php if ($r['status'] === 'pending'): ?>
         <p class="alert alert--warn">

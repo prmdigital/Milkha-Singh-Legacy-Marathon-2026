@@ -11,6 +11,15 @@
  */
 
 return [
+    // ---- Payments -------------------------------------------------------
+    // false: the site takes registrations only. The runner submits their
+    // details, the entry is stored as 'awaiting', and the team collects the fee
+    // separately. Razorpay is never contacted, so the keys below can stay blank.
+    //
+    // true: the Razorpay checkout runs as normal. Fill in the keys first, and
+    // run api/schema-awaiting.sql before either mode is used.
+    'PAYMENTS_ENABLED' => false,
+
     // ---- Razorpay -------------------------------------------------------
     // Test keys start rzp_test_, live keys rzp_live_.
     // The key id is also used in the browser; the secret must NEVER be.

@@ -157,6 +157,7 @@ code {
   box-shadow: var(--shadow);
 }
 .stat--muted { border-top-color: var(--border); }
+.stat--due { border-top-color: var(--saffron-deep); }
 .stat__n {
   display: block;
   font-size: 1.7rem; font-weight: 800;
@@ -277,7 +278,10 @@ code {
 .pill--lg { font-size: .84rem; padding: 6px 14px; }
 .pill--paid    { background: #E7F5E6; color: var(--green-deep); }
 .pill--free    { background: #E8EEFB; color: var(--navy); }
-.pill--pending { background: var(--bg-warm); color: #9A4A05; }
+.pill--pending { background: #EEF0F4; color: #5B6472; }
+/* Saffron, and the only pill that is a call to action: somebody must ring
+   these runners for the money. */
+.pill--awaiting { background: var(--bg-warm); color: #9A4A05; }
 .pill--failed  { background: #FDECEC; color: #B42318; }
 
 /* ---------- Record page ---------- */
@@ -343,6 +347,10 @@ code {
 }
 .alert--error { background: #FDECEC; border-left-color: #B42318; color: #7A1610; }
 .alert--warn  { background: var(--bg-warm); border-left-color: var(--saffron-deep); color: #7A3A03; }
+.alert--ok    { background: #E7F5E6; border-left-color: var(--green-deep); color: #14520E; }
+
+.markpaid { margin-top: 12px; }
+.markpaid .btn { width: 100%; }
 
 .empty {
   background: var(--surface);

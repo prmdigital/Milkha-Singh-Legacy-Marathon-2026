@@ -38,9 +38,7 @@ function config(): array
     http_response_code(500);
     if (admin_context()) {
         header('Content-Type: text/plain; charset=utf-8');
-        echo "Server is not configured.
-
-"
+        echo "Server is not configured." . PHP_EOL . PHP_EOL
            . "marathon-config.php was not found above public_html.";
         exit;
     }
@@ -124,6 +122,45 @@ function ok(array $payload): void
 }
 
 /**
+ * Answers the browser and THEN carries on working.
+ *
+ * The confirmation email is the slowest thing these endpoints do — several
+ * seconds against a remote SMTP server, longer if it is having a bad day — and
+ * none of it is anything the runner needs to wait for. Their registration is
+ * already saved by this point.
+ */
+function respond_then(array $payload, callable $after): void
+{
+    $json = json_encode(['ok' => true] + $payload);
+
+    // Keep working after the browser has its answer, even if it disconnects.
+    ignore_user_abort(true);
+
+    if (function_exists('fastcgi_finish_request')) {
+        echo $json;
+        fastcgi_finish_request();          // PHP-FPM / LiteSpeed, which Hostinger runs
+    } else {
+        // mod_php and the built-in server: close the connection by hand. The
+        // buffer has to be opened HERE — Content-Length is measured from it, and
+        // ob_get_length() returns false when no buffer is active, which would
+        // send an empty and invalid header.
+        ob_start();
+        echo $json;
+        header('Content-Length: ' . ob_get_length());
+        header('Connection: close');
+        ob_end_flush();
+        flush();
+    }
+
+    try {
+        $after();
+    } catch (Throwable $e) {
+        error_log('[marathon-api] post-response task failed: ' . $e->getMessage());
+    }
+    exit;
+}
+
+/**
  * Public message only. Internal detail goes to the error log, never to the
  * browser — the reference site returned its SMTP host, port and username in a
  * failure response.
@@ -139,9 +176,7 @@ function fail(int $status, string $message, string $internal = ''): void
         header('Content-Type: text/plain; charset=utf-8');
         echo $message;
         if (cfg('DEBUG') && $internal !== '') {
-            echo "
-
-" . $internal;
+            echo PHP_EOL . PHP_EOL . $internal;
         }
         exit;
     }
@@ -218,6 +253,18 @@ const RACE_TIMES = [
 
 /** Accepted photo IDs, verified in person at bib collection. */
 const ID_PROOF_TYPES = ['Aadhaar', 'PAN', 'Passport', 'Driving Licence', 'Voter ID'];
+
+/**
+ * Whether online payment is live.
+ *
+ * While this is false the site takes registrations only: the runner submits
+ * their details, the entry is stored as 'awaiting', and the team collects the
+ * fee separately. Razorpay is never contacted.
+ */
+function payments_enabled(): bool
+{
+    return (bool) cfg('PAYMENTS_ENABLED', false);
+}
 
 const EARLY_BIRD_PERCENT = 20;
 const EARLY_BIRD_UNTIL   = '2026-11-07 23:59:59';   // IST, inclusive
@@ -452,4 +499,23 @@ function store_id_proof(string $field = 'idProofFile'): array
     @chmod($dest, 0640);
 
     return [$name, null];
+}
+
+/**
+ * Deletes an upload whose registration was never written.
+ *
+ * The file is stored before the database row exists, so a validation failure or
+ * a failed INSERT would otherwise leave someone's ID document on disk with
+ * nothing pointing at it and no way to tell whose it was.
+ */
+function discard_id_proof(?string $name): void
+{
+    if ($name === null || $name === '') {
+        return;
+    }
+
+    $path = id_upload_dir() . '/' . basename($name);
+    if (is_file($path)) {
+        @unlink($path);
+    }
 }

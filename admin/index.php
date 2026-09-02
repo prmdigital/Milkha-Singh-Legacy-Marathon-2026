@@ -13,17 +13,19 @@ $pdo = db();
 $stats = $pdo->query(
     "SELECT
         COUNT(*)                                                AS total,
-        SUM(status IN ('paid','free'))                          AS confirmed,
+        SUM(status IN ('paid','free','awaiting'))               AS confirmed,
+        SUM(status = 'awaiting')                                AS awaiting,
         SUM(status = 'pending')                                 AS pending,
         SUM(status = 'failed')                                  AS failed,
-        COALESCE(SUM(CASE WHEN status = 'paid' THEN amount_paise ELSE 0 END), 0) AS collected
+        COALESCE(SUM(CASE WHEN status = 'paid' THEN amount_paise ELSE 0 END), 0) AS collected,
+        COALESCE(SUM(CASE WHEN status = 'awaiting' THEN amount_paise ELSE 0 END), 0) AS outstanding
      FROM registrations"
 )->fetch();
 
 $byCat = $pdo->query(
     "SELECT category, COUNT(*) AS n
        FROM registrations
-      WHERE status IN ('paid','free')
+      WHERE status IN ('paid','free','awaiting')
       GROUP BY category"
 )->fetchAll();
 
@@ -62,7 +64,7 @@ $filtered = has_filters();
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>Registrations &middot; Marathon Admin</title>
-<link rel="stylesheet" href="assets/admin.css?v=20260902-1">
+<link rel="stylesheet" href="assets/admin.css?v=20260902-2">
 </head>
 <body>
 
@@ -73,15 +75,19 @@ $filtered = has_filters();
   <section class="stats">
     <div class="stat">
       <span class="stat__n"><?= (int) $stats['confirmed'] ?></span>
-      <span class="stat__l">Confirmed runners</span>
+      <span class="stat__l">Registered runners</span>
     </div>
     <div class="stat">
       <span class="stat__n"><?= money((int) $stats['collected']) ?></span>
       <span class="stat__l">Collected</span>
     </div>
-    <div class="stat stat--muted">
-      <span class="stat__n"><?= (int) $stats['pending'] ?></span>
-      <span class="stat__l">Started, not paid</span>
+    <div class="stat stat--due">
+      <span class="stat__n"><?= money((int) $stats['outstanding']) ?></span>
+      <span class="stat__l">To collect</span>
+    </div>
+    <div class="stat stat--due">
+      <span class="stat__n"><?= (int) $stats['awaiting'] ?></span>
+      <span class="stat__l">Awaiting payment</span>
     </div>
     <div class="stat stat--muted">
       <span class="stat__n"><?= (int) $stats['total'] ?></span>
@@ -123,7 +129,13 @@ $filtered = has_filters();
         <select name="status">
           <option value="">Any status</option>
           <?php
-          $statuses = ['paid' => 'Paid', 'free' => 'Free entry', 'pending' => 'Not paid', 'failed' => 'Failed'];
+          $statuses = [
+              'awaiting' => 'Awaiting payment',
+              'paid'     => 'Paid',
+              'free'     => 'Free entry',
+              'pending'  => 'Abandoned checkout',
+              'failed'   => 'Failed',
+          ];
           foreach ($statuses as $k => $v): ?>
             <option value="<?= h($k) ?>" <?= ($_GET['status'] ?? '') === $k ? 'selected' : '' ?>><?= h($v) ?></option>
           <?php endforeach; ?>
@@ -200,7 +212,7 @@ $filtered = has_filters();
               <?= money((int) $r['amount_paise']) ?>
               <?php if ((int) $r['early_bird'] === 1): ?><span class="sub">early bird</span><?php endif; ?>
             </td>
-            <td><span class="pill pill--<?= h($r['status']) ?>"><?= h(ucfirst($r['status'])) ?></span></td>
+            <td><span class="pill pill--<?= h($r['status']) ?>"><?= h(status_label((string) $r['status'])) ?></span></td>
             <td class="nowrap"><a class="btn btn--sm" href="view.php?id=<?= (int) $r['id'] ?>">Open</a></td>
           </tr>
         <?php endforeach; ?>

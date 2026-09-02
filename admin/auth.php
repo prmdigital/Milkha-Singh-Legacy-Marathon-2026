@@ -173,6 +173,23 @@ function when(?string $dt): string
     return date('j M Y, g:i A', strtotime($dt));
 }
 
+/**
+ * 'awaiting' and 'pending' both mean unpaid but call for opposite actions, so
+ * they must never share a label. Awaiting = ring them. Pending = they walked
+ * away from the gateway and the webhook may still settle it.
+ */
+function status_label(string $status): string
+{
+    $map = [
+        'awaiting' => 'Awaiting payment',
+        'paid'     => 'Paid',
+        'free'     => 'Free entry',
+        'pending'  => 'Abandoned',
+        'failed'   => 'Failed',
+    ];
+    return $map[$status] ?? ucfirst($status);
+}
+
 function cat_label(string $key): string
 {
     return CATEGORIES[$key]['label'] ?? $key;

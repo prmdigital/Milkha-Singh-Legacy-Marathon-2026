@@ -13,6 +13,11 @@
 
   var API = 'api/';
 
+  /* Online payment is not live for this event: the runner submits their
+     details and the team collects the fee. The button must not promise a
+     payment step that never comes. */
+  var SUBMIT_LABEL = 'Submit registration';
+
   var CATEGORIES = {
     half:  { label: 'Half Marathon',     base: 150000 },
     mini:  { label: 'Mini Marathon',     base: 100000 },
@@ -72,15 +77,16 @@
     var p = key && priceFor(key);
     if (!p) {
       summary.hidden = true;
-      submitBtn.textContent = 'Continue to payment';
+      submitBtn.textContent = SUBMIT_LABEL;
       return;
     }
     summary.hidden = false;
     amountEl.textContent = p.base === 0 ? 'Free' : rupees(p.payable);
     noteEl.textContent = p.base === 0
       ? 'No payment needed for the 1 KM category.'
-      : (p.early ? 'Early entry price, 20% off until 7 November 2026.' : 'Standard entry price.');
-    submitBtn.textContent = p.base === 0 ? 'Complete registration' : 'Continue to payment';
+      : (p.early ? 'Early entry price, 20% off until 7 November 2026.' : 'Standard entry price.')
+        + ' Our team will contact you to collect it.';
+    submitBtn.textContent = SUBMIT_LABEL;
   }
 
   form.addEventListener('change', function (e) {
@@ -122,10 +128,7 @@
 
   function busy(on, label) {
     submitBtn.disabled = on;
-    submitBtn.textContent = on ? (label || 'Please wait…') : (
-      priceFor(selectedCategory()) && priceFor(selectedCategory()).base === 0
-        ? 'Complete registration' : 'Continue to payment'
-    );
+    submitBtn.textContent = on ? (label || 'Please wait…') : SUBMIT_LABEL;
   }
 
   /* ---------- Payload ---------- */
@@ -241,9 +244,24 @@
     });
   }
 
-  function succeed(registrationId) {
+  function succeed(registrationId, amountDue) {
     form.hidden = true;
     doneId.textContent = registrationId;
+
+    /* Say plainly what happens next. Someone who has just filled in a long form
+       should not be left wondering whether they still owe money. */
+    var dueBox = document.getElementById('regDoneDue');
+    if (dueBox) {
+      if (amountDue > 0) {
+        dueBox.textContent = 'Entry fee ' + rupees(amountDue) +
+          ' is still to be paid. Our team will contact you on the mobile number ' +
+          'you gave to arrange it.';
+        dueBox.hidden = false;
+      } else {
+        dueBox.hidden = true;
+      }
+    }
+
     doneBox.hidden = false;
     doneBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
@@ -349,13 +367,40 @@
     data.mobile = normaliseMobile(data.mobile);
     if (data.emergencyPhone) data.emergencyPhone = normaliseMobile(data.emergencyPhone);
 
-    var isFree = priceFor(data.category).base === 0;
-    busy(true, isFree ? 'Saving…' : 'Preparing payment…');
+    busy(true, 'Saving…');
 
-    if (isFree) {
+    /* Everything goes through register.php. It stores the entry and, if online
+       payment is ever switched back on, answers usePaymentFlow so the Razorpay
+       path below takes over without this file needing to change. */
+    postForm('register.php', data).then(function (r) {
+      if (r.status === 200 && r.body.ok) {
+        succeed(r.body.registrationId, r.body.amountDue);
+        return;
+      }
+      if (r.body && r.body.usePaymentFlow) {
+        startPayment(data);
+        return;
+      }
+      if (r.status === 422) showErrors(r.body.fields);
+      setStatus(r.body.error || 'Could not save your registration.', 'err');
+      busy(false);
+    }).catch(function () {
+      setStatus('Network problem. Please check your connection and try again.', 'err');
+      busy(false);
+    });
+  });
+
+  /* ---------- Online payment (dormant while PAYMENTS_ENABLED is false) ---- */
+
+  function startPayment(data) {
+    /* The free category has nothing to charge for, and create-order.php refuses
+       it outright. Without this it would dead-end the moment payments are
+       switched back on. */
+    if (priceFor(data.category).base === 0) {
+      busy(true, 'Saving…');
       postForm('register-free.php', data).then(function (r) {
         if (r.status === 200 && r.body.ok) {
-          succeed(r.body.registrationId);
+          succeed(r.body.registrationId, 0);
           return;
         }
         if (r.status === 422) showErrors(r.body.fields);
@@ -367,6 +412,8 @@
       });
       return;
     }
+
+    busy(true, 'Preparing payment…');
 
     loadRazorpay().then(function (loaded) {
       if (!loaded) {
@@ -389,5 +436,5 @@
       setStatus('Network problem. Please check your connection and try again.', 'err');
       busy(false);
     });
-  });
+  }
 })();

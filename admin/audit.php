@@ -12,6 +12,7 @@ $labels = [
     'login'         => 'Signed in',
     'view_id_proof' => 'Opened an ID proof',
     'export_csv'    => 'Downloaded a CSV',
+    'mark_paid'     => 'Recorded a payment as received',
 ];
 ?>
 <!doctype html>
@@ -21,7 +22,7 @@ $labels = [
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>Activity &middot; Marathon Admin</title>
-<link rel="stylesheet" href="assets/admin.css?v=20260902-1">
+<link rel="stylesheet" href="assets/admin.css?v=20260902-2">
 </head>
 <body>
 

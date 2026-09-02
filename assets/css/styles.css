@@ -875,6 +875,18 @@ body::before {
 .reg__done p { margin: 0; color: var(--ink-dim); font-size: var(--fs-md); line-height: 1.7; }
 .reg__done b { color: var(--navy); font-size: 1.02rem; }
 
+/* What is still owed. Saffron rather than green: the registration is done, the
+   payment is not, and the two must not read as the same thing. */
+.reg__done-due {
+  margin-top: 14px !important;
+  padding: 11px 14px;
+  border-left: 3px solid var(--saffron-deep);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  background: var(--bg-saffron);
+  color: var(--ink) !important;
+  font-size: var(--fs-sm) !important;
+}
+
 /* ---------- Contact ---------- */
 .contact__grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
 .contact__card {

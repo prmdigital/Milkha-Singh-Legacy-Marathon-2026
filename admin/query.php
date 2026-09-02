@@ -32,7 +32,7 @@ function reg_filters(array $q): array
     }
 
     $status = (string) ($q['status'] ?? '');
-    if (in_array($status, ['pending', 'paid', 'free', 'failed'], true)) {
+    if (in_array($status, ['pending', 'awaiting', 'paid', 'free', 'failed'], true)) {
         $where[]  = 'status = ?';
         $params[] = $status;
     }

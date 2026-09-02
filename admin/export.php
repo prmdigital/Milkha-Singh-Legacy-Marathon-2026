@@ -88,7 +88,7 @@ while ($r = $st->fetch()) {
         $r['emergency_phone'] ? "'" . $r['emergency_phone'] : '',
         number_format((int) $r['amount_paise'] / 100, 2, '.', ''),
         ((int) $r['early_bird'] === 1) ? 'Yes' : 'No',
-        ucfirst((string) $r['status']),
+        status_label((string) $r['status']),
         $r['paid_at'],
         $r['razorpay_order_id'],
         $r['razorpay_payment_id'],
