@@ -144,9 +144,18 @@ body::before {
 .nav__inner { display: flex; align-items: center; justify-content: space-between; gap: 20px; min-height: 76px; }
 
 .nav__brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
-.nav__brand span { display: flex; flex-direction: column; line-height: 1.25; }
-.nav__brand strong { font-size: 1.05rem; font-weight: 800; color: var(--navy); letter-spacing: .01em; }
-.nav__brand em { font-style: normal; font-size: .72rem; font-weight: 600; color: var(--saffron-deep); letter-spacing: .1em; text-transform: uppercase; }
+
+/* The lockup already carries the event name, so the wordmark that used to sit
+   beside it is gone. Sized by height: the nav bar is 76px, and 54px leaves the
+   logo room to breathe without dictating the header height. Width follows the
+   3:1 artwork. */
+.nav__logo {
+  height: 54px;
+  width: auto;
+  max-width: 62vw;          /* never crowds out the menu button on a phone */
+  object-fit: contain;
+  display: block;
+}
 
 .nav__links { display: flex; align-items: center; gap: 4px; }
 .nav__links a {
@@ -924,7 +933,19 @@ body::before {
   gap: 40px; padding-bottom: 48px;
 }
 .footer__brand p { color: #B9C2D6; font-size: .93rem; max-width: 320px; }
-.footer__brand img { margin-bottom: 16px; }
+
+/* The artwork has a white background, which would read as a glitch straight on
+   the navy. Sitting it on a white panel makes that deliberate. */
+.footer__logo {
+  width: 100%;
+  max-width: 290px;
+  height: auto;
+  margin-bottom: 18px;
+  padding: 12px 14px;
+  background: #fff;
+  border-radius: var(--radius-lg);
+  display: block;
+}
 .footer__slogan { font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--saffron); font-size: .9rem; }
 
 .footer__col h4 {
