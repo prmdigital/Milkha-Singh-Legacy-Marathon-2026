@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="no-js">
 <head>
 <meta charset="UTF-8" />
+<script>document.documentElement.classList.remove('no-js');</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
 <title>The Flying Sikh Milkha Singh Legacy Marathon 2026 | Run for a Drug-Free India</title>
@@ -31,7 +32,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="assets/css/styles.css?v=20261220-28" />
+<link rel="stylesheet" href="assets/css/styles.css?v=20261220-47" />
 
 <!-- Event schema: this is what makes Google show your date + venue in search results. -->
 <script type="application/ld+json">
@@ -48,11 +49,13 @@
   "url": "https://milkhasinghlegacymarathon.com/",
   "location": {
     "@type": "Place",
-    "name": "Chandigarh",
+    "name": "Ground opposite Chandigarh Club, Sector 1",
     "address": {
       "@type": "PostalAddress",
+      "streetAddress": "Ground opposite Chandigarh Club, Sector 1",
       "addressLocality": "Chandigarh",
       "addressRegion": "Chandigarh",
+      "postalCode": "160001",
       "addressCountry": "IN"
     }
   },
@@ -101,6 +104,7 @@
 <!-- ============ HERO ============ -->
 <section class="hero" id="hero">
   <div class="hero__bg" aria-hidden="true"></div>
+  <canvas class="hero__dust" id="heroDust" aria-hidden="true"></canvas>
   <div class="wrap hero__inner">
 
     <p class="hero__eyebrow">Forever Legend Foundation Presents</p>
@@ -142,8 +146,8 @@
     </div>
 
     <!-- Countdown -->
-    <div class="countdown" id="countdown" aria-label="Time remaining until the marathon">
-      <div class="countdown__unit"><b data-cd="days">--</b><span>Days</span></div>
+    <div class="countdown" id="countdown" role="group" aria-label="Time remaining until the marathon">
+      <div class="countdown__unit"><b data-cd="days" aria-live="polite">--</b><span>Days</span></div>
       <div class="countdown__unit"><b data-cd="hours">--</b><span>Hours</span></div>
       <div class="countdown__unit"><b data-cd="mins">--</b><span>Minutes</span></div>
       <div class="countdown__unit"><b data-cd="secs">--</b><span>Seconds</span></div>
@@ -305,8 +309,8 @@
           <dd>Sunday, 20 December 2026</dd>
         </div>
         <div class="info__row">
-          <dt>City</dt>
-          <dd>Chandigarh</dd>
+          <dt>Venue</dt>
+          <dd>Ground opposite Chandigarh Club, Sector 1, Chandigarh 160001</dd>
         </div>
         <div class="info__row">
           <dt>Event</dt>
@@ -323,12 +327,12 @@
       </dl>
 
       <aside class="info__note">
-        <h3>Coming Soon</h3>
+        <h3>Reporting Point</h3>
         <p>
-          The exact venue and the official route map will be published here once confirmed.
-          Race categories and flag-off times are listed below.
+          Ground opposite Chandigarh Club, Sector 1, Chandigarh 160001. Race categories and
+          flag-off times are listed below; the official route map will follow.
         </p>
-        <a class="btn btn--ghost btn--sm" href="#register">Registration details</a>
+        <a class="btn btn--ghost btn--sm" href="#register">Register now</a>
       </aside>
     </div>
   </div>
@@ -340,8 +344,8 @@
     <p class="section__eyebrow">Race Categories &amp; Route</p>
     <h2 class="section__title">Choose Your <span class="accent">Distance</span></h2>
     <p class="section__sub">
-      Choose your challenge and run for a cause. The reporting venue and the official route map
-      will be announced shortly.
+      Choose your challenge and run for a cause. All races start from the ground opposite
+      Chandigarh Club, Sector 1.
     </p>
 
     <div class="race-grid">
@@ -349,7 +353,7 @@
       <article class="race-card">
         <header class="race-card__head">
           <h3>Half Marathon</h3>
-          <span class="race-card__dist">21.097<span>KM</span></span>
+          <span class="race-card__dist">21<span>KM</span></span>
         </header>
 
         <ul class="race-card__tags">
@@ -483,10 +487,13 @@
     </div>
 
     <figure class="route">
-      <img src="images/placeholder-route.svg?v=2"
-           alt="Placeholder: official route map to be supplied"
-           width="1200" height="600" loading="lazy" decoding="async" />
-      <figcaption>Official route map, to be published once confirmed.</figcaption>
+      <img src="images/route-map.jpg"
+           alt="Race route map: start and finish at the ground opposite Chandigarh Club, out past Rock Garden and the Lake, through the Golf Club and Bridge, turning at DT Mall and IT City. Hydration points, ambulances and toilets are marked along the way, with distance markers from 1 km to 10.5 km."
+           width="1800" height="885" loading="lazy" decoding="async" />
+      <figcaption>
+        Official route map. Green arrows show the outward leg, red the return.
+        Hydration points, ambulances and toilets are marked throughout.
+      </figcaption>
     </figure>
 
     <div class="prize">
@@ -522,36 +529,36 @@
             <tr>
               <th scope="col">Category</th>
               <th scope="col">Distance</th>
-              <th scope="col">Entry fee</th>
+              <th scope="col" class="fee-table__price">Entry fee</th>
             </tr>
           </thead>
           <tbody>
             <tr>
               <th scope="row">Half Marathon</th>
-              <td>21.097 km</td>
+              <td>21 km</td>
               <td class="fee-table__price">
-                <s>&#8377;1,950</s><b>&#8377;1,365</b>
+                <s>&#8377;1,500</s><b>&#8377;1,200</b>
               </td>
             </tr>
             <tr>
               <th scope="row">Mini Marathon</th>
               <td>10 km</td>
               <td class="fee-table__price">
-                <s>&#8377;1,300</s><b>&#8377;910</b>
+                <s>&#8377;1,000</s><b>&#8377;800</b>
               </td>
             </tr>
             <tr>
               <th scope="row">Run for Cause</th>
               <td>5 km</td>
               <td class="fee-table__price">
-                <s>&#8377;650</s><b>&#8377;455</b>
+                <s>&#8377;650</s><b>&#8377;520</b>
               </td>
             </tr>
           </tbody>
         </table>
 
         <p class="fees__earlybird">
-          <b>30% off</b> Early entry closes 7 November 2026.
+          <b>20% off</b> Early entry closes 7 November 2026.
         </p>
 
         <div class="fees__includes">
@@ -571,33 +578,13 @@
             </li>
           </ul>
         </div>
+
+        <p class="fees__cta">
+          <a class="btn btn--primary btn--lg" href="#register">Register &amp; pay online</a>
+          <span>Secure payment by card, UPI or net banking.</span>
+        </p>
       </div>
 
-      <!-- TODO: replace the placeholder below with the real payment QR image, and
-           fill in the UPI ID and WhatsApp number. -->
-      <aside class="pay">
-        <h3 class="pay__head">Pay by UPI</h3>
-
-        <div class="pay__body">
-          <svg class="pay__qr" viewBox="0 0 160 160" role="img" aria-label="Placeholder for the payment QR code">
-            <rect x="1" y="1" width="158" height="158" fill="#FAFAF8" stroke="#C9CCC4" stroke-width="1.5" stroke-dasharray="6 4" />
-            <path d="M22 42V22h20M118 22h20v20M138 118v20h-20M42 138H22v-20" fill="none" stroke="#14161A" stroke-width="2.5" />
-            <text x="80" y="76" text-anchor="middle" font-size="11" font-weight="700" letter-spacing="2" fill="#8A8F86">PAYMENT QR</text>
-            <text x="80" y="94" text-anchor="middle" font-size="10" fill="#A9ADA5">to be added</text>
-          </svg>
-
-          <p class="pay__lede">Scan to pay your entry fee</p>
-          <p class="pay__note">Any UPI app &mdash; GPay, PhonePe, Paytm</p>
-
-          <p class="pay__upi"><span>UPI ID</span>[ YOUR UPI ID ]</p>
-        </div>
-
-        <ol class="pay__steps">
-          <li>Scan and pay the amount for your distance.</li>
-          <li>Save the payment screenshot.</li>
-          <li>Send it with your name and distance to <b>[ WHATSAPP NUMBER ]</b>.</li>
-        </ol>
-      </aside>
     </div>
   </div>
 </section>
@@ -635,18 +622,157 @@
 
     <p class="register__slogan">One Run. One Pledge. One Nation.</p>
 
-    <!--
-      ================= REGISTRATION CTA =================
-      Set REGISTRATION_URL in assets/js/main.js the moment the real registration
-      link exists, the button then points straight at it. Until then it sends
-      people to the contact section, so it is never a dead link.
-      ===================================================
-    -->
-    <div class="register__cta">
-      <a class="btn btn--primary btn--lg" href="#contact" id="registerBtn">
-        Register for the Marathon
-      </a>
+    <form class="reg" id="regForm" novalidate>
+
+      <fieldset class="reg__block">
+        <legend class="reg__legend">1. Choose your race <span class="reg__req" aria-hidden="true">*</span></legend>
+        <div class="reg__cats" role="radiogroup" aria-label="Race category">
+          <label class="reg__cat">
+            <input type="radio" name="category" value="half" required />
+            <span class="reg__cat-body">
+              <b>Half Marathon</b>
+              <em>21 KM</em>
+              <span class="reg__cat-fee" data-fee="half"></span>
+            </span>
+          </label>
+          <label class="reg__cat">
+            <input type="radio" name="category" value="mini" />
+            <span class="reg__cat-body">
+              <b>Mini Marathon</b>
+              <em>10 KM</em>
+              <span class="reg__cat-fee" data-fee="mini"></span>
+            </span>
+          </label>
+          <label class="reg__cat">
+            <input type="radio" name="category" value="cause" />
+            <span class="reg__cat-body">
+              <b>Run for Cause</b>
+              <em>5 KM</em>
+              <span class="reg__cat-fee" data-fee="cause"></span>
+            </span>
+          </label>
+          <label class="reg__cat">
+            <input type="radio" name="category" value="para" />
+            <span class="reg__cat-body">
+              <b>Disabled Category</b>
+              <em>1 KM</em>
+              <span class="reg__cat-fee" data-fee="para"></span>
+            </span>
+          </label>
+        </div>
+        <p class="reg__err" data-err="category"></p>
+      </fieldset>
+
+      <fieldset class="reg__block">
+        <legend class="reg__legend">2. Your details</legend>
+        <p class="reg__required-note">Fields marked <span class="reg__req" aria-hidden="true">*</span> are required.</p>
+        <div class="reg__grid">
+          <p class="reg__field reg__field--wide">
+            <label for="regName">Full name <span class="reg__req" aria-hidden="true">*</span></label>
+            <input aria-describedby="fullName-err" id="regName" name="fullName" type="text" autocomplete="name" required />
+            <span class="reg__err" id="fullName-err" data-err="fullName"></span>
+          </p>
+          <p class="reg__field">
+            <label for="regEmail">Email <span class="reg__req" aria-hidden="true">*</span></label>
+            <input aria-describedby="email-err" id="regEmail" name="email" type="email" autocomplete="email" required />
+            <span class="reg__err" id="email-err" data-err="email"></span>
+          </p>
+          <p class="reg__field">
+            <label for="regMobile">Mobile <span class="reg__req" aria-hidden="true">*</span></label>
+            <input aria-describedby="mobile-err" id="regMobile" name="mobile" type="tel" inputmode="numeric" autocomplete="tel"
+                   placeholder="10-digit mobile number" maxlength="15" required />
+            <span class="reg__err" id="mobile-err" data-err="mobile"></span>
+          </p>
+          <p class="reg__field">
+            <label for="regAge">Age on race day <span class="reg__req" aria-hidden="true">*</span></label>
+            <input aria-describedby="age-err" id="regAge" name="age" type="number" min="5" max="100" inputmode="numeric" required />
+            <span class="reg__err" id="age-err" data-err="age"></span>
+          </p>
+          <p class="reg__field">
+            <label for="regGender">Gender <span class="reg__req" aria-hidden="true">*</span></label>
+            <select aria-describedby="gender-err" id="regGender" name="gender" required>
+              <option value="">Select</option>
+              <option>Male</option>
+              <option>Female</option>
+              <option>Other</option>
+            </select>
+            <span class="reg__err" id="gender-err" data-err="gender"></span>
+          </p>
+          <p class="reg__field">
+            <label for="regCity">City <span class="reg__req" aria-hidden="true">*</span></label>
+            <input aria-describedby="city-err" id="regCity" name="city" type="text" autocomplete="address-level2" required />
+            <span class="reg__err" id="city-err" data-err="city"></span>
+          </p>
+          <p class="reg__field">
+            <label for="regTshirt">T-shirt size <span class="reg__req" aria-hidden="true">*</span></label>
+            <select aria-describedby="tshirtSize-err" id="regTshirt" name="tshirtSize" required>
+              <option value="">Select</option>
+              <option>XS</option><option>S</option><option>M</option>
+              <option>L</option><option>XL</option><option>XXL</option>
+            </select>
+            <span class="reg__err" id="tshirtSize-err" data-err="tshirtSize"></span>
+          </p>
+          <p class="reg__field">
+            <label for="regIdType">Photo ID proof <span class="reg__req" aria-hidden="true">*</span></label>
+            <select aria-describedby="idProofType-hint idProofType-err" id="regIdType" name="idProofType" required>
+              <option value="">Select</option>
+              <option>Aadhaar</option>
+              <option>PAN</option>
+              <option>Passport</option>
+              <option>Driving Licence</option>
+              <option>Voter ID</option>
+            </select>
+            <span class="reg__hint" id="idProofType-hint">Bring the original to collect your race kit.</span>
+            <span class="reg__err" id="idProofType-err" data-err="idProofType"></span>
+          </p>
+          <p class="reg__field">
+            <label for="regIdFile">Upload ID proof <span class="reg__req" aria-hidden="true">*</span></label>
+            <input aria-describedby="idProofFile-hint idProofFile-err" id="regIdFile" name="idProofFile" type="file"
+                   accept="image/jpeg,image/png,image/webp,application/pdf" required />
+            <span class="reg__hint" id="idProofFile-hint">JPG, PNG or PDF, max 5&nbsp;MB.</span>
+            <span class="reg__err" id="idProofFile-err" data-err="idProofFile"></span>
+          </p>
+          <p class="reg__field">
+            <label for="regEmName">Emergency contact name <span>(optional)</span></label>
+            <input id="regEmName" name="emergencyName" type="text" maxlength="120" />
+          </p>
+          <p class="reg__field">
+            <label for="regEmPhone">Emergency contact number <span>(optional)</span></label>
+            <input aria-describedby="emergencyPhone-err" id="regEmPhone" name="emergencyPhone" type="tel" inputmode="numeric" maxlength="15" />
+            <span class="reg__err" id="emergencyPhone-err" data-err="emergencyPhone"></span>
+          </p>
+        </div>
+      </fieldset>
+
+      <div class="reg__summary" id="regSummary" hidden>
+        <span class="reg__summary-label">Entry fee</span>
+        <span class="reg__summary-amount" id="regAmount"></span>
+        <span class="reg__summary-note" id="regNote"></span>
+      </div>
+
+      <p class="reg__consent">
+        <label>
+          <input type="checkbox" name="declaration" value="1" required />
+          <span><span class="reg__req" aria-hidden="true">*</span> I confirm I am medically fit to take part, that I run at my own risk, and that
+          I accept the <a href="terms-conditions.html">terms &amp; conditions</a>.</span>
+        </label>
+        <span class="reg__err" data-err="declaration"></span>
+      </p>
+
+      <div class="reg__actions">
+        <button class="btn btn--primary btn--lg" type="submit" id="regSubmit">
+          Continue to payment
+        </button>
+        <p class="reg__status" id="regStatus" role="status" aria-live="polite"></p>
+      </div>
+    </form>
+
+    <div class="reg__done" id="regDone" hidden>
+      <h3>You&rsquo;re registered</h3>
+      <p>Your registration number is <b id="regDoneId"></b>. A confirmation has been sent to
+      your email. Please keep this number for race-day collection.</p>
     </div>
+
   </div>
 </section>
 
@@ -841,7 +967,8 @@
       </p>
       <a class="footer__notify-link" href="#contact">Contact the organisers &rarr;</a>
       <div class="footer__social">
-        <!-- TODO: replace # with real profile URLs -->
+        <!-- TODO: replace href="#" with real profile URLs, or delete the
+             icons. As-is they are dead links that do nothing when tapped. -->
         <a href="#" aria-label="Facebook" rel="noopener noreferrer">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
         </a>
@@ -869,6 +996,7 @@
   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
 </button>
 
-<script src="assets/js/main.js?v=20261220-28" defer></script>
+<script src="assets/js/main.js?v=20261220-47" defer></script>
+<script src="assets/js/register.js?v=20261220-47" defer></script>
 </body>
 </html>

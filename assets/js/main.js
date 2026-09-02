@@ -71,11 +71,25 @@
     }
 
     var s = Math.floor(diff / 1000);
-    fields.days.textContent  = Math.floor(s / 86400);
-    fields.hours.textContent = pad(Math.floor(s % 86400 / 3600));
-    fields.mins.textContent  = pad(Math.floor(s % 3600 / 60));
-    fields.secs.textContent  = pad(s % 60);
+
+    // Roll the figure only when it actually changes. Seconds are set directly:
+    // a flourish every second stops being a flourish.
+    setUnit(fields.days,  String(Math.floor(s / 86400)), true);
+    setUnit(fields.hours, pad(Math.floor(s % 86400 / 3600)), true);
+    setUnit(fields.mins,  pad(Math.floor(s % 3600 / 60)), true);
+    fields.secs.textContent = pad(s % 60);
   };
+
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  function setUnit(el, value, animate) {
+    if (el.textContent === value) return;
+    el.textContent = value;
+    if (!animate || reduceMotion.matches) return;
+    el.classList.remove('is-rolling');
+    void el.offsetWidth;                 // restart the animation
+    el.classList.add('is-rolling');
+  }
 
   tick();
   var timer = setInterval(tick, 1000);
@@ -119,7 +133,7 @@
 
   /* ---------- Reveal on scroll ---------- */
   var targets = document.querySelectorAll(
-    '.section__title, .section__sub, .about__copy, .about__media, .tribute__copy, ' +
+    '.section__eyebrow, .section__title, .section__sub, .about__copy, .about__media, .tribute__copy, ' +
     '.tribute__slogan, .cause__copy, .cause__media, .card, .info__list, .info__note, ' +
     '.reasons li, .contact__card, .route, .race-card, .prize, .ambassador-card, ' +
     '.sponsor-tile, .press-card, .sponsors__cta'
@@ -141,15 +155,107 @@
     });
   }
 
-  /* ---------- Register CTA ----------
-     Once the registration URL exists, set REGISTRATION_URL below and the
-     button will link straight out instead of scrolling to the contact section. */
-  var REGISTRATION_URL = '';
-  if (REGISTRATION_URL) {
-    document.querySelectorAll('a[href="#register"], #registerBtn').forEach(function (a) {
-      a.href = REGISTRATION_URL;
-      a.target = '_blank';
-      a.rel = 'noopener noreferrer';
-    });
+  /* Registration itself lives in register.js — the form and Razorpay flow. */
+})();
+
+/* ==========================================================================
+   Hero dust motes
+
+   Echoes the dust the runner kicks up in the artwork. Deliberately plain
+   canvas rather than a 3D library: the visual is identical and it costs ~2KB
+   instead of ~150KB on what is a registration funnel.
+
+   Guards: skipped entirely under prefers-reduced-motion, paused when the hero
+   scrolls away or the tab is hidden, so it never burns battery off-screen.
+   ========================================================================== */
+(function () {
+  'use strict';
+
+  var canvas = document.getElementById('heroDust');
+  if (!canvas || !canvas.getContext) return;
+
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  if (reduce.matches) return;
+
+  var ctx = canvas.getContext('2d');
+  var motes = [];
+  var raf = null;
+  var w = 0, h = 0, dpr = 1;
+
+  function size() {
+    var r = canvas.getBoundingClientRect();
+    dpr = Math.min(window.devicePixelRatio || 1, 2);   // cap: 3x costs 2.25x pixels for no gain
+    w = r.width; h = r.height;
+    canvas.width = Math.round(w * dpr);
+    canvas.height = Math.round(h * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
+
+  function seed() {
+    // Fewer on small screens: same visual density, less work per frame.
+    var count = w < 700 ? 18 : 38;
+    motes = [];
+    for (var i = 0; i < count; i++) {
+      motes.push({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        r: 0.6 + Math.random() * 1.7,
+        vx: 0.06 + Math.random() * 0.20,        // drifts right, like the dust trail
+        vy: -0.05 - Math.random() * 0.16,       // and slowly rises
+        a: 0.10 + Math.random() * 0.28,
+        phase: Math.random() * Math.PI * 2
+      });
+    }
+  }
+
+  function frame(t) {
+    ctx.clearRect(0, 0, w, h);
+
+    for (var i = 0; i < motes.length; i++) {
+      var m = motes[i];
+      m.x += m.vx;
+      m.y += m.vy;
+
+      // Gentle lateral sway so it reads as drifting air, not falling snow.
+      var sway = Math.sin((t / 2600) + m.phase) * 0.35;
+
+      if (m.y < -12) { m.y = h + 8; m.x = Math.random() * w; }
+      if (m.x > w + 12) { m.x = -8; }
+
+      ctx.beginPath();
+      ctx.arc(m.x + sway, m.y, m.r, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(232, 152, 68, ' + m.a + ')';   // warm, matches the artwork
+      ctx.fill();
+    }
+
+    raf = requestAnimationFrame(frame);
+  }
+
+  function start() { if (!raf) raf = requestAnimationFrame(frame); }
+  function stop()  { if (raf) { cancelAnimationFrame(raf); raf = null; } }
+
+  size(); seed(); start();
+
+  var resizeTimer;
+  window.addEventListener('resize', function () {
+    clearTimeout(resizeTimer);
+    // start() too: if the loop was stopped while off-screen, a resize (phone
+    // rotation) would otherwise leave the canvas blank for good.
+    resizeTimer = setTimeout(function () { size(); seed(); start(); }, 200);
+  }, { passive: true });
+
+  // Stop drawing once the hero is off-screen.
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(function (entries) {
+      entries[0].isIntersecting ? start() : stop();
+    }, { threshold: 0 }).observe(canvas);
+  }
+
+  document.addEventListener('visibilitychange', function () {
+    document.hidden ? stop() : start();
+  });
+
+  // Honour the preference if it is switched on while the page is open.
+  var onPref = function (e) { if (e.matches) { stop(); ctx.clearRect(0, 0, w, h); } else { start(); } };
+  reduce.addEventListener ? reduce.addEventListener('change', onPref) : reduce.addListener(onPref);
 })();

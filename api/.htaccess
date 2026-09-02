@@ -1,0 +1,17 @@
+# Belt and braces. config.php is meant to live above public_html, but if a
+# local copy is ever left here, this stops it (and the schema) being served as
+# plain text should PHP ever fail to execute.
+<FilesMatch "\.(sql|md|log|ini)$">
+  Require all denied
+</FilesMatch>
+
+<Files "config.php">
+  Require all denied
+</Files>
+
+<Files "config.sample.php">
+  Require all denied
+</Files>
+
+# No directory listing.
+Options -Indexes

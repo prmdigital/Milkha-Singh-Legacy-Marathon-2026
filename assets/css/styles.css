@@ -12,13 +12,19 @@
   --navy:          #12295B;   /* chakra navy — headings */
   --ink:           #26303F;   /* body text */
   --ink-dim:       #57616F;
-  --ink-mute:      #8B93A1;
+  --ink-mute:      #6B7280;  /* 4.83:1 on white — #8B93A1 was 3.09:1, failing AA */
 
   --bg:            #FFFFFF;
   --bg-saffron:    #FFF7ED;   /* soft saffron tint */
   --bg-green:      #F4FAF2;   /* soft green tint */
   --surface:       #FFFFFF;
   --border:        #E7EAF0;
+
+  /* Type scale. The form had drifted to seven near-miss sizes (15.2, 14.88,
+     14.72, 13.76, 13.12, 12.48, 12.16px) with no system behind them. */
+  --fs-xs:         .78rem;   /* hints, errors, eyebrow labels */
+  --fs-sm:         .88rem;   /* field labels, chips, buttons, nav */
+  --fs-md:         .95rem;   /* inputs, card body copy */
 
   --radius:        6px;
   --radius-lg:     8px;
@@ -104,7 +110,13 @@ body::before {
   background: var(--saffron-deep);
   color: #fff;
 }
-.btn--primary:hover { background: #C9540A; }
+.btn--primary:hover { background: #C9540A; box-shadow: 0 4px 14px rgba(232,101,11,.28); }
+
+/* Presses should feel like presses. A 0ms state change reads as a dead
+   control, especially on touch where there is no hover to confirm the tap. */
+.btn:active { transform: translateY(1px) scale(.995); }
+.btn { transition: background .18s var(--ease), border-color .18s var(--ease),
+                   box-shadow .18s var(--ease), transform .08s var(--ease); }
 
 .btn--ghost {
   border-color: var(--green);
@@ -206,6 +218,14 @@ body::before {
       rgba(252,252,250,.70) 100%),
     url('../../images/hero-bg.jpg') center 34% / cover no-repeat;
 }
+/* Dust motes drawn by main.js. Sits above the artwork, below the copy, and
+   never intercepts a tap. */
+.hero__dust {
+  position: absolute; inset: 0; z-index: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+}
+
 .hero__bg::after {
   content: ''; position: absolute; inset: 0;
   /* Fade into the white About section below */
@@ -483,7 +503,8 @@ body::before {
   box-shadow: var(--shadow-soft);
   transition: border-color .22s var(--ease), box-shadow .22s var(--ease);
 }
-.race-card:hover { box-shadow: var(--shadow); }
+.race-card:hover { box-shadow: 0 10px 28px rgba(18,41,91,.09); transform: translateY(-2px); }
+.race-card { transition: border-color .22s var(--ease), box-shadow .22s var(--ease), transform .22s var(--ease); }
 .race-card--mini  { border-top-color: var(--green); }
 .race-card--cause { border-top-color: var(--navy); }
 .race-card--para  { border-top-color: var(--saffron-deep); }
@@ -561,9 +582,17 @@ body::before {
 .race-card__note strong { color: var(--navy); }
 
 /* ---------- Entry fees ---------- */
-/* No align-items: start — the panel stretches to match the fee column. */
-.fees { display: grid; grid-template-columns: 1fr 340px; gap: 32px; }
-.fees__main { min-width: 0; }
+/* Single column since the payment panel was removed — Razorpay handles UPI
+   inside the registration form now. Capped so the fee rows do not stretch
+   across the full 1440px container. */
+.fees { display: block; }
+.fees__main { min-width: 0; max-width: 900px; }
+
+.fees__cta {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 10px 18px;
+  margin: 28px 0 0;
+}
+.fees__cta span { font-size: .88rem; color: var(--ink-dim); }
 
 .fee-table { width: 100%; border-collapse: collapse; }
 .fee-table th, .fee-table td { text-align: left; padding: 15px 0; }
@@ -612,51 +641,12 @@ body::before {
   stroke-linecap: round; stroke-linejoin: round;
 }
 
-/* Payment panel */
-.pay {
-  display: flex; flex-direction: column;
-  border: 1px solid var(--border); border-radius: var(--radius-lg);
-  background: #fff; overflow: hidden;
-}
-.pay__head {
-  margin: 0; padding: 14px 20px; border-bottom: 1px solid var(--border);
-  font-size: .68rem; font-weight: 700; letter-spacing: .13em;
-  text-transform: uppercase; color: var(--ink-mute);
-}
-/* Grows into whatever height the fee column sets, keeping the QR block
-   optically centred rather than stranded at the top. */
-.pay__body {
-  flex-grow: 1;
-  padding: 22px 20px;
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  gap: 14px;
-}
-.pay__qr { width: 168px; height: 168px; }
-.pay__lede { margin: 0; font-size: .92rem; font-weight: 700; color: var(--navy); text-align: center; }
-.pay__note { margin: -10px 0 0; font-size: .82rem; color: var(--ink-dim); text-align: center; }
-.pay__upi {
-  width: 100%; margin: 0; padding: 10px 14px; text-align: center;
-  background: #FAFAF8; border: 1px dashed #C9CCC4; border-radius: var(--radius);
-}
-.pay__upi span {
-  display: block;
-  font-size: .62rem; font-weight: 700; letter-spacing: .13em;
-  text-transform: uppercase; color: var(--ink-mute); margin-bottom: 2px;
-}
-.pay__steps {
-  margin: 0; padding: 16px 20px 16px 38px;
-  border-top: 1px solid var(--border); background: #FAFBFC;
-  font-size: .84rem; color: var(--ink-dim); line-height: 1.65;
-}
-.pay__steps li { margin-bottom: 5px; }
-.pay__steps li:last-child { margin-bottom: 0; }
-.pay__steps b { color: var(--navy); }
-
 /* ---------- Route ---------- */
 .route { margin: 30px 0 0; }
+/* Solid border now the real map is in — the dashed one read as a placeholder. */
 .route img {
   width: 100%; border-radius: var(--radius-lg);
-  border: 1px dashed #D5DAE3; background: #FAFBFC;
+  border: 1px solid var(--border); background: #fff;
 }
 
 /* ---------- Event Info ---------- */
@@ -740,6 +730,139 @@ body::before {
   border-image: var(--tricolor) 1;
 }
 
+/* ---------- Registration form ---------- */
+.reg {
+  max-width: 860px; margin: 0 auto; text-align: left;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-top: 4px solid var(--saffron);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+  padding: 30px 30px 26px;
+}
+.reg__block { border: 0; margin: 0 0 26px; padding: 0; }
+.reg__legend {
+  padding: 0; margin-bottom: 14px;
+  font-size: var(--fs-xs); font-weight: 800; letter-spacing: .13em;
+  text-transform: uppercase; color: var(--green-deep);
+}
+
+/* Category tiles */
+.reg__cats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.reg__cat { position: relative; display: block; cursor: pointer; }
+.reg__cat input {
+  position: absolute; opacity: 0; width: 0; height: 0;
+}
+.reg__cat-body {
+  display: flex; flex-direction: column; gap: 3px;
+  padding: 14px 16px; height: 100%;
+  border: 1px solid var(--border); border-radius: var(--radius);
+  transition: border-color .18s var(--ease), background .18s var(--ease);
+}
+.reg__cat-body b { font-size: var(--fs-md); font-weight: 700; color: var(--navy); }
+.reg__cat-body em {
+  font-style: normal; font-size: var(--fs-xs); font-weight: 600;
+  letter-spacing: .08em; text-transform: uppercase; color: var(--ink-mute);
+}
+.reg__cat-fee { margin-top: 6px; font-size: var(--fs-md); font-weight: 800; color: var(--green-deep); }
+.reg__cat-fee s { color: var(--ink-mute); font-weight: 500; font-size: .82rem; margin-right: 5px; }
+.reg__cat:hover .reg__cat-body { border-color: #C9D0DA; }
+.reg__cat input:checked + .reg__cat-body {
+  border-color: var(--saffron-deep); background: var(--bg-saffron);
+}
+.reg__cat input:focus-visible + .reg__cat-body {
+  outline: 3px solid var(--saffron-deep); outline-offset: 2px;
+}
+
+/* Fields */
+.reg__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.reg__field { margin: 0; display: flex; flex-direction: column; gap: 6px; }
+.reg__field--wide { grid-column: 1 / -1; }
+.reg__field label { font-size: var(--fs-sm); font-weight: 600; color: var(--navy); }
+.reg__field label span { font-weight: 500; color: var(--ink-mute); }
+/* One fixed height for every control. Left to min-height, text inputs came out
+   at 49px (they inherit the body's 1.75 line-height) while selects sat at 46. */
+.reg__field input,
+.reg__field select {
+  height: 48px; padding: 0 13px;
+  font: inherit; font-size: var(--fs-md); line-height: 1.4; color: var(--ink);
+  background: #fff;
+  border: 1px solid var(--border); border-radius: var(--radius);
+  transition: border-color .18s var(--ease);
+}
+.reg__field input:focus, .reg__field select:focus { border-color: var(--saffron-deep); outline: none; }
+
+/* File input: the native control is taller than a text input by default, so
+   pin it to the same 46px and shrink the button to fit inside that. */
+.reg__field input[type="file"] {
+  height: 48px; padding: 0 12px;
+  font-size: var(--fs-md); line-height: 46px; cursor: pointer;
+}
+.reg__field input[type="file"]::file-selector-button {
+  height: 30px; margin: 0 12px 0 0; padding: 0 14px;
+  font: inherit; font-size: var(--fs-sm); font-weight: 600; line-height: 28px;
+  color: var(--navy); background: #fff;
+  border: 1px solid var(--border); border-radius: var(--radius);
+  cursor: pointer;
+}
+.reg__field input[type="file"]::file-selector-button:hover {
+  border-color: var(--saffron-deep); color: var(--saffron-deep);
+}
+
+/* Required-field key and marker */
+.reg__required-note { margin: -4px 0 14px; font-size: var(--fs-xs); color: var(--ink-mute); }
+.reg__req { color: #C0392B; font-weight: 700; }
+.reg__field [aria-invalid="true"] { border-color: #C0392B; }
+
+.reg__err { display: block; margin: 0; font-size: var(--fs-xs); color: #C0392B; }
+.reg__err:empty { display: none; }
+.reg__hint { font-size: var(--fs-xs); color: var(--ink-mute); }
+
+/* Fee summary */
+.reg__summary {
+  display: flex; align-items: baseline; flex-wrap: wrap; gap: 6px 12px;
+  margin-bottom: 20px; padding: 13px 16px;
+  border-left: 3px solid var(--saffron-deep); background: var(--bg-saffron);
+}
+.reg__summary-label {
+  font-size: .7rem; font-weight: 800; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--ink-mute);
+}
+.reg__summary-amount { font-size: 1.4rem; font-weight: 800; color: var(--green-deep); }
+.reg__summary-note { font-size: .84rem; color: var(--ink-dim); }
+
+/* Consent */
+.reg__consent { margin: 0 0 20px; }
+.reg__consent label {
+  display: flex; gap: 12px; align-items: flex-start; cursor: pointer;
+  padding: 10px 0;              /* lifts the tap row to 44px+ */
+  min-height: 44px;
+}
+.reg__consent input {
+  width: 22px; height: 22px; margin: 0; flex: none;
+  accent-color: var(--saffron-deep); cursor: pointer;
+}
+.reg__consent span { font-size: var(--fs-sm); color: var(--ink-dim); line-height: 1.6; }
+.reg__consent a { color: var(--saffron-deep); font-weight: 600; }
+
+.reg__actions { display: flex; flex-direction: column; gap: 12px; align-items: flex-start; }
+.reg__actions .btn:disabled { opacity: .65; cursor: not-allowed; }
+.reg__status { margin: 0; font-size: var(--fs-sm); line-height: 1.6; }
+.reg__status.is-ok   { color: var(--green-deep); font-weight: 600; }
+.reg__status.is-err  { color: #C0392B; font-weight: 600; }
+.reg__status.is-warn { color: var(--saffron-deep); font-weight: 600; }
+
+/* Success panel */
+.reg__done {
+  max-width: 860px; margin: 0 auto; text-align: left;
+  padding: 26px 30px;
+  background: var(--bg-green);
+  border: 1px solid rgba(18,136,7,.35); border-radius: var(--radius-lg);
+}
+.reg__done h3 { font-size: 1.2rem; margin-bottom: 8px; color: var(--green-deep); }
+.reg__done p { margin: 0; color: var(--ink-dim); font-size: var(--fs-md); line-height: 1.7; }
+.reg__done b { color: var(--navy); font-size: 1.02rem; }
+
 /* ---------- Contact ---------- */
 .contact__grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
 .contact__card {
@@ -756,10 +879,10 @@ body::before {
 .contact__grid .contact__card:nth-child(4) { border-top-color: var(--saffron); }
 .contact__card:hover { box-shadow: var(--shadow); }
 .contact__card h3 {
-  font-size: .72rem; font-weight: 800; letter-spacing: .16em; text-transform: uppercase;
+  font-size: var(--fs-xs); font-weight: 800; letter-spacing: .16em; text-transform: uppercase;
   color: var(--green-deep); margin-bottom: 14px;
 }
-.contact__card p { margin: 0 0 6px; font-size: .97rem; }
+.contact__card p { margin: 0 0 6px; font-size: var(--fs-md); }
 .contact__card a { color: var(--navy); text-decoration: none; font-weight: 600; word-break: break-word; }
 .contact__card a:hover { color: var(--saffron-deep); text-decoration: underline; }
 
@@ -1007,6 +1130,7 @@ body::before {
   .info            { grid-template-columns: 1fr; }
   .press__grid     { grid-template-columns: repeat(2, 1fr); }
   .reasons         { grid-template-columns: repeat(2, 1fr); }
+  .reg__cats       { grid-template-columns: repeat(2, 1fr); }
   .sponsors__grid  { grid-template-columns: repeat(3, 1fr); }
   .ambassadors__grid { grid-template-columns: repeat(2, 1fr); }
 }
@@ -1034,11 +1158,10 @@ body::before {
 }
 
 @media (max-width: 860px) {
-  .about__grid, .cause__grid, .race-grid, .fees { grid-template-columns: 1fr; }
+  .about__grid, .cause__grid, .race-grid { grid-template-columns: 1fr; }
   /* Equal heights only help when cards sit side by side; stacked, they just
      leave dead space inside the shorter ones. */
   .race-grid { grid-auto-rows: auto; }
-  .pay { max-width: 400px; }
   .about__media { order: -1; max-width: 440px; margin-inline: auto; }
 }
 
@@ -1055,6 +1178,9 @@ body::before {
   .ambassadors__grid { grid-template-columns: 1fr 1fr; }
   .countdown { grid-template-columns: repeat(4, 1fr); gap: 8px; }
   .race-card__head { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .reg { padding: 22px 18px 20px; }
+  .reg__grid { grid-template-columns: 1fr; }
+  .reg__actions .btn { width: 100%; }
   .fees__includes ul { grid-template-columns: 1fr; }
   /* Distance is redundant here — the race cards above already state it, and
      three columns will not fit a phone without cramping the price. */
@@ -1078,7 +1204,117 @@ body::before {
   .btn:hover, .card:hover, .footer__social a:hover { transform: none; }
 }
 
-/* Reveal-on-scroll (progressively enhanced by main.js) */
-.reveal { opacity: 0; transform: translateY(22px); transition: opacity .6s var(--ease), transform .6s var(--ease); }
+/* Reveal-on-scroll (progressively enhanced by main.js).
+   Scoped to .no-js being absent: without JS the content must still be visible,
+   otherwise the whole page renders blank to crawlers and to anyone whose
+   script fails. The 22px slide was also heavy — 12px reads as a fade. */
+.no-js .reveal { opacity: 1; transform: none; }
+.reveal { opacity: 0; transform: translateY(12px); transition: opacity .5s var(--ease), transform .5s var(--ease); }
 .reveal.is-visible { opacity: 1; transform: none; }
 @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; } }
+
+/* ==========================================================================
+   Motion & hover polish
+   Restrained on purpose: the guidance is 1-2 animated elements per view, and
+   every hover here is decorative. Nothing is reachable by hover alone, so
+   touch users lose no functionality.
+   ========================================================================== */
+
+/* Nav: an underline that grows from the left, rather than a flat colour swap */
+.nav__links a:not(.btn) { position: relative; }
+.nav__links a:not(.btn)::after {
+  content: ''; position: absolute; left: 14px; right: 14px; bottom: 5px;
+  height: 2px; border-radius: 2px; background: var(--saffron-deep);
+  transform: scaleX(0); transform-origin: left;
+  transition: transform .22s var(--ease);
+}
+.nav__links a:not(.btn):hover::after,
+.nav__links a[aria-current="true"]:not(.btn)::after { transform: scaleX(1); }
+
+/* Countdown: pulse a figure when it rolls over. Seconds are excluded — a pulse
+   every second is a tic, not a flourish. */
+@keyframes cd-roll {
+  0%   { transform: translateY(0);     opacity: 1; }
+  40%  { transform: translateY(-6px);  opacity: 0; }
+  60%  { transform: translateY(6px);   opacity: 0; }
+  100% { transform: translateY(0);     opacity: 1; }
+}
+.countdown__unit b { display: block; }
+.countdown__unit b.is-rolling { animation: cd-roll .45s var(--ease); }
+.countdown__unit {
+  transition: border-color .22s var(--ease), box-shadow .22s var(--ease),
+              transform .22s var(--ease);
+}
+.countdown__unit:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+
+/* Purpose / ambassador / press / contact cards: one shared hover language */
+.card, .ambassador-card, .press-card, .contact__card, .sponsor-tile {
+  transition: border-color .22s var(--ease), box-shadow .22s var(--ease),
+              transform .22s var(--ease);
+}
+.card:hover, .contact__card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(18,41,91,.10);
+}
+.ambassador-card:hover, .press-card:hover { border-color: #C9D0DA; transform: translateY(-2px); }
+.sponsor-tile--logo:hover, .sponsor-tile--org:hover {
+  transform: translateY(-2px); box-shadow: var(--shadow-soft);
+}
+
+/* Purpose-card icon reacts with its card */
+.card__icon { transition: transform .28s var(--ease), background .22s var(--ease); }
+.card:hover .card__icon { transform: scale(1.08) rotate(-4deg); }
+
+/* Race cards: the distance pill leans in with the card */
+.race-card__dist { transition: transform .22s var(--ease); }
+.race-card:hover .race-card__dist { transform: scale(1.05); }
+
+/* Fee table: rows respond, so a long price list does not feel inert */
+.fee-table tbody tr { transition: background .18s var(--ease); }
+.fee-table tbody tr:hover { background: var(--bg-saffron); }
+.fee-table tbody th, .fee-table tbody td { transition: none; }
+
+/* Category tiles in the form */
+.reg__cat-body { transition: border-color .18s var(--ease), background .18s var(--ease),
+                             transform .18s var(--ease); }
+.reg__cat:hover .reg__cat-body { transform: translateY(-2px); }
+
+/* Inclusion chips and footer social */
+.fees__includes li { transition: border-color .2s var(--ease), transform .2s var(--ease); }
+.fees__includes li:hover { border-color: var(--green); transform: translateY(-2px); }
+
+/* Section eyebrows draw a short rule in as the section arrives.
+   Inline rather than absolutely positioned: at -34px it fell outside the
+   container and was clipped away entirely on narrow viewports. Width is fixed
+   so the space is reserved and only transform animates — no layout thrash. */
+.section__eyebrow { display: inline-block; }
+.section__eyebrow::before {
+  content: ''; display: inline-block; vertical-align: middle;
+  width: 22px; height: 2px; margin-right: 10px; margin-bottom: 2px;
+  background: var(--saffron);
+  transform: scaleX(0); transform-origin: left;
+  transition: transform .5s var(--ease) .1s;
+}
+.section__eyebrow.is-visible::before { transform: scaleX(1); }
+/* No JS, or reduced motion: show the rule rather than leave it invisible. */
+.no-js .section__eyebrow::before { transform: scaleX(1); }
+@media (prefers-reduced-motion: reduce) { .section__eyebrow::before { transform: scaleX(1); } }
+
+/* Links in body copy get a proper underline animation */
+.contact__card a, .reg__consent a {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0% 1px; background-position: 0 100%; background-repeat: no-repeat;
+  transition: background-size .25s var(--ease), color .18s var(--ease);
+}
+.contact__card a:hover, .reg__consent a:hover { background-size: 100% 1px; }
+
+/* Anything that lifts must not lift for people who asked for less motion. */
+@media (prefers-reduced-motion: reduce) {
+  .card:hover, .contact__card:hover, .race-card:hover, .countdown__unit:hover,
+  .ambassador-card:hover, .press-card:hover, .sponsor-tile--logo:hover,
+  .sponsor-tile--org:hover, .reg__cat:hover .reg__cat-body,
+  .fees__includes li:hover { transform: none; }
+  .card:hover .card__icon, .race-card:hover .race-card__dist { transform: none; }
+  .countdown__unit b.is-rolling { animation: none; }
+  .nav__links a:not(.btn)::after { transition: none; }
+}
