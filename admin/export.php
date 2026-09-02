@@ -28,10 +28,18 @@ header('Content-Disposition: attachment; filename="' . $file . '"');
 
 $out = fopen('php://output', 'w');
 
+// PHP 8.4 deprecates fputcsv() without an explicit $escape, and the notice it
+// prints lands in the middle of the download and corrupts the file. Passing ''
+// also turns off PHP's non-standard backslash escaping, which is what
+// Excel and Google Sheets actually expect (RFC 4180).
+$csv = static function ($row) use ($out): void {
+    fputcsv($out, $row, ',', '"', '');
+};
+
 // UTF-8 BOM so Excel opens Indian names correctly instead of mangling them.
 fwrite($out, "\xEF\xBB\xBF");
 
-fputcsv($out, [
+$csv([
     'Registration ID',
     'Registered on',
     'Full name',
@@ -59,7 +67,7 @@ fputcsv($out, [
 while ($r = $st->fetch()) {
     $cat = (string) $r['category'];
 
-    fputcsv($out, [
+    $csv([
         $r['registration_id'],
         $r['created_at'],
         $r['full_name'],

@@ -111,12 +111,15 @@ const LOGIN_WINDOW_MIN = 15;
 
 function login_blocked(string $ip): bool
 {
+    // The cutoff is worked out in PHP rather than with MySQL's INTERVAL syntax,
+    // so the same query runs against SQLite when the site is run locally.
+    $cutoff = (new DateTimeImmutable('-' . LOGIN_WINDOW_MIN . ' minutes'))->format('Y-m-d H:i:s');
+
     $st = db()->prepare(
         'SELECT COUNT(*) FROM admin_login_attempts
-          WHERE ip_address = ? AND succeeded = 0
-            AND attempted_at > (NOW() - INTERVAL ? MINUTE)'
+          WHERE ip_address = ? AND succeeded = 0 AND attempted_at > ?'
     );
-    $st->execute([$ip, LOGIN_WINDOW_MIN]);
+    $st->execute([$ip, $cutoff]);
     return (int) $st->fetchColumn() >= LOGIN_MAX_FAILS;
 }
 

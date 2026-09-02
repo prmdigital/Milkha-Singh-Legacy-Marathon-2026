@@ -165,14 +165,23 @@ function db(): PDO
         return $pdo;
     }
 
-    $dsn = sprintf(
-        'mysql:host=%s;dbname=%s;charset=utf8mb4',
-        cfg('DB_HOST', 'localhost'),
-        cfg('DB_NAME')
-    );
+    // DB_DSN is an escape hatch for running the site locally against SQLite,
+    // where there is no MySQL to point at. Production leaves it unset and gets
+    // the MySQL DSN below.
+    $dsn = (string) cfg('DB_DSN', '');
+
+    if ($dsn === '') {
+        $dsn = sprintf(
+            'mysql:host=%s;dbname=%s;charset=utf8mb4',
+            cfg('DB_HOST', 'localhost'),
+            cfg('DB_NAME')
+        );
+    }
+
+    $isSqlite = str_starts_with($dsn, 'sqlite:');
 
     try {
-        $pdo = new PDO($dsn, cfg('DB_USER'), cfg('DB_PASS'), [
+        $pdo = new PDO($dsn, $isSqlite ? null : cfg('DB_USER'), $isSqlite ? null : cfg('DB_PASS'), [
             PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
             PDO::ATTR_EMULATE_PREPARES   => false,
