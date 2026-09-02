@@ -30,7 +30,7 @@ find "$OUT" -mindepth 1 -delete
 
 echo "Copying site ..."
 cp index.html privacy-policy.html refund-policy.html terms-conditions.html \
-   robots.txt sitemap.xml "$OUT"/
+   robots.txt sitemap.xml setup.php "$OUT"/
 cp -r assets images api admin "$OUT"/
 
 # ---- Strip anything that must not be published -----------------------------
