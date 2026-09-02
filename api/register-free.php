@@ -50,7 +50,7 @@ try {
          VALUES
             (:rid, :cat, :name, :email, :mobile, :age, :gender, :city,
              :tshirt, :idtype, :idfile, :ename, :ephone,
-             0, 0, "free", :ip, NOW())'
+             0, 0, "free", :ip, CURRENT_TIMESTAMP)'
     );
     $stmt->execute([
         ':rid'    => $registrationId,

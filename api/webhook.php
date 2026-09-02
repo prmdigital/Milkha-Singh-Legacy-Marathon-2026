@@ -97,7 +97,7 @@ if ($type === 'payment.captured') {
     try {
         db()->prepare(
             'UPDATE registrations
-                SET status = "paid", razorpay_payment_id = :pid, paid_at = NOW()
+                SET status = "paid", razorpay_payment_id = :pid, paid_at = CURRENT_TIMESTAMP
               WHERE razorpay_order_id = :oid AND status <> "paid"'
         )->execute([':pid' => $paymentId, ':oid' => $orderId]);
     } catch (Throwable $e) {
