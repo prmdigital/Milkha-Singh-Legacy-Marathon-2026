@@ -1,0 +1,11 @@
+# The admin panel must never be indexed.
+<IfModule mod_headers.c>
+  Header always set X-Robots-Tag "noindex, nofollow, noarchive"
+</IfModule>
+
+# Only the PHP entry points are servable here.
+<FilesMatch "\.(sql|md|log|bak|ini|json|txt)$">
+  Require all denied
+</FilesMatch>
+
+Options -Indexes

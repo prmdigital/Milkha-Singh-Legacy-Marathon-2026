@@ -36,9 +36,26 @@ function config(): array
     }
 
     http_response_code(500);
+    if (admin_context()) {
+        header('Content-Type: text/plain; charset=utf-8');
+        echo "Server is not configured.
+
+"
+           . "marathon-config.php was not found above public_html.";
+        exit;
+    }
     header('Content-Type: application/json');
     echo json_encode(['error' => 'Server is not configured.']);
     exit;
+}
+
+/**
+ * The admin panel shares these helpers but renders HTML, so a JSON error body
+ * would show a user a wall of braces instead of a message they can act on.
+ */
+function admin_context(): bool
+{
+    return defined('MARATHON_ADMIN');
 }
 
 function cfg(string $key, $default = null)
@@ -117,6 +134,18 @@ function fail(int $status, string $message, string $internal = ''): void
         error_log('[marathon-api] ' . $internal);
     }
     http_response_code($status);
+
+    if (admin_context()) {
+        header('Content-Type: text/plain; charset=utf-8');
+        echo $message;
+        if (cfg('DEBUG') && $internal !== '') {
+            echo "
+
+" . $internal;
+        }
+        exit;
+    }
+
     $out = ['ok' => false, 'error' => $message];
     if (cfg('DEBUG') && $internal !== '') {
         $out['debug'] = $internal;

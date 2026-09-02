@@ -43,6 +43,13 @@ return [
     // Registration alerts land here.
     'ADMIN_EMAIL' => 'info@milkhasinghlegacymarathon.com',
 
+    // ---- Admin panel (/admin) -------------------------------------------
+    // Never store the password itself. Leave the hash empty, open
+    // /admin/hash-tool.php once, paste what it gives you here, then DELETE
+    // that file. The tool disables itself as soon as this is filled in.
+    'ADMIN_USER'          => 'admin',
+    'ADMIN_PASSWORD_HASH' => '',
+
     // ---- Site -----------------------------------------------------------
     // Only these origins may call the API. Keep it tight; never use '*'.
     'ALLOWED_ORIGINS' => [

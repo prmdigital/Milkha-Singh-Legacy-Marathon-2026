@@ -1,0 +1,434 @@
+/* ==========================================================================
+   Milkha Singh Legacy Marathon 2026 — admin panel
+
+   Deliberately plainer than the public site: this is a working tool used at a
+   kit desk, often on a phone, often in a hurry. Same palette so it reads as
+   the same event, but no motion, no decoration, nothing that costs a moment.
+   ========================================================================== */
+
+:root {
+  --saffron:      #FF9933;
+  --saffron-deep: #E8650B;
+  --green:        #128807;
+  --green-deep:   #0E6B06;
+  --navy:         #12295B;
+  --ink:          #26303F;
+  --ink-dim:      #57616F;
+  --ink-mute:     #6B7280;
+
+  --bg:        #F6F7FA;
+  --surface:   #FFFFFF;
+  --bg-warm:   #FFF7ED;
+  --border:    #E3E7EF;
+
+  --radius:    6px;
+  --radius-lg: 10px;
+  --shadow:      0 1px 2px rgba(18, 41, 91, .06);
+  --shadow-lift: 0 6px 20px rgba(18, 41, 91, .09);
+
+  --font: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: var(--font);
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--ink);
+  background: var(--bg);
+  -webkit-text-size-adjust: 100%;
+}
+
+a { color: var(--saffron-deep); }
+code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: .86em;
+  background: var(--bg-warm);
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+.wrap {
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 24px 20px 64px;
+}
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+.muted { color: var(--ink-mute); }
+
+/* ---------- Top bar ---------- */
+
+.topbar {
+  background: var(--navy);
+  color: #fff;
+  border-bottom: 3px solid var(--saffron);
+}
+.topbar__in {
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.topbar__brand {
+  display: flex; align-items: center; gap: 11px;
+  color: #fff; text-decoration: none;
+}
+.topbar__mark {
+  width: 36px; height: 36px; flex: none;
+  display: grid; place-items: center;
+  border-radius: 8px;
+  background: var(--saffron);
+  color: var(--navy);
+  font-weight: 800; letter-spacing: .02em;
+}
+.topbar__name { display: grid; line-height: 1.25; }
+.topbar__name strong { font-size: .95rem; }
+.topbar__name span { font-size: .76rem; opacity: .75; }
+
+.topbar__nav { display: flex; gap: 4px; margin-left: auto; }
+.topbar__nav a {
+  color: #fff; text-decoration: none;
+  padding: 8px 14px; border-radius: var(--radius);
+  font-size: .88rem; opacity: .8;
+}
+.topbar__nav a:hover { background: rgba(255, 255, 255, .1); opacity: 1; }
+.topbar__nav a[aria-current] { background: rgba(255, 255, 255, .16); opacity: 1; font-weight: 600; }
+
+.topbar__user {
+  display: flex; align-items: center; gap: 12px;
+  font-size: .84rem; opacity: .9;
+}
+
+/* ---------- Buttons ---------- */
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 40px;                     /* comfortable on a phone */
+  padding: 9px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit; font-size: .88rem; font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+.btn:hover { border-color: #C9D0DE; background: #FBFCFE; }
+.btn:focus-visible { outline: 2px solid var(--saffron-deep); outline-offset: 2px; }
+
+.btn--primary {
+  background: var(--saffron-deep);
+  border-color: var(--saffron-deep);
+  color: #fff;
+}
+.btn--primary:hover { background: #D25C08; border-color: #D25C08; }
+
+.btn--ghost { background: transparent; }
+.topbar .btn--ghost { color: #fff; border-color: rgba(255, 255, 255, .35); }
+.topbar .btn--ghost:hover { background: rgba(255, 255, 255, .12); }
+
+.btn--sm { min-height: 32px; padding: 5px 11px; font-size: .82rem; }
+
+/* ---------- Stats ---------- */
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 14px;
+  margin-bottom: 16px;
+}
+.stat {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--saffron);   /* the site's card language */
+  border-radius: var(--radius-lg);
+  padding: 16px 18px;
+  box-shadow: var(--shadow);
+}
+.stat--muted { border-top-color: var(--border); }
+.stat__n {
+  display: block;
+  font-size: 1.7rem; font-weight: 800;
+  color: var(--navy); line-height: 1.15;
+}
+.stat__l {
+  display: block; margin-top: 3px;
+  font-size: .8rem; color: var(--ink-mute);
+}
+
+/* ---------- Category strip ---------- */
+
+.catbar {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 10px;
+  margin-bottom: 22px;
+}
+.catbar__item {
+  display: flex; align-items: baseline; gap: 9px;
+  padding: 11px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--green);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  text-decoration: none; color: var(--ink);
+}
+.catbar__item:hover { background: #FBFCFE; }
+.catbar__item b { font-size: 1.1rem; color: var(--navy); }
+.catbar__item span { font-size: .8rem; color: var(--ink-mute); }
+
+/* ---------- Filters ---------- */
+
+.filters {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 14px;
+  margin-bottom: 18px;
+  box-shadow: var(--shadow);
+}
+.filters__row {
+  display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+}
+.filters__search { flex: 1 1 280px; }
+.filters label { display: flex; align-items: center; gap: 7px; }
+.filters__date span { font-size: .8rem; color: var(--ink-mute); }
+
+.filters input, .filters select {
+  min-height: 40px;
+  padding: 8px 11px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: #fff;
+  font: inherit; font-size: .9rem;
+  color: var(--ink);
+  width: 100%;
+}
+.filters input:focus, .filters select:focus {
+  outline: 2px solid var(--saffron-deep);
+  outline-offset: 1px;
+  border-color: var(--saffron-deep);
+}
+
+/* ---------- List header ---------- */
+
+.listhead {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 14px; flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+.listhead p { margin: 0; font-size: .9rem; color: var(--ink-dim); }
+
+/* ---------- Table ---------- */
+
+.tablewrap {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow-x: auto;                       /* the page itself never scrolls sideways */
+  box-shadow: var(--shadow);
+}
+.table { width: 100%; border-collapse: collapse; font-size: .88rem; }
+.table th, .table td {
+  padding: 11px 14px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+.table thead th {
+  position: sticky; top: 0;
+  background: #FAFBFD;
+  font-size: .74rem; text-transform: uppercase; letter-spacing: .06em;
+  color: var(--ink-mute); font-weight: 700;
+  white-space: nowrap;
+}
+.table thead th a { color: inherit; text-decoration: none; }
+.table thead th a:hover { color: var(--saffron-deep); }
+.table tbody tr:hover { background: #FCFDFF; }
+.table tbody tr:last-child td { border-bottom: 0; }
+.table .num { text-align: right; }
+.table .nowrap { white-space: nowrap; }
+.table .sub {
+  display: block;
+  font-size: .76rem; color: var(--ink-mute);
+  margin-top: 2px;
+}
+
+/* ---------- Status pills ---------- */
+
+.pill {
+  display: inline-block;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: .74rem; font-weight: 700;
+  letter-spacing: .02em; white-space: nowrap;
+}
+.pill--lg { font-size: .84rem; padding: 6px 14px; }
+.pill--paid    { background: #E7F5E6; color: var(--green-deep); }
+.pill--free    { background: #E8EEFB; color: var(--navy); }
+.pill--pending { background: var(--bg-warm); color: #9A4A05; }
+.pill--failed  { background: #FDECEC; color: #B42318; }
+
+/* ---------- Record page ---------- */
+
+.crumb { margin: 0 0 12px; font-size: .86rem; }
+.crumb a { text-decoration: none; }
+
+.rec__head {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 16px; flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+.rec__head h1 { margin: 0; font-size: 1.5rem; color: var(--navy); }
+.rec__meta { margin: 4px 0 0; font-size: .84rem; color: var(--ink-mute); }
+
+.rec {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 14px;
+  align-items: start;
+}
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--saffron);
+  border-radius: var(--radius-lg);
+  padding: 16px 18px;
+  box-shadow: var(--shadow);
+}
+.panel--wide { grid-column: 1 / -1; border-top-color: var(--border); }
+.panel h2 {
+  margin: 0 0 10px;
+  font-size: .76rem; text-transform: uppercase; letter-spacing: .07em;
+  color: var(--ink-mute);
+}
+/* A second heading inside a panel needs room from whatever it follows —
+   matching on `h2 + h2` alone misses the usual case of a list in between. */
+.panel > * + h2 { margin-top: 22px; }
+
+.dl { display: grid; grid-template-columns: 140px 1fr; gap: 7px 14px; margin: 0; }
+.dl dt { color: var(--ink-mute); font-size: .84rem; }
+.dl dd { margin: 0; font-size: .92rem; word-break: break-word; }
+.dl--inline { grid-template-columns: 110px 1fr; }
+
+.idnote {
+  font-size: .8rem; color: var(--ink-mute);
+  background: var(--bg-warm);
+  border-left: 3px solid var(--saffron-deep);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 9px 12px;
+  margin: 12px 0;
+}
+
+/* ---------- Alerts, empties, pager ---------- */
+
+.alert {
+  margin: 12px 0;
+  padding: 11px 14px;
+  border-radius: var(--radius);
+  font-size: .88rem;
+  background: var(--bg-warm);
+  border-left: 3px solid var(--saffron-deep);
+}
+.alert--error { background: #FDECEC; border-left-color: #B42318; color: #7A1610; }
+.alert--warn  { background: var(--bg-warm); border-left-color: var(--saffron-deep); color: #7A3A03; }
+
+.empty {
+  background: var(--surface);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-lg);
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--ink-mute);
+}
+
+.pager {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 14px; margin-top: 16px;
+  font-size: .86rem; color: var(--ink-mute);
+}
+
+.pagetitle { margin: 0 0 4px; font-size: 1.5rem; color: var(--navy); }
+.pagesub { margin: 0 0 20px; font-size: .88rem; color: var(--ink-mute); max-width: 62ch; }
+
+/* ---------- Login ---------- */
+
+.login-body {
+  display: grid; place-items: center;
+  min-height: 100vh;
+  padding: 24px;
+  background: var(--navy);
+}
+.login {
+  width: 100%; max-width: 400px;
+  background: var(--surface);
+  border-radius: 14px;
+  border-top: 4px solid var(--saffron);
+  padding: 28px;
+  box-shadow: var(--shadow-lift);
+}
+.login h1 { margin: 0 0 6px; font-size: 1.25rem; color: var(--navy); }
+.login__brand { display: flex; align-items: center; gap: 12px; margin-bottom: 22px; }
+.login__mark {
+  width: 44px; height: 44px; flex: none;
+  display: grid; place-items: center;
+  border-radius: 10px;
+  background: var(--navy); color: var(--saffron);
+  font-weight: 800;
+}
+.login__brand div { display: grid; line-height: 1.3; }
+.login__brand strong { font-size: .95rem; color: var(--navy); }
+.login__brand span { font-size: .78rem; color: var(--ink-mute); }
+
+.login label {
+  display: block;
+  margin: 14px 0 5px;
+  font-size: .82rem; font-weight: 600; color: var(--ink-dim);
+}
+.login input {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font: inherit; font-size: .95rem;
+}
+.login input:focus {
+  outline: 2px solid var(--saffron-deep);
+  outline-offset: 1px;
+  border-color: var(--saffron-deep);
+}
+.login .btn { width: 100%; margin-top: 20px; min-height: 44px; }
+.login__note { margin: 16px 0 0; font-size: .78rem; color: var(--ink-mute); text-align: center; }
+
+.hashout {
+  width: 100%;
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+  font-size: .78rem;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  resize: vertical;
+}
+
+/* ---------- Small screens ---------- */
+
+@media (max-width: 720px) {
+  .topbar__nav { margin-left: 0; order: 3; width: 100%; }
+  .topbar__user { margin-left: auto; }
+  .filters__row > label { flex: 1 1 100%; }
+  .dl { grid-template-columns: 1fr; gap: 2px 0; }
+  .dl dd { margin-bottom: 9px; }
+  .stat__n { font-size: 1.4rem; }
+}

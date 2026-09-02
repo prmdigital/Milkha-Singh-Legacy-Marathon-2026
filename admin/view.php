@@ -1,0 +1,153 @@
+<?php
+declare(strict_types=1);
+require_once __DIR__ . '/auth.php';
+
+require_admin();
+
+$id = (int) ($_GET['id'] ?? 0);
+if ($id <= 0) {
+    header('Location: index.php');
+    exit;
+}
+
+$st = db()->prepare('SELECT * FROM registrations WHERE id = ?');
+$st->execute([$id]);
+$r = $st->fetch();
+
+if (!$r) {
+    http_response_code(404);
+    $notFound = true;
+}
+?>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title><?= isset($notFound) ? 'Not found' : h($r['full_name']) ?> &middot; Marathon Admin</title>
+<link rel="stylesheet" href="assets/admin.css?v=1">
+</head>
+<body>
+
+<?php require __DIR__ . '/header.php'; ?>
+
+<main class="wrap">
+
+<?php if (isset($notFound)): ?>
+
+  <p class="empty">That registration does not exist. <a href="index.php">Back to the list</a>.</p>
+
+<?php else: ?>
+
+  <p class="crumb"><a href="index.php">&larr; All registrations</a></p>
+
+  <header class="rec__head">
+    <div>
+      <h1><?= h($r['full_name']) ?></h1>
+      <p class="rec__meta">
+        <code><?= h($r['registration_id']) ?></code>
+        &middot; registered <?= h(when($r['created_at'])) ?>
+      </p>
+    </div>
+    <span class="pill pill--lg pill--<?= h($r['status']) ?>"><?= h(ucfirst($r['status'])) ?></span>
+  </header>
+
+  <div class="rec">
+
+    <section class="panel">
+      <h2>Runner</h2>
+      <dl class="dl">
+        <dt>Full name</dt><dd><?= h($r['full_name']) ?></dd>
+        <dt>Email</dt><dd><a href="mailto:<?= h($r['email']) ?>"><?= h($r['email']) ?></a></dd>
+        <dt>Mobile</dt><dd><a href="tel:+91<?= h($r['mobile']) ?>"><?= h($r['mobile']) ?></a></dd>
+        <dt>Age</dt><dd><?= h($r['age']) ?></dd>
+        <dt>Gender</dt><dd><?= h($r['gender']) ?></dd>
+        <dt>City</dt><dd><?= h($r['city']) ?></dd>
+        <dt>T-shirt size</dt><dd><?= h($r['tshirt_size']) ?></dd>
+      </dl>
+    </section>
+
+    <section class="panel">
+      <h2>Race</h2>
+      <dl class="dl">
+        <dt>Category</dt><dd><?= h(cat_label((string) $r['category'])) ?></dd>
+        <dt>Distance</dt><dd><?= h(CATEGORIES[$r['category']]['distance'] ?? '-') ?></dd>
+        <dt>Assembly / flag-off</dt><dd><?= h(RACE_TIMES[$r['category']] ?? '—') ?></dd>
+      </dl>
+
+      <h2>Emergency contact</h2>
+      <dl class="dl">
+        <dt>Name</dt><dd><?= $r['emergency_name'] ? h($r['emergency_name']) : '<span class="muted">Not given</span>' ?></dd>
+        <dt>Phone</dt>
+        <dd><?= $r['emergency_phone'] ? h($r['emergency_phone']) : '<span class="muted">Not given</span>' ?></dd>
+      </dl>
+    </section>
+
+    <section class="panel">
+      <h2>Payment</h2>
+      <dl class="dl">
+        <dt>Amount</dt>
+        <dd>
+          <strong><?= money((int) $r['amount_paise']) ?></strong>
+          <?php if ((int) $r['early_bird'] === 1): ?>
+            <span class="muted">(early bird, <?= EARLY_BIRD_PERCENT ?>% off)</span>
+          <?php endif; ?>
+        </dd>
+        <dt>Status</dt><dd><span class="pill pill--<?= h($r['status']) ?>"><?= h(ucfirst($r['status'])) ?></span></dd>
+        <dt>Paid at</dt><dd><?= h(when($r['paid_at'])) ?></dd>
+        <dt>Razorpay order</dt>
+        <dd><?= $r['razorpay_order_id'] ? '<code>' . h($r['razorpay_order_id']) . '</code>' : '<span class="muted">&mdash;</span>' ?></dd>
+        <dt>Razorpay payment</dt>
+        <dd><?= $r['razorpay_payment_id'] ? '<code>' . h($r['razorpay_payment_id']) . '</code>' : '<span class="muted">&mdash;</span>' ?></dd>
+        <dt>Receipt emailed</dt>
+        <dd><?= ((int) $r['receipt_emailed'] === 1) ? 'Yes' : 'No' ?></dd>
+      </dl>
+
+      <?php if ($r['status'] === 'pending'): ?>
+        <p class="alert alert--warn">
+          This runner reached the payment page but no confirmed payment came back.
+          Check the Razorpay dashboard before treating them as registered.
+        </p>
+      <?php endif; ?>
+    </section>
+
+    <section class="panel">
+      <h2>ID proof</h2>
+      <dl class="dl">
+        <dt>Type</dt><dd><?= h($r['id_proof_type']) ?></dd>
+      </dl>
+
+      <?php if ($r['id_proof_file']): ?>
+        <p class="idnote">
+          The document is stored outside the website folder and is only served
+          through this panel. Opening it is recorded under Activity.
+        </p>
+        <p>
+          <a class="btn" target="_blank" rel="noopener"
+             href="id-proof.php?id=<?= (int) $r['id'] ?>">Open ID proof</a>
+          <a class="btn btn--ghost"
+             href="id-proof.php?id=<?= (int) $r['id'] ?>&amp;download=1">Download</a>
+        </p>
+      <?php else: ?>
+        <p class="muted">No file was uploaded with this registration.</p>
+      <?php endif; ?>
+    </section>
+
+    <section class="panel panel--wide">
+      <h2>Technical</h2>
+      <dl class="dl dl--inline">
+        <dt>Record</dt><dd>#<?= (int) $r['id'] ?></dd>
+        <dt>IP address</dt><dd><?= h($r['ip_address'] ?: '—') ?></dd>
+        <dt>Created</dt><dd><?= h(when($r['created_at'])) ?></dd>
+      </dl>
+    </section>
+
+  </div>
+
+<?php endif; ?>
+
+</main>
+
+</body>
+</html>
