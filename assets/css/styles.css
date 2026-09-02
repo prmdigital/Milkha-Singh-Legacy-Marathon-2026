@@ -582,9 +582,11 @@ body::before {
   font-size: .81rem; font-weight: 500; color: var(--ink-dim);
 }
 
-/* Pinned to the bottom so the cards line up despite different content. */
+/* Sits directly under the age categories it qualifies, not pinned to the foot
+   of the card. `margin-top: auto` pushed it to the bottom, which on the short
+   Disabled card left a gap that read as a missing element between the two. */
 .race-card__note {
-  margin: 16px 0 0; margin-top: auto; padding: 13px 16px;
+  margin: 10px 0 0; padding: 13px 16px;
   background: var(--bg-saffron); border-radius: var(--radius-lg);
   font-size: .85rem; color: var(--ink-dim); line-height: 1.55;
 }
