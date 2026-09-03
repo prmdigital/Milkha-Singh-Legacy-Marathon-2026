@@ -272,8 +272,12 @@ body::before {
 }
 .hero__title--accent { color: var(--saffron-deep); }
 .hero__year {
-  font-size: .44em; font-weight: 700; letter-spacing: .42em; color: var(--ink-mute);
-  margin-top: 10px; text-indent: .42em;
+  /* Was .44em in --ink-mute with .42em tracking: small, grey and spaced so
+     wide it read as a caption rather than part of the title. Bigger, heavier,
+     navy, and less airy. */
+  font-size: .54em; font-weight: 800; letter-spacing: .26em;
+  color: var(--navy);
+  margin-top: 8px; text-indent: .26em;
 }
 
 .hero__tagline {
@@ -291,13 +295,21 @@ body::before {
 .hero__cause {
   font-size: clamp(.82rem, 1.7vw, .98rem);
   font-weight: 800; letter-spacing: .16em; text-transform: uppercase;
-  color: var(--saffron-deep);
+  /* A deeper saffron than the token: --saffron-deep measures 3.13:1 against
+     the hero at this point, and at 15.7px this line is not "large text", so it
+     needs 4.5:1. #AE4405 reaches 5.43:1 and still reads as saffron. */
+  color: #AE4405;
   margin-bottom: 20px;
 }
 
 .hero__lead {
   max-width: 720px; margin: 0 auto 30px;
-  color: var(--ink-dim); font-size: 1.02rem;
+  /* Full-strength ink, not the dimmed grey: this sits over artwork, and a
+     softened colour that works on flat white loses its footing there. */
+  color: var(--ink);
+  font-size: 1.08rem;
+  font-weight: 500;
+  line-height: 1.8;
 }
 
 .hero__meta {
