@@ -272,7 +272,17 @@ body::before {
 
 .hero__tagline {
   font-size: clamp(1.05rem, 2.4vw, 1.45rem);
-  font-weight: 600; color: var(--ink); margin-bottom: 18px;
+  font-weight: 600; color: var(--ink); margin-bottom: 8px;
+}
+
+/* The campaign line, directly under the tagline it belongs with. Saffron and
+   uppercase so it carries without competing with the title above or the
+   tricolour-underlined slogan further down. */
+.hero__cause {
+  font-size: clamp(.82rem, 1.7vw, .98rem);
+  font-weight: 800; letter-spacing: .16em; text-transform: uppercase;
+  color: var(--saffron-deep);
+  margin-bottom: 20px;
 }
 
 .hero__lead {
