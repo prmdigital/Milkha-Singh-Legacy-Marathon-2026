@@ -55,8 +55,12 @@ if [ -f "$OUT/api/config.php" ]; then
   exit 1
 fi
 
-if grep -rlE "rzp_live_|rzp_test_[A-Za-z0-9]{8,}" "$OUT" 2>/dev/null | grep -v config.sample; then
-  echo "REFUSING TO BUILD: a Razorpay key appears in the build output above." >&2
+# Match a key-SHAPED value, not the bare prefix. setup.php legitimately
+# contains the strings "rzp_test_" and "rzp_live_" in the pattern it validates
+# entered keys against, and in its placeholder text; neither is a credential.
+# A real key is the prefix followed by a run of alphanumerics.
+if grep -rlE "rzp_(test|live)_[A-Za-z0-9]{10,}" "$OUT" 2>/dev/null; then
+  echo "REFUSING TO BUILD: a Razorpay key appears in the file(s) above." >&2
   exit 1
 fi
 
