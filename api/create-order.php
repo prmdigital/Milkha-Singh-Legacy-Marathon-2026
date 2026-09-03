@@ -43,6 +43,14 @@ if ($price['payable'] <= 0) {
     fail(400, 'That category does not require payment.');
 }
 
+// Razorpay rejects anything under 100 paise. Catching it here turns a confusing
+// gateway error into a clear one, and saves a round trip. It cannot happen with
+// today's prices, but a future category priced at a rupee would trip it.
+if ($price['payable'] < 100) {
+    fail(400, 'That entry fee is too small to collect online.',
+        'Amount below Razorpay minimum: ' . $price['payable'] . ' paise');
+}
+
 $registrationId = new_registration_id();
 
 // Written before checkout opens, so a payment can always be traced to a person
@@ -115,6 +123,14 @@ if ($curlErr !== '') {
 }
 
 $body = json_decode((string) $response, true);
+
+// Wrong or missing keys are OUR fault, not the runner's, and no amount of
+// retrying will fix them. Separating this from a general gateway failure means
+// the error log says "check the keys" instead of "try again".
+if ($httpCode === 401) {
+    fail(500, 'Online payment is not set up correctly. Please contact us.',
+        'Razorpay rejected the API keys (401). Check RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET.');
+}
 
 if ($httpCode !== 200 || empty($body['id'])) {
     $detail = $body['error']['description'] ?? ('HTTP ' . $httpCode);

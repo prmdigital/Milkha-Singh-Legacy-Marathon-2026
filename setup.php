@@ -62,6 +62,11 @@ $checks = [
         'Enable fileinfo. Without it, uploaded ID proofs cannot be checked.'),
     check('Text handling (mbstring)', extension_loaded('mbstring'),
         'Enable mbstring.'),
+    // Only create-order.php needs it, and only when payments are on — but a
+    // missing curl there is a fatal error at the moment someone tries to pay,
+    // which is the worst possible time to find out.
+    check('Outbound HTTP (curl) — needed for online payment', extension_loaded('curl'),
+        'Enable curl. Without it the Razorpay checkout cannot create an order.'),
     check('Can write above public_html', is_writable($home),
         'The folder ' . $home . ' is not writable by PHP. Create marathon-config.php by hand instead.'),
 ];
@@ -159,14 +164,18 @@ function build_config_php(array $v): string
     $lines[] = ' */';
     $lines[] = '';
     $lines[] = 'return [';
-    $lines[] = '    // Online payment is off: the site takes registrations and the team';
-    $lines[] = '    // collects the fee. Set true, and fill in the Razorpay keys, to turn';
-    $lines[] = '    // the checkout back on.';
-    $lines[] = "    'PAYMENTS_ENABLED' => false,";
+    $lines[] = '    // true  = Razorpay checkout runs and the runner pays online.';
+    $lines[] = '    // false = the site takes registrations and the team collects the fee.';
+    $lines[] = '    // Payment is only ever switched on when a key pair is present, so this';
+    $lines[] = '    // cannot end up true with nothing behind it.';
+    $lines[] = "    'PAYMENTS_ENABLED' => " . ($v['payments_enabled'] ? 'true' : 'false') . ',';
     $lines[] = '';
-    $lines[] = "    'RAZORPAY_KEY_ID'         => '',";
-    $lines[] = "    'RAZORPAY_KEY_SECRET'     => '',";
-    $lines[] = "    'RAZORPAY_WEBHOOK_SECRET' => '',";
+    $lines[] = "    'RAZORPAY_KEY_ID'     => " . $q($v['rzp_key_id']) . ',';
+    $lines[] = "    'RAZORPAY_KEY_SECRET' => " . $q($v['rzp_key_secret']) . ',';
+    $lines[] = '';
+    $lines[] = '    // From Razorpay > Settings > Webhooks. Without it the webhook endpoint';
+    $lines[] = '    // refuses every call, so a payment whose browser died stays unconfirmed.';
+    $lines[] = "    'RAZORPAY_WEBHOOK_SECRET' => " . $q($v['rzp_webhook_secret']) . ',';
     $lines[] = '';
     $lines[] = "    'DB_HOST' => " . $q($v['db_host']) . ',';
     $lines[] = "    'DB_NAME' => " . $q($v['db_name']) . ',';
@@ -229,7 +238,12 @@ if (!$alreadyConfigured && $preflightOk && ($_SERVER['REQUEST_METHOD'] ?? '') ==
         'smtp_user'  => $f('smtp_user'),
         'admin_email'=> $f('admin_email'),
         'domain'     => $f('domain'),
+        'rzp_key_id' => $f('rzp_key_id'),
     ];
+
+    $rzpKeyId         = trim((string) ($_POST['rzp_key_id'] ?? ''));
+    $rzpKeySecret     = trim((string) ($_POST['rzp_key_secret'] ?? ''));
+    $rzpWebhookSecret = trim((string) ($_POST['rzp_webhook_secret'] ?? ''));
 
     $dbPass    = (string) ($_POST['db_pass'] ?? '');
     $adminPass = (string) ($_POST['admin_pass'] ?? '');
@@ -239,6 +253,13 @@ if (!$alreadyConfigured && $preflightOk && ($_SERVER['REQUEST_METHOD'] ?? '') ==
     if ($posted['db_user'] === '') { $errors[] = 'Enter the database user.'; }
     if (strlen($adminPass) < 12)   { $errors[] = 'The admin password must be at least 12 characters.'; }
     if ($posted['domain'] === '')  { $errors[] = 'Enter the site address, e.g. https://milkhasinghlegacymarathon.com'; }
+
+    if (($rzpKeyId === '') !== ($rzpKeySecret === '')) {
+        $errors[] = 'Enter both the Razorpay key id and the key secret, or leave both blank.';
+    }
+    if ($rzpKeyId !== '' && !preg_match('/^rzp_(test|live)_/', $rzpKeyId)) {
+        $errors[] = 'That does not look like a Razorpay key id. They start with rzp_test_ or rzp_live_.';
+    }
 
     // ---- Database ----
     $pdo = null;
@@ -308,6 +329,12 @@ if (!$alreadyConfigured && $preflightOk && ($_SERVER['REQUEST_METHOD'] ?? '') ==
             'smtp_pass'   => $smtpPass,
             'admin_email' => $posted['admin_email'] !== '' ? $posted['admin_email'] : $posted['smtp_user'],
             'origins'     => $origins,
+            // Online payment turns on only when both keys are present. Half a key
+            // pair would mean a checkout that fails at the moment someone pays.
+            'payments_enabled'   => $rzpKeyId !== '' && $rzpKeySecret !== '',
+            'rzp_key_id'         => $rzpKeyId,
+            'rzp_key_secret'     => $rzpKeySecret,
+            'rzp_webhook_secret' => $rzpWebhookSecret,
         ]);
 
         if (@file_put_contents($configPath, $php) === false) {
@@ -498,6 +525,36 @@ $e = static function (string $s): string {
         <input id="domain" name="domain" required
                value="<?= $v('domain', 'https://' . ($_SERVER['HTTP_HOST'] ?? '')) ?>">
         <small>Only this address may submit the registration form.</small>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Online payment <span style="font-weight:400;color:var(--ink-mute)">(optional)</span></h2>
+      <p class="hint">
+        From Razorpay &rsaquo; Account &amp; Settings &rsaquo; API Keys. <b>Leave blank</b> to take
+        registrations without payment &mdash; entries are stored as &ldquo;awaiting payment&rdquo;
+        and your team collects the fee. Fill both in and the checkout goes live.
+      </p>
+
+      <div class="row">
+        <div class="field">
+          <label for="rzp_key_id">Key id</label>
+          <input id="rzp_key_id" name="rzp_key_id" value="<?= $v('rzp_key_id') ?>"
+                 placeholder="rzp_test_... or rzp_live_...">
+        </div>
+        <div class="field">
+          <label for="rzp_key_secret">Key secret</label>
+          <input id="rzp_key_secret" name="rzp_key_secret" type="password">
+          <small>Never sent to the browser. Stored above public_html only.</small>
+        </div>
+      </div>
+      <div class="field">
+        <label for="rzp_webhook_secret">Webhook secret</label>
+        <input id="rzp_webhook_secret" name="rzp_webhook_secret" type="password">
+        <small>
+          From Razorpay &rsaquo; Settings &rsaquo; Webhooks. Needed so a payment still
+          confirms when the runner&rsquo;s browser closes mid-checkout.
+        </small>
       </div>
     </div>
 
