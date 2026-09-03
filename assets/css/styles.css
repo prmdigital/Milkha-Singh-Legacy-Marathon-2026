@@ -951,16 +951,13 @@ body::before {
 }
 .footer__brand p { color: #B9C2D6; font-size: .93rem; max-width: 320px; }
 
-/* The artwork has a white background, which would read as a glitch straight on
-   the navy. Sitting it on a white panel makes that deliberate. */
+/* The footer uses the transparent white-text artwork, so it sits straight on
+   the navy with no panel behind it. */
 .footer__logo {
   width: 100%;
-  max-width: 290px;
+  max-width: 300px;
   height: auto;
   margin-bottom: 18px;
-  padding: 12px 14px;
-  background: #fff;
-  border-radius: var(--radius-lg);
   display: block;
 }
 .footer__slogan { font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--saffron); font-size: .9rem; }
