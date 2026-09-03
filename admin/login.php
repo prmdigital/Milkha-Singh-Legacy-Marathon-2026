@@ -55,17 +55,15 @@ $csrf = csrf_token();
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>Sign in · Marathon Admin</title>
-<link rel="stylesheet" href="assets/admin.css?v=20260903-3">
+<link rel="stylesheet" href="assets/admin.css?v=20260903-4">
 </head>
 <body class="login-body">
 
 <main class="login">
   <div class="login__brand">
-    <span class="login__mark">MS</span>
-    <div>
-      <strong>Milkha Singh Legacy Marathon</strong>
-      <span>Registration admin</span>
-    </div>
+    <img class="login__logo" src="../images/logo-lockup.jpg"
+         alt="The Flying Sikh Milkha Singh Legacy Marathon 2026" width="600" height="200" />
+    <span>Registration admin</span>
   </div>
 
   <?php if ($error !== ''): ?>

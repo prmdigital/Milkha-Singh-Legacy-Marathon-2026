@@ -7,11 +7,9 @@ $current = basename((string) ($_SERVER['SCRIPT_NAME'] ?? ''));
 <header class="topbar">
   <div class="topbar__in">
     <a class="topbar__brand" href="index.php">
-      <span class="topbar__mark">MS</span>
-      <span class="topbar__name">
-        <strong>Legacy Marathon 2026</strong>
-        <span>Registration admin</span>
-      </span>
+      <img class="topbar__logo" src="../images/logo-lockup-white.png"
+           alt="The Flying Sikh Milkha Singh Legacy Marathon 2026" width="600" height="200" />
+      <span class="topbar__name"><span>Registration admin</span></span>
     </a>
 
     <nav class="topbar__nav">
