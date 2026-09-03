@@ -44,12 +44,12 @@ $registrationId = new_registration_id();
 try {
     $stmt = db()->prepare(
         'INSERT INTO registrations
-            (registration_id, category, full_name, email, mobile, age, gender, city,
-             tshirt_size, id_proof_type, id_proof_file, emergency_name, emergency_phone,
+            (registration_id, category, full_name, email, mobile, age, dob, gender, city,
+             tshirt_size, id_proof_type, id_proof_file, emergency_phone,
              amount_paise, early_bird, status, ip_address, paid_at)
          VALUES
-            (:rid, :cat, :name, :email, :mobile, :age, :gender, :city,
-             :tshirt, :idtype, :idfile, :ename, :ephone,
+            (:rid, :cat, :name, :email, :mobile, :age, :dob, :gender, :city,
+             :tshirt, :idtype, :idfile, :ephone,
              0, 0, "free", :ip, CURRENT_TIMESTAMP)'
     );
     $stmt->execute([
@@ -59,12 +59,12 @@ try {
         ':email'  => $runner['email'],
         ':mobile' => $runner['mobile'],
         ':age'    => $runner['age'],
+        ':dob'    => $runner['dob'],
         ':gender' => $runner['gender'],
         ':city'   => $runner['city'],
         ':tshirt' => $runner['tshirt_size'],
         ':idtype' => $runner['id_proof_type'],
         ':idfile' => $idFile,
-        ':ename'  => $runner['emergency_name'] ?: null,
         ':ephone' => $runner['emergency_phone'] ?: null,
         ':ip'     => client_ip(),
     ]);

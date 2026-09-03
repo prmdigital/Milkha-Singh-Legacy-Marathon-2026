@@ -91,6 +91,7 @@ $SCHEMA = [
   email               VARCHAR(190) NOT NULL,
   mobile              VARCHAR(20)  NOT NULL,
   age                 SMALLINT UNSIGNED NOT NULL,
+  dob                 DATE         DEFAULT NULL,
   gender              VARCHAR(16)  NOT NULL,
   city                VARCHAR(90)  NOT NULL,
   tshirt_size         VARCHAR(8)   NOT NULL,
@@ -134,10 +135,13 @@ $SCHEMA = [
   KEY idx_created (created_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
 
-// Brings an older install up to date. Harmless on a fresh one.
+// Brings an older install up to date. Harmless on a fresh one; the ALTERs are
+// wrapped in the loop's try/catch because MySQL errors on a duplicate column.
 "ALTER TABLE registrations
    MODIFY COLUMN status
    ENUM('pending','awaiting','paid','free','failed') NOT NULL DEFAULT 'pending'",
+
+"ALTER TABLE registrations ADD COLUMN dob DATE DEFAULT NULL AFTER age",
 ];
 
 // ---------------------------------------------------------------------------
@@ -361,7 +365,7 @@ $e = static function (string $s): string {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>Setup &middot; Milkha Singh Legacy Marathon</title>
-<link rel="stylesheet" href="admin/assets/admin.css?v=20260903-1">
+<link rel="stylesheet" href="admin/assets/admin.css?v=20260903-2">
 <style>
   .setup { max-width: 720px; margin: 40px auto; padding: 0 20px 80px; }
   .setup h1 { color: var(--navy); margin: 0 0 6px; }

@@ -141,6 +141,87 @@
 
   /* Accepts 9876543210, 09876543210, +91 98765 43210 — returns the bare 10
      digits, or '' when it is not a valid Indian mobile. */
+  /* Race day. Age is quoted "on race day", not today: someone whose birthday
+     falls between now and December would otherwise be told the wrong age, and
+     could be turned away at bib collection for a category they do qualify for. */
+  var RACE_DAY = new Date(2026, 11, 20);
+
+  function ageOnRaceDay(dobString) {
+    if (!dobString) return null;
+    var parts = dobString.split('-');
+    if (parts.length !== 3) return null;
+
+    var y = +parts[0], m = +parts[1], d = +parts[2];
+    var dob = new Date(y, m - 1, d);
+    // Rejects 31 February and friends, which the date input allows when typed.
+    if (dob.getFullYear() !== y || dob.getMonth() !== m - 1 || dob.getDate() !== d) {
+      return null;
+    }
+    if (dob > RACE_DAY) return null;
+
+    var age = RACE_DAY.getFullYear() - y;
+    var monthDiff = RACE_DAY.getMonth() - (m - 1);
+    if (monthDiff < 0 || (monthDiff === 0 && RACE_DAY.getDate() < d)) {
+      age--;                       // birthday has not landed by race day
+    }
+    return age;
+  }
+
+  /* Shows the age back the moment a date is picked, so nobody has to work out
+     what they will be in December. */
+  var dobInput = document.getElementById('regDob');
+  var ageOut   = document.getElementById('regAgeOut');
+
+  function refreshAge() {
+    if (!dobInput || !ageOut) return;
+    var age = ageOnRaceDay(dobInput.value);
+    ageOut.textContent = age === null ? '—' : age + (age === 1 ? ' year' : ' years');
+    ageOut.classList.toggle('is-set', age !== null);
+  }
+
+  if (dobInput) {
+    dobInput.addEventListener('change', refreshAge);
+    dobInput.addEventListener('input', refreshAge);
+    refreshAge();
+  }
+
+  /* Mobile: digits only, and never more than ten. maxlength alone does not stop
+     a paste of "+91 98765 43210", which would silently lose the last digits. */
+  function digitsOnly(el, max) {
+    if (!el) return;
+    var clean = function () {
+      var before = el.value;
+      var after  = before.replace(/\D/g, '');
+
+      /* Drop a country or trunk prefix BEFORE truncating. Someone pasting
+         "+91 98765 43210" would otherwise be left with "9198765432" — the 91
+         kept and the last two digits cut off, a wrong number saved in silence.
+         Only applied when the value is too long, so a genuine 10-digit number
+         beginning 91 is untouched. */
+      if (after.length > max) {
+        if (after.indexOf('91') === 0 && after.length >= max + 2) {
+          after = after.slice(2);
+        } else if (after.charAt(0) === '0') {
+          after = after.slice(1);
+        }
+      }
+
+      after = after.slice(0, max);
+      if (after !== before) {
+        var atEnd = el.selectionStart === before.length;
+        el.value = after;
+        if (!atEnd && el.setSelectionRange) {
+          try { el.setSelectionRange(el.value.length, el.value.length); } catch (e) {}
+        }
+      }
+    };
+    el.addEventListener('input', clean);
+    el.addEventListener('paste', function () { setTimeout(clean, 0); });
+  }
+
+  digitsOnly(document.getElementById('regMobile'), 10);
+  digitsOnly(document.getElementById('regEmPhone'), 10);
+
   function normaliseMobile(raw) {
     var d = String(raw || '').replace(/[^0-9]/g, '');
     if (/^(91|0)\d{10}$/.test(d)) d = d.replace(/^(91|0)/, '');
@@ -169,9 +250,13 @@
         : 'Please enter a 10-digit mobile number (you entered ' + digits.length + ').';
     }
 
-    var age = parseInt(d.age, 10);
-    if (!d.age || isNaN(age) || age < 5 || age > 100) {
-      f.age = 'Please enter an age between 5 and 100.';
+    var age = ageOnRaceDay(d.dob);
+    if (!d.dob) {
+      f.dob = 'Please enter your date of birth.';
+    } else if (age === null) {
+      f.dob = 'Please enter a valid date of birth.';
+    } else if (age < 5 || age > 100) {
+      f.dob = 'Runners must be between 5 and 100 on race day.';
     } else if (d.category && age < MIN_AGE[d.category]) {
       f.age = CATEGORIES[d.category].label + ' is open to runners aged ' +
               MIN_AGE[d.category] + ' and over.';
@@ -206,8 +291,8 @@
 
   function payload() {
     var d = {};
-    ['fullName', 'email', 'mobile', 'age', 'gender', 'city', 'tshirtSize',
-     'idProofType', 'emergencyName', 'emergencyPhone'].forEach(function (n) {
+    ['fullName', 'email', 'mobile', 'dob', 'gender', 'city', 'tshirtSize',
+     'idProofType', 'emergencyPhone'].forEach(function (n) {
       var el = form.elements[n];
       d[n] = el ? el.value.trim() : '';
     });

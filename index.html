@@ -32,7 +32,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="assets/css/styles.css?v=20260903-1" />
+<link rel="stylesheet" href="assets/css/styles.css?v=20260903-2" />
 
 <!-- Event schema: this is what makes Google show your date + venue in search results. -->
 <script type="application/ld+json">
@@ -681,14 +681,23 @@
           </p>
           <p class="reg__field">
             <label for="regMobile">Mobile <span class="reg__req" aria-hidden="true">*</span></label>
-            <input aria-describedby="mobile-err" id="regMobile" name="mobile" type="tel" inputmode="numeric" autocomplete="tel"
-                   placeholder="10-digit mobile number" maxlength="15" required />
+            <input aria-describedby="mobile-err" id="regMobile" name="mobile" type="tel"
+                   inputmode="numeric" autocomplete="tel" pattern="[6-9][0-9]{9}"
+                   placeholder="10-digit mobile number" maxlength="10" required />
             <span class="reg__err" id="mobile-err" data-err="mobile"></span>
           </p>
           <p class="reg__field">
-            <label for="regAge">Age on race day <span class="reg__req" aria-hidden="true">*</span></label>
-            <input aria-describedby="age-err" id="regAge" name="age" type="number" min="5" max="100" inputmode="numeric" required />
-            <span class="reg__err" id="age-err" data-err="age"></span>
+            <label for="regDob">Date of birth <span class="reg__req" aria-hidden="true">*</span></label>
+            <input aria-describedby="dob-hint dob-err" id="regDob" name="dob" type="date"
+                   min="1920-01-01" max="2021-12-20" required />
+            <span class="reg__hint" id="dob-hint">Your age is worked out from this.</span>
+            <span class="reg__err" id="dob-err" data-err="dob"></span>
+          </p>
+          <p class="reg__field">
+            <label for="regAgeOut">Age on race day</label>
+            <output class="reg__age" id="regAgeOut" for="regDob" aria-live="polite">&mdash;</output>
+            <span class="reg__hint">Calculated for 20 December 2026.</span>
+            <span class="reg__err" data-err="age"></span>
           </p>
           <p class="reg__field">
             <label for="regGender">Gender <span class="reg__req" aria-hidden="true">*</span></label>
@@ -733,10 +742,6 @@
                    accept="image/jpeg,image/png,image/webp,application/pdf" required />
             <span class="reg__hint" id="idProofFile-hint">JPG, PNG or PDF, max 5&nbsp;MB.</span>
             <span class="reg__err" id="idProofFile-err" data-err="idProofFile"></span>
-          </p>
-          <p class="reg__field">
-            <label for="regEmName">Emergency contact name <span>(optional)</span></label>
-            <input id="regEmName" name="emergencyName" type="text" maxlength="120" />
           </p>
           <p class="reg__field">
             <label for="regEmPhone">Emergency contact number <span>(optional)</span></label>
@@ -1001,7 +1006,7 @@
   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
 </button>
 
-<script src="assets/js/main.js?v=20260903-1" defer></script>
-<script src="assets/js/register.js?v=20260903-1" defer></script>
+<script src="assets/js/main.js?v=20260903-2" defer></script>
+<script src="assets/js/register.js?v=20260903-2" defer></script>
 </body>
 </html>

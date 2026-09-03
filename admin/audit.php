@@ -22,7 +22,7 @@ $labels = [
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>Activity &middot; Marathon Admin</title>
-<link rel="stylesheet" href="assets/admin.css?v=20260903-1">
+<link rel="stylesheet" href="assets/admin.css?v=20260903-2">
 </head>
 <body>
 

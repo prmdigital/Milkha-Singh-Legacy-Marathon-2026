@@ -266,6 +266,42 @@ function payments_enabled(): bool
     return (bool) cfg('PAYMENTS_ENABLED', false);
 }
 
+/** Race day. Age is judged on this date, not on the day someone registers. */
+const RACE_DAY = '2026-12-20';
+
+/**
+ * Age on race day, worked out from a yyyy-mm-dd date of birth.
+ *
+ * The browser shows the runner their age as they type, but it is recalculated
+ * here and the browser's figure is ignored: age decides which categories
+ * someone may enter, so it cannot be something the client gets to assert.
+ *
+ * @return int|null null when the date is malformed, impossible or in the future
+ */
+function age_on_race_day(string $dob): ?int
+{
+    if (!preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', $dob, $m)) {
+        return null;
+    }
+
+    [, $y, $mo, $d] = array_map('intval', $m);
+
+    // checkdate rejects 31 February and 30 February-style dates that a typed
+    // value can carry even when the pattern matches.
+    if (!checkdate($mo, $d, $y)) {
+        return null;
+    }
+
+    $born = new DateTimeImmutable(sprintf('%04d-%02d-%02d', $y, $mo, $d));
+    $race = new DateTimeImmutable(RACE_DAY);
+
+    if ($born > $race) {
+        return null;
+    }
+
+    return (int) $born->diff($race)->y;
+}
+
 const EARLY_BIRD_PERCENT = 20;
 const EARLY_BIRD_UNTIL   = '2026-11-07 23:59:59';   // IST, inclusive
 
@@ -337,10 +373,18 @@ function validate_runner(array $in): array
     }
     $v['mobile'] = $mobile;
 
-    $age = filter_var($in['age'] ?? null, FILTER_VALIDATE_INT);
-    if ($age === false || $age < 5 || $age > 100) {
-        $e['age'] = 'Please enter an age between 5 and 100.';
+    $v['dob'] = trim((string) ($in['dob'] ?? ''));
+    $age = $v['dob'] === '' ? null : age_on_race_day($v['dob']);
+
+    if ($v['dob'] === '') {
+        $e['dob'] = 'Please enter your date of birth.';
+    } elseif ($age === null) {
+        $e['dob'] = 'Please enter a valid date of birth.';
+    } elseif ($age < 5 || $age > 100) {
+        $e['dob'] = 'Runners must be between 5 and 100 on race day.';
     }
+
+    // Derived, never taken from the request.
     $v['age'] = (int) $age;
 
     $v['gender'] = (string) ($in['gender'] ?? '');
@@ -366,8 +410,6 @@ function validate_runner(array $in): array
         $e['idProofType'] = 'Please select an ID proof type.';
     }
 
-    $v['emergency_name'] = mb_substr(trim((string) ($in['emergencyName'] ?? '')), 0, 120);
-
     $ec = preg_replace('/[^0-9]/', '', (string) ($in['emergencyPhone'] ?? ''));
     $v['emergency_phone'] = mb_substr($ec, 0, 20);
 
@@ -377,10 +419,10 @@ function validate_runner(array $in): array
     }
 
     // Minimum ages published on the site.
-    if (!isset($e['category']) && !isset($e['age'])) {
+    if (!isset($e['category']) && !isset($e['dob'])) {
         $min = ['half' => 18, 'mini' => 18, 'cause' => 12, 'para' => 0];
         if ($v['age'] < $min[$v['category']]) {
-            $e['age'] = sprintf(
+            $e['dob'] = sprintf(
                 '%s is open to runners aged %d and over.',
                 CATEGORIES[$v['category']]['label'],
                 $min[$v['category']]

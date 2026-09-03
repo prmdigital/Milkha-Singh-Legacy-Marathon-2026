@@ -15,7 +15,8 @@ CREATE TABLE IF NOT EXISTS registrations (
   full_name           VARCHAR(120) NOT NULL,
   email               VARCHAR(190) NOT NULL,
   mobile              VARCHAR(20)  NOT NULL,
-  age                 SMALLINT UNSIGNED NOT NULL,
+  age                 SMALLINT UNSIGNED NOT NULL,   -- on race day, derived from dob
+  dob                 DATE         DEFAULT NULL,
   gender              VARCHAR(16)  NOT NULL,
   city                VARCHAR(90)  NOT NULL,
   tshirt_size         VARCHAR(8)   NOT NULL,

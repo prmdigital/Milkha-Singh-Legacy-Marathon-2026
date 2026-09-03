@@ -59,7 +59,7 @@ if (!$r) {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title><?= isset($notFound) ? 'Not found' : h($r['full_name']) ?> &middot; Marathon Admin</title>
-<link rel="stylesheet" href="assets/admin.css?v=20260903-1">
+<link rel="stylesheet" href="assets/admin.css?v=20260903-2">
 </head>
 <body>
 
@@ -94,7 +94,9 @@ if (!$r) {
         <dt>Full name</dt><dd><?= h($r['full_name']) ?></dd>
         <dt>Email</dt><dd><a href="mailto:<?= h($r['email']) ?>"><?= h($r['email']) ?></a></dd>
         <dt>Mobile</dt><dd><a href="tel:+91<?= h($r['mobile']) ?>"><?= h($r['mobile']) ?></a></dd>
-        <dt>Age</dt><dd><?= h($r['age']) ?></dd>
+        <dt>Date of birth</dt>
+        <dd><?= $r['dob'] ? h(date('j M Y', strtotime((string) $r['dob']))) : '<span class="muted">Not recorded</span>' ?></dd>
+        <dt>Age on race day</dt><dd><?= h($r['age']) ?></dd>
         <dt>Gender</dt><dd><?= h($r['gender']) ?></dd>
         <dt>City</dt><dd><?= h($r['city']) ?></dd>
         <dt>T-shirt size</dt><dd><?= h($r['tshirt_size']) ?></dd>
@@ -111,7 +113,6 @@ if (!$r) {
 
       <h2>Emergency contact</h2>
       <dl class="dl">
-        <dt>Name</dt><dd><?= $r['emergency_name'] ? h($r['emergency_name']) : '<span class="muted">Not given</span>' ?></dd>
         <dt>Phone</dt>
         <dd><?= $r['emergency_phone'] ? h($r['emergency_phone']) : '<span class="muted">Not given</span>' ?></dd>
       </dl>

@@ -64,7 +64,7 @@ $filtered = has_filters();
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>Registrations &middot; Marathon Admin</title>
-<link rel="stylesheet" href="assets/admin.css?v=20260903-1">
+<link rel="stylesheet" href="assets/admin.css?v=20260903-2">
 </head>
 <body>
 
@@ -205,7 +205,7 @@ $filtered = has_filters();
             </td>
             <td>
               <?= h(cat_label($r['category'])) ?>
-              <span class="sub"><?= h($r['age']) ?> yrs &middot; <?= h($r['gender']) ?> &middot; <?= h($r['city']) ?></span>
+              <span class="sub"><?= h($r['age']) ?> yrs on race day &middot; <?= h($r['gender']) ?> &middot; <?= h($r['city']) ?></span>
             </td>
             <td class="nowrap"><?= h($r['tshirt_size']) ?></td>
             <td class="num">

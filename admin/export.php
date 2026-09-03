@@ -45,7 +45,8 @@ $csv([
     'Full name',
     'Email',
     'Mobile',
-    'Age',
+    'Date of birth',
+    'Age on race day',
     'Gender',
     'City',
     'Category',
@@ -54,7 +55,6 @@ $csv([
     'T-shirt size',
     'ID proof type',
     'ID proof uploaded',
-    'Emergency name',
     'Emergency phone',
     'Amount (INR)',
     'Early bird',
@@ -75,6 +75,7 @@ while ($r = $st->fetch()) {
         // Leading apostrophe stops Excel dropping the leading digit or turning
         // a long number into 9.19E+11.
         "'" . $r['mobile'],
+        $r['dob'],
         $r['age'],
         $r['gender'],
         $r['city'],
@@ -84,7 +85,6 @@ while ($r = $st->fetch()) {
         $r['tshirt_size'],
         $r['id_proof_type'],
         $r['id_proof_file'] ? 'Yes' : 'No',
-        $r['emergency_name'],
         $r['emergency_phone'] ? "'" . $r['emergency_phone'] : '',
         number_format((int) $r['amount_paise'] / 100, 2, '.', ''),
         ((int) $r['early_bird'] === 1) ? 'Yes' : 'No',

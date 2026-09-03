@@ -841,6 +841,21 @@ body::before {
 .reg__err:empty { display: none; }
 .reg__hint { font-size: var(--fs-xs); color: var(--ink-mute); }
 
+/* Age is worked out, not typed. It is built to the same height as the inputs
+   beside it so the row still lines up, but it is deliberately not a box: it is
+   an answer, and nothing here is for the runner to fill in. */
+.reg__age {
+  display: flex; align-items: center;
+  min-height: 50px;
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  background: var(--bg-saffron);
+  border: 1px dashed var(--border);
+  font-size: var(--fs-md); font-weight: 700;
+  color: var(--ink-mute);
+}
+.reg__age.is-set { color: var(--navy); border-style: solid; border-color: var(--saffron); }
+
 /* Fee summary */
 .reg__summary {
   display: flex; align-items: baseline; flex-wrap: wrap; gap: 6px 12px;
