@@ -32,7 +32,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="assets/css/styles.css?v=20260904-3" />
+<link rel="stylesheet" href="assets/css/styles.css?v=20260904-4" />
 
 <!-- Event schema: this is what makes Google show your date + venue in search results. -->
 <script type="application/ld+json">
@@ -689,15 +689,13 @@
           </p>
           <p class="reg__field">
             <label for="regDob">Date of birth <span class="reg__req" aria-hidden="true">*</span></label>
-            <input aria-describedby="dob-hint dob-err" id="regDob" name="dob" type="date"
+            <input aria-describedby="dob-err" id="regDob" name="dob" type="date"
                    min="1920-01-01" max="2021-12-20" required />
-            <span class="reg__hint" id="dob-hint">Your age is worked out from this.</span>
             <span class="reg__err" id="dob-err" data-err="dob"></span>
           </p>
           <p class="reg__field">
             <label for="regAgeOut">Age on race day</label>
             <output class="reg__age" id="regAgeOut" for="regDob" aria-live="polite">&mdash;</output>
-            <span class="reg__hint">Calculated for 20 December 2026.</span>
             <span class="reg__err" data-err="age"></span>
           </p>
           <p class="reg__field">
@@ -726,7 +724,7 @@
           </p>
           <p class="reg__field">
             <label for="regIdType">Photo ID proof <span class="reg__req" aria-hidden="true">*</span></label>
-            <select aria-describedby="idProofType-hint idProofType-err" id="regIdType" name="idProofType" required>
+            <select aria-describedby="idProofType-err" id="regIdType" name="idProofType" required>
               <option value="">Select</option>
               <option>Aadhaar</option>
               <option>PAN</option>
@@ -734,7 +732,6 @@
               <option>Driving Licence</option>
               <option>Voter ID</option>
             </select>
-            <span class="reg__hint" id="idProofType-hint">Bring the original to collect your race kit.</span>
             <span class="reg__err" id="idProofType-err" data-err="idProofType"></span>
           </p>
           <p class="reg__field">
@@ -1007,7 +1004,7 @@
   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
 </button>
 
-<script src="assets/js/main.js?v=20260904-3" defer></script>
-<script src="assets/js/register.js?v=20260904-3" defer></script>
+<script src="assets/js/main.js?v=20260904-4" defer></script>
+<script src="assets/js/register.js?v=20260904-4" defer></script>
 </body>
 </html>
