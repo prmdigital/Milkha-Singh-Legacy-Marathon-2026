@@ -251,7 +251,13 @@ body::before {
   font-size: clamp(2.3rem, 6.5vw, 4.6rem);
   font-weight: 800;
   line-height: 1.06;
-  letter-spacing: -.015em;
+  /* Capitals are wider and sit closer together than mixed case, so the negative
+     tracking that suited "Milkha Singh" would crowd "MILKHA SINGH". Nudged to
+     zero, and the line height opened slightly since capitals have no
+     descenders to fill the gap. */
+  letter-spacing: 0;
+  line-height: 1.1;
+  text-transform: uppercase;
   color: var(--navy);
   margin-bottom: 20px;
 }
@@ -272,7 +278,11 @@ body::before {
 
 .hero__tagline {
   font-size: clamp(1.05rem, 2.4vw, 1.45rem);
-  font-weight: 600; color: var(--ink); margin-bottom: 8px;
+  font-weight: 700; color: var(--ink); margin-bottom: 8px;
+  /* Set in capitals, which need a little tracking to stay readable at this
+     size, and a touch more weight to hold up against the title above. */
+  text-transform: uppercase;
+  letter-spacing: .06em;
 }
 
 /* The campaign line, directly under the tagline it belongs with. Saffron and
