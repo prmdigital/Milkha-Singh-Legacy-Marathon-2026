@@ -125,6 +125,23 @@ $SCHEMA = [
   KEY idx_ip_time (ip_address, attempted_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
 
+"CREATE TABLE IF NOT EXISTS admin_users (
+  id            INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  username      VARCHAR(40)  NOT NULL,
+  full_name     VARCHAR(120) NOT NULL,
+  email         VARCHAR(190) DEFAULT NULL,
+  password_hash VARCHAR(255) NOT NULL,
+  role          ENUM('owner','manager','viewer') NOT NULL DEFAULT 'viewer',
+  is_active     TINYINT(1)   NOT NULL DEFAULT 1,
+  must_change   TINYINT(1)   NOT NULL DEFAULT 0,
+  created_by    INT UNSIGNED DEFAULT NULL,
+  created_at    DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  last_login_at DATETIME     DEFAULT NULL,
+  PRIMARY KEY (id),
+  UNIQUE KEY uniq_username (username),
+  KEY idx_active (is_active)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
+
 "CREATE TABLE IF NOT EXISTS admin_audit (
   id         INT UNSIGNED NOT NULL AUTO_INCREMENT,
   action     VARCHAR(40)  NOT NULL,
@@ -142,6 +159,9 @@ $SCHEMA = [
    ENUM('pending','awaiting','paid','free','failed') NOT NULL DEFAULT 'pending'",
 
 "ALTER TABLE registrations ADD COLUMN dob DATE DEFAULT NULL AFTER age",
+
+"ALTER TABLE admin_audit ADD COLUMN actor VARCHAR(40) DEFAULT NULL AFTER action",
+"ALTER TABLE admin_login_attempts ADD COLUMN username VARCHAR(40) DEFAULT NULL AFTER ip_address",
 ];
 
 // ---------------------------------------------------------------------------
@@ -294,7 +314,33 @@ if (!$alreadyConfigured && $preflightOk && ($_SERVER['REQUEST_METHOD'] ?? '') ==
             }
         }
         if (!$errors) {
-            $steps[] = 'Created the registrations, login-attempts and audit tables.';
+            $steps[] = 'Created the registrations, users, login-attempts and audit tables.';
+        }
+
+        // The first owner is a real user row, not just a line in the config, so
+        // the panel has someone to attribute actions to from the very first
+        // sign-in. The config credential stays as a way back in if the account
+        // is ever lost.
+        if (!$errors) {
+            try {
+                $exists = (int) $pdo->query('SELECT COUNT(*) FROM admin_users')->fetchColumn();
+                if ($exists === 0) {
+                    $ins = $pdo->prepare(
+                        'INSERT INTO admin_users
+                            (username, full_name, password_hash, role, is_active, must_change)
+                         VALUES (?, ?, ?, ?, 1, 0)'
+                    );
+                    $ins->execute([
+                        $posted['admin_user'],
+                        'Owner',
+                        password_hash($adminPass, PASSWORD_DEFAULT),
+                        'owner',
+                    ]);
+                    $steps[] = 'Created the owner account "' . $posted['admin_user'] . '".';
+                }
+            } catch (Throwable $e) {
+                $errors[] = 'Could not create the owner account: ' . $e->getMessage();
+            }
         }
     }
 
@@ -365,7 +411,7 @@ $e = static function (string $s): string {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>Setup &middot; Milkha Singh Legacy Marathon</title>
-<link rel="stylesheet" href="admin/assets/admin.css?v=20260904-4">
+<link rel="stylesheet" href="admin/assets/admin.css?v=20260904-5">
 <style>
   .setup { max-width: 720px; margin: 40px auto; padding: 0 20px 80px; }
   .setup h1 { color: var(--navy); margin: 0 0 6px; }
@@ -507,7 +553,11 @@ $e = static function (string $s): string {
 
     <div class="card">
       <h2>Admin panel login</h2>
-      <p class="hint">How you will sign in to see registrations. The password is stored only as a hash.</p>
+      <p class="hint">
+        This creates the first <b>owner</b> account &mdash; the one that can add
+        other staff and set what each of them may do. The password is stored
+        only as a hash.
+      </p>
 
       <div class="row">
         <div class="field">

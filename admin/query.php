@@ -49,6 +49,47 @@ function reg_filters(array $q): array
         $params[] = $to . ' 23:59:59';
     }
 
+    $gender = (string) ($q['gender'] ?? '');
+    if (in_array($gender, ['Male', 'Female', 'Other'], true)) {
+        $where[]  = 'gender = ?';
+        $params[] = $gender;
+    }
+
+    $tshirt = (string) ($q['tshirt'] ?? '');
+    if (in_array($tshirt, ['XS', 'S', 'M', 'L', 'XL', 'XXL'], true)) {
+        $where[]  = 'tshirt_size = ?';
+        $params[] = $tshirt;
+    }
+
+    // City is free text on the form, so it is matched loosely: "chand" should
+    // find Chandigarh without anyone having to remember the exact spelling.
+    $city = trim((string) ($q['city'] ?? ''));
+    if ($city !== '') {
+        $where[]  = 'city LIKE ?';
+        $params[] = '%' . $city . '%';
+    }
+
+    $ageMin = filter_var($q['age_min'] ?? null, FILTER_VALIDATE_INT);
+    if ($ageMin !== false && $ageMin !== null) {
+        $where[]  = 'age >= ?';
+        $params[] = $ageMin;
+    }
+
+    $ageMax = filter_var($q['age_max'] ?? null, FILTER_VALIDATE_INT);
+    if ($ageMax !== false && $ageMax !== null) {
+        $where[]  = 'age <= ?';
+        $params[] = $ageMax;
+    }
+
+    // Only entries where a document was actually uploaded, or only those
+    // missing one — the list the kit desk works from.
+    $idProof = (string) ($q['id_proof'] ?? '');
+    if ($idProof === 'yes') {
+        $where[] = 'id_proof_file IS NOT NULL';
+    } elseif ($idProof === 'no') {
+        $where[] = 'id_proof_file IS NULL';
+    }
+
     $sql = $where ? ' WHERE ' . implode(' AND ', $where) : '';
     return [$sql, $params];
 }
@@ -62,6 +103,8 @@ function reg_sort(array $q): string
         'category'   => 'category',
         'amount'     => 'amount_paise',
         'status'     => 'status',
+        'age'        => 'age',
+        'city'       => 'city',
     ];
     $col = $allowed[(string) ($q['sort'] ?? '')] ?? 'created_at';
     $dir = strtolower((string) ($q['dir'] ?? 'desc')) === 'asc' ? 'ASC' : 'DESC';
@@ -82,9 +125,15 @@ function link_with(array $over, string $base = 'index.php'): string
 }
 
 /** True when the list is showing anything other than everything. */
+/** Every filter the list understands, in one place. */
+const FILTER_KEYS = [
+    'q', 'category', 'status', 'from', 'to',
+    'gender', 'tshirt', 'city', 'age_min', 'age_max', 'id_proof',
+];
+
 function has_filters(): bool
 {
-    foreach (['q', 'category', 'status', 'from', 'to'] as $k) {
+    foreach (FILTER_KEYS as $k) {
         if (trim((string) ($_GET[$k] ?? '')) !== '') {
             return true;
         }

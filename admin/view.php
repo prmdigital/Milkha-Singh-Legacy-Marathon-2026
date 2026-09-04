@@ -20,6 +20,8 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
     $action = (string) ($_POST['action'] ?? '');
 
     if ($action === 'mark_paid') {
+        require_can('mark_paid');
+
         // Only an entry that is genuinely awaiting collection may be flipped, so
         // this can never overwrite a real gateway payment or a free entry.
         $upd = db()->prepare(
@@ -59,7 +61,7 @@ if (!$r) {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title><?= isset($notFound) ? 'Not found' : h($r['full_name']) ?> &middot; Marathon Admin</title>
-<link rel="stylesheet" href="assets/admin.css?v=20260904-4">
+<link rel="stylesheet" href="assets/admin.css?v=20260904-5">
 </head>
 <body>
 
@@ -148,6 +150,7 @@ if (!$r) {
           This runner registered while online payment was switched off. Call
           <?= h($r['mobile']) ?> to take the fee, then record it here.
         </p>
+        <?php if (can('mark_paid')): ?>
         <form method="post" class="markpaid"
               onsubmit="return confirm('Record <?= h(money((int) $r['amount_paise'])) ?> as received from <?= h($r['full_name']) ?>?');">
           <input type="hidden" name="csrf" value="<?= h(csrf_token()) ?>">
@@ -156,6 +159,7 @@ if (!$r) {
             Mark <?= money((int) $r['amount_paise']) ?> as received
           </button>
         </form>
+        <?php endif; ?>
       <?php endif; ?>
 
       <?php if ($r['status'] === 'pending'): ?>
@@ -172,7 +176,9 @@ if (!$r) {
         <dt>Type</dt><dd><?= h($r['id_proof_type']) ?></dd>
       </dl>
 
-      <?php if ($r['id_proof_file']): ?>
+      <?php if ($r['id_proof_file'] && !can('view_id_proof')): ?>
+        <p class="muted">A document is on file. Your role cannot open ID proofs.</p>
+      <?php elseif ($r['id_proof_file']): ?>
         <p class="idnote">
           The document is stored outside the website folder and is only served
           through this panel. Opening it is recorded under Activity.

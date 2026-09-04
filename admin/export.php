@@ -11,6 +11,7 @@ require_once __DIR__ . '/auth.php';
 require_once __DIR__ . '/query.php';
 
 require_admin();
+require_can('export_csv');
 
 [$where, $params] = reg_filters($_GET);
 

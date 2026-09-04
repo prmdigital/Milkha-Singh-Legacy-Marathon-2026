@@ -18,30 +18,47 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
 
     $user = (string) ($_POST['username'] ?? '');
     $pass = (string) ($_POST['password'] ?? '');
-    $hash = (string) cfg('ADMIN_PASSWORD_HASH', '');
 
-    if ($hash === '') {
-        $error = 'No admin password is set. Open hash-tool.php to create one.';
+    if (!has_db_users() && (string) cfg('ADMIN_PASSWORD_HASH', '') === '') {
+        $error = 'No admin account exists yet. Run setup.php to create one.';
     } elseif (login_blocked($ip)) {
         $error = 'Too many failed attempts. Try again in ' . LOGIN_WINDOW_MIN . ' minutes.';
     } else {
-        // Both checks always run: comparing the password even when the username
-        // is wrong keeps the response time even, so it cannot be used to work
-        // out which half was correct.
-        $userOk = hash_equals((string) cfg('ADMIN_USER', ''), $user);
-        $passOk = password_verify($pass, $hash);
+        $account = authenticate($user, $pass);
 
-        if ($userOk && $passOk) {
-            login_record($ip, true);
+        if ($account !== null) {
+            login_record($ip, true, $user);
             session_regenerate_id(true);   // stops session fixation
-            $_SESSION['admin_ok'] = true;
-            $_SESSION['admin_user'] = $user;
+
+            $_SESSION['admin_ok']   = true;
+            $_SESSION['admin_id']   = (int) ($account['id'] ?? 0);
+            $_SESSION['admin_user'] = (string) $account['username'];
+            $_SESSION['admin_name'] = (string) ($account['full_name'] ?? $account['username']);
+            $_SESSION['admin_role'] = (string) ($account['role'] ?? 'owner');
+
+            if ((int) ($account['id'] ?? 0) > 0) {
+                try {
+                    db()->prepare('UPDATE admin_users SET last_login_at = CURRENT_TIMESTAMP WHERE id = ?')
+                        ->execute([(int) $account['id']]);
+                } catch (Throwable $e) {
+                    error_log('[marathon-admin] last_login_at: ' . $e->getMessage());
+                }
+            }
+
             audit('login', $user);
+
+            // An owner-set temporary password must be replaced before the
+            // account is any use, otherwise whoever set it still knows it.
+            if ((int) ($account['must_change'] ?? 0) === 1) {
+                header('Location: password.php?first=1');
+                exit;
+            }
+
             header('Location: index.php');
             exit;
         }
 
-        login_record($ip, false);
+        login_record($ip, false, $user);
         $error = 'Wrong username or password.';
     }
 }
@@ -55,7 +72,7 @@ $csrf = csrf_token();
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>Sign in · Marathon Admin</title>
-<link rel="stylesheet" href="assets/admin.css?v=20260904-4">
+<link rel="stylesheet" href="assets/admin.css?v=20260904-5">
 </head>
 <body class="login-body">
 

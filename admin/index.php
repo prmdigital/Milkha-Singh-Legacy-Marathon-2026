@@ -41,7 +41,12 @@ $countSt = $pdo->prepare('SELECT COUNT(*) FROM registrations' . $where);
 $countSt->execute($params);
 $found = (int) $countSt->fetchColumn();
 
-$perPage = 50;
+// The kit desk sometimes wants everything on one screen to scan by eye.
+$perPageAllowed = [25, 50, 100, 200];
+$perPage = (int) ($_GET['per'] ?? 50);
+if (!in_array($perPage, $perPageAllowed, true)) {
+    $perPage = 50;
+}
 $pages   = max(1, (int) ceil($found / $perPage));
 $page    = max(1, min($pages, (int) ($_GET['page'] ?? 1)));
 $offset  = ($page - 1) * $perPage;
@@ -56,6 +61,15 @@ $rows = $listSt->fetchAll();
 
 $flip = (strtolower((string) ($_GET['dir'] ?? 'desc')) === 'desc') ? 'asc' : 'desc';
 $filtered = has_filters();
+
+// Keep the advanced panel open when one of its filters is in use, so an active
+// filter is never hidden behind a collapsed section.
+$advancedOpen = false;
+foreach (['gender', 'tshirt', 'city', 'age_min', 'age_max', 'id_proof'] as $k) {
+    if (trim((string) ($_GET[$k] ?? '')) !== '') {
+        $advancedOpen = true;
+    }
+}
 ?>
 <!doctype html>
 <html lang="en">
@@ -64,7 +78,7 @@ $filtered = has_filters();
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>Registrations &middot; Marathon Admin</title>
-<link rel="stylesheet" href="assets/admin.css?v=20260904-4">
+<link rel="stylesheet" href="assets/admin.css?v=20260904-5">
 </head>
 <body>
 
@@ -156,13 +170,67 @@ $filtered = has_filters();
         <a class="btn btn--ghost" href="index.php">Clear</a>
       <?php endif; ?>
     </div>
+
+    <details class="filters__more"<?= $advancedOpen ? ' open' : '' ?>>
+      <summary>More filters</summary>
+      <div class="filters__row">
+        <label>
+          <span class="sr-only">Gender</span>
+          <select name="gender">
+            <option value="">Any gender</option>
+            <?php foreach (['Male', 'Female', 'Other'] as $g): ?>
+              <option value="<?= h($g) ?>" <?= ($_GET['gender'] ?? '') === $g ? 'selected' : '' ?>><?= h($g) ?></option>
+            <?php endforeach; ?>
+          </select>
+        </label>
+
+        <label>
+          <span class="sr-only">T-shirt size</span>
+          <select name="tshirt">
+            <option value="">Any T-shirt size</option>
+            <?php foreach (['XS', 'S', 'M', 'L', 'XL', 'XXL'] as $t): ?>
+              <option value="<?= h($t) ?>" <?= ($_GET['tshirt'] ?? '') === $t ? 'selected' : '' ?>><?= h($t) ?></option>
+            <?php endforeach; ?>
+          </select>
+        </label>
+
+        <label class="filters__city">
+          <span class="sr-only">City</span>
+          <input type="search" name="city" placeholder="City" value="<?= h($_GET['city'] ?? '') ?>">
+        </label>
+
+        <label class="filters__age">
+          <span>Age</span>
+          <input type="number" name="age_min" min="1" max="120" placeholder="from" value="<?= h($_GET['age_min'] ?? '') ?>">
+          <input type="number" name="age_max" min="1" max="120" placeholder="to" value="<?= h($_GET['age_max'] ?? '') ?>">
+        </label>
+
+        <label>
+          <span class="sr-only">ID proof</span>
+          <select name="id_proof">
+            <option value="">ID proof: any</option>
+            <option value="yes" <?= ($_GET['id_proof'] ?? '') === 'yes' ? 'selected' : '' ?>>Uploaded</option>
+            <option value="no"  <?= ($_GET['id_proof'] ?? '') === 'no'  ? 'selected' : '' ?>>Missing</option>
+          </select>
+        </label>
+
+        <label class="filters__per">
+          <span>Show</span>
+          <select name="per" onchange="this.form.submit()">
+            <?php foreach ($perPageAllowed as $n): ?>
+              <option value="<?= $n ?>" <?= $perPage === $n ? 'selected' : '' ?>><?= $n ?></option>
+            <?php endforeach; ?>
+          </select>
+        </label>
+      </div>
+    </details>
   </form>
 
   <div class="listhead">
     <p>
       <strong><?= $found ?></strong> <?= $found === 1 ? 'registration' : 'registrations' ?><?= $filtered ? ' matching your filters' : '' ?>
     </p>
-    <?php if ($found > 0): ?>
+    <?php if ($found > 0 && can('export_csv')): ?>
       <a class="btn btn--primary" href="<?= h(link_with(['page' => null], 'export.php')) ?>">Download CSV</a>
     <?php endif; ?>
   </div>

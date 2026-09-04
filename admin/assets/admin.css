@@ -432,3 +432,108 @@ code {
   .dl dd { margin-bottom: 9px; }
   .stat__n { font-size: 1.4rem; }
 }
+
+/* ---------- Who is signed in ---------- */
+
+.topbar__who { display: grid; line-height: 1.2; text-align: right; }
+.topbar__who b { font-size: .84rem; font-weight: 600; }
+.topbar__who span { font-size: .72rem; opacity: .7; }
+
+/* ---------- Advanced filters ---------- */
+
+.filters__more { margin-top: 10px; }
+.filters__more > summary {
+  cursor: pointer; list-style: none;
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: .84rem; font-weight: 600; color: var(--saffron-deep);
+  padding: 6px 0;
+}
+.filters__more > summary::-webkit-details-marker { display: none; }
+.filters__more > summary::before { content: '+'; font-weight: 800; }
+.filters__more[open] > summary::before { content: '\2212'; }
+.filters__more .filters__row { margin-top: 10px; }
+.filters__city { flex: 1 1 160px; }
+.filters__age { gap: 6px; }
+.filters__age input { width: 84px; }
+.filters__age span, .filters__per span { font-size: .8rem; color: var(--ink-mute); }
+
+/* ---------- User management ---------- */
+
+.wrap--narrow { max-width: 640px; }
+
+.userform__grid {
+  display: grid; gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  align-items: end;
+}
+.userform label { display: grid; gap: 5px; }
+.userform label > span { font-size: .82rem; font-weight: 600; color: var(--ink-dim); }
+.userform label em { font-style: normal; font-weight: 400; color: var(--ink-mute); }
+.userform input, .userform select {
+  min-height: 42px; padding: 9px 12px;
+  border: 1px solid var(--border); border-radius: var(--radius);
+  font: inherit; font-size: .9rem; background: #fff; width: 100%;
+}
+.userform input:focus, .userform select:focus {
+  outline: 2px solid var(--saffron-deep); outline-offset: 1px;
+  border-color: var(--saffron-deep);
+}
+.userform__submit .btn { width: 100%; }
+
+.rolekey {
+  list-style: none; margin: 18px 0 0; padding: 14px 16px;
+  background: #FAFBFD; border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  font-size: .82rem; color: var(--ink-mute);
+}
+.rolekey li + li { margin-top: 6px; }
+.rolekey b { color: var(--navy); margin-right: 6px; }
+
+.table tr.is-off td { opacity: .55; }
+.table .inline { margin: 0; }
+.table .inline select {
+  min-height: 34px; padding: 4px 8px;
+  border: 1px solid var(--border); border-radius: var(--radius);
+  font: inherit; font-size: .82rem; background: #fff;
+}
+
+/* The per-row menu is a details element so it needs no JavaScript and cannot
+   get stuck open when a submit navigates away. */
+.rowmenu { position: relative; }
+.rowmenu > summary { list-style: none; cursor: pointer; display: inline-flex; }
+.rowmenu > summary::-webkit-details-marker { display: none; }
+.rowmenu__body {
+  position: absolute; right: 0; z-index: 20;
+  margin-top: 6px; padding: 14px; width: 232px;
+  display: grid; gap: 8px;
+  background: #fff; border: 1px solid var(--border);
+  border-radius: var(--radius-lg); box-shadow: var(--shadow-lift);
+  text-align: left;
+}
+.rowmenu__label { font-size: .78rem; font-weight: 600; color: var(--ink-dim); }
+.rowmenu__body input {
+  min-height: 38px; padding: 8px 10px; width: 100%;
+  border: 1px solid var(--border); border-radius: var(--radius);
+  font: inherit; font-size: .86rem;
+}
+.rowmenu__toggle { border-top: 1px solid var(--border); padding-top: 10px; margin: 2px 0 0; }
+.rowmenu__toggle .btn { width: 100%; }
+
+.pwform { display: grid; gap: 14px; }
+.pwform label { display: grid; gap: 5px; }
+.pwform label > span { font-size: .82rem; font-weight: 600; color: var(--ink-dim); }
+.pwform small { font-size: .78rem; color: var(--ink-mute); }
+.pwform input {
+  min-height: 44px; padding: 10px 12px;
+  border: 1px solid var(--border); border-radius: var(--radius);
+  font: inherit; font-size: .95rem;
+}
+.pwform input:focus {
+  outline: 2px solid var(--saffron-deep); outline-offset: 1px;
+  border-color: var(--saffron-deep);
+}
+
+@media (max-width: 720px) {
+  .topbar__who { display: none; }
+  .rowmenu__body { right: auto; left: 0; }
+}

@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 $current = basename((string) ($_SERVER['SCRIPT_NAME'] ?? ''));
+$me      = current_user();
 ?>
 <header class="topbar">
   <div class="topbar__in">
@@ -13,11 +14,22 @@ $current = basename((string) ($_SERVER['SCRIPT_NAME'] ?? ''));
 
     <nav class="topbar__nav">
       <a href="index.php" <?= $current === 'index.php' ? 'aria-current="page"' : '' ?>>Registrations</a>
-      <a href="audit.php" <?= $current === 'audit.php' ? 'aria-current="page"' : '' ?>>Activity</a>
+
+      <?php if (can('view_audit')): ?>
+        <a href="audit.php" <?= $current === 'audit.php' ? 'aria-current="page"' : '' ?>>Activity</a>
+      <?php endif; ?>
+
+      <?php if (can('manage_users')): ?>
+        <a href="users.php" <?= $current === 'users.php' ? 'aria-current="page"' : '' ?>>Users</a>
+      <?php endif; ?>
     </nav>
 
     <div class="topbar__user">
-      <span><?= h($_SESSION['admin_user'] ?? 'admin') ?></span>
+      <span class="topbar__who">
+        <b><?= h($me['name'] !== '' ? $me['name'] : $me['username']) ?></b>
+        <span><?= h(role_label($me['role'])) ?></span>
+      </span>
+      <a class="btn btn--sm btn--ghost" href="password.php">Password</a>
       <a class="btn btn--sm btn--ghost" href="logout.php">Sign out</a>
     </div>
   </div>
