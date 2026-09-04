@@ -8,7 +8,7 @@ $me      = current_user();
 <header class="topbar">
   <div class="topbar__in">
     <a class="topbar__brand" href="index.php">
-      <img class="topbar__logo" src="../images/logo-lockup-white.png"
+      <img class="topbar__logo" src="../images/logo-lockup.jpg"
            alt="The Flying Sikh Milkha Singh Legacy Marathon 2026" width="600" height="200" />
     </a>
 

@@ -45,8 +45,9 @@ rm -f "$OUT/api/config.sample.php"
 # SQL schemas are run once by hand in phpMyAdmin; they are not web content.
 rm -f "$OUT"/api/*.sql
 
-# Editor and OS leftovers.
-find "$OUT" -name '.DS_Store' -o -name 'Thumbs.db' | xargs -r rm -f
+# Editor and OS leftovers, plus any config backup or half-written temp file the
+# settings page may have left behind. Those hold live credentials.
+find "$OUT" -type f \( -name '.DS_Store' -o -name 'Thumbs.db' -o -name '*.bak' -o -name 'config.php.*' \) -delete
 
 # ---- Refuse to ship a secret ------------------------------------------------
 

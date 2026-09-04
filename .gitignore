@@ -7,3 +7,9 @@ dist/
 # Real credentials — never commit. Use api/config.sample.php as the template.
 api/config.php
 marathon-config.php
+
+# The settings page writes a .bak beside the config before replacing it, and a
+# temporary file while validating. On the server those live above public_html,
+# but locally the config sits inside the repo — and they hold live credentials.
+api/config.php.*
+*.bak

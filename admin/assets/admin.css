@@ -84,9 +84,16 @@ code {
   display: flex; align-items: center; gap: 11px;
   color: #fff; text-decoration: none;
 }
-/* The white-text artwork, because this bar is navy. 40px keeps the header
-   compact — this is a working tool, not a landing page. */
-.topbar__logo { height: 40px; width: auto; display: block; }
+/* The colour artwork has a white background, and this bar is navy, so it sits
+   on a white plate rather than as a bare rectangle butted against the blue.
+   40px keeps the header compact: this is a working tool, not a landing page. */
+.topbar__logo {
+  height: 40px; width: auto; display: block;
+  background: #fff;
+  padding: 5px 9px;
+  border-radius: var(--radius);
+  box-sizing: content-box;
+}
 
 .topbar__nav { display: flex; gap: 4px; margin-left: auto; }
 .topbar__nav a {
