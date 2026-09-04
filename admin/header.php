@@ -22,6 +22,10 @@ $me      = current_user();
       <?php if (can('manage_users')): ?>
         <a href="users.php" <?= $current === 'users.php' ? 'aria-current="page"' : '' ?>>Users</a>
       <?php endif; ?>
+
+      <?php if (can('manage_settings')): ?>
+        <a href="settings.php" <?= $current === 'settings.php' ? 'aria-current="page"' : '' ?>>Settings</a>
+      <?php endif; ?>
     </nav>
 
     <div class="topbar__user">

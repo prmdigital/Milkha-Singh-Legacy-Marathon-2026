@@ -14,6 +14,40 @@ date_default_timezone_set('Asia/Kolkata');
 // Config
 // ---------------------------------------------------------------------------
 
+/**
+ * Where the configuration was actually loaded from.
+ *
+ * The admin settings page needs to write back to the same file it read, and
+ * guessing between the candidates would risk creating a second config that
+ * silently shadows the real one.
+ */
+function config_path(): ?string
+{
+    static $found = null;
+    if ($found !== null) {
+        return $found ?: null;
+    }
+
+    foreach (config_candidates() as $path) {
+        if (is_readable($path)) {
+            $found = $path;
+            return $found;
+        }
+    }
+    $found = '';
+    return null;
+}
+
+/** In priority order: above the webroot first. */
+function config_candidates(): array
+{
+    return [
+        __DIR__ . '/../../marathon-config.php',
+        __DIR__ . '/../marathon-config.php',
+        __DIR__ . '/config.php',   // local testing only; gitignored
+    ];
+}
+
 function config(): array
 {
     static $cfg = null;
@@ -21,18 +55,10 @@ function config(): array
         return $cfg;
     }
 
-    // Preferred: above public_html, where the web server cannot serve it.
-    $candidates = [
-        __DIR__ . '/../../marathon-config.php',
-        __DIR__ . '/../marathon-config.php',
-        __DIR__ . '/config.php',   // local testing only; gitignored
-    ];
-
-    foreach ($candidates as $path) {
-        if (is_readable($path)) {
-            $cfg = require $path;
-            return $cfg;
-        }
+    $path = config_path();
+    if ($path !== null) {
+        $cfg = require $path;
+        return $cfg;
     }
 
     http_response_code(500);

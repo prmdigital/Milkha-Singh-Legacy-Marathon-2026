@@ -164,7 +164,7 @@ $csrf = csrf_token();
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>Users &middot; Marathon Admin</title>
-<link rel="stylesheet" href="assets/admin.css?v=20260904-5">
+<link rel="stylesheet" href="assets/admin.css?v=20260904-6">
 </head>
 <body>
 

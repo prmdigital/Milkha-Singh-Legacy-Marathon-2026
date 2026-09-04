@@ -119,7 +119,7 @@ function csrf_check(): void
 const ROLE_PERMISSIONS = [
     'owner' => [
         'view_registrations', 'export_csv', 'view_id_proof', 'mark_paid',
-        'manage_users', 'view_audit',
+        'manage_users', 'manage_settings', 'view_audit',
     ],
     'manager' => [
         'view_registrations', 'export_csv', 'view_id_proof', 'mark_paid',
@@ -175,7 +175,7 @@ function require_can(string $permission): void
         no_store();
         header('Content-Type: text/html; charset=utf-8');
         echo '<!doctype html><meta charset="utf-8"><title>Not allowed</title>'
-           . '<link rel="stylesheet" href="assets/admin.css?v=20260904-5">'
+           . '<link rel="stylesheet" href="assets/admin.css?v=20260904-6">'
            . '<main class="wrap"><p class="empty">'
            . 'Your account does not have access to that. '
            . '<a href="index.php">Back to registrations</a>.'

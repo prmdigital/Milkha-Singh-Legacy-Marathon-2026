@@ -537,3 +537,16 @@ code {
   .topbar__who { display: none; }
   .rowmenu__body { right: auto; left: 0; }
 }
+
+/* ---------- Settings ---------- */
+
+.checkline {
+  display: flex; gap: 11px; align-items: flex-start;
+  padding: 13px 15px;
+  border: 1px solid var(--border); border-radius: var(--radius-lg);
+  background: #FAFBFD;
+}
+.checkline input { margin-top: 3px; width: 18px; height: 18px; flex: none; }
+.checkline span { display: grid; gap: 3px; }
+.checkline b { font-size: .9rem; color: var(--navy); }
+.checkline small { font-size: .8rem; color: var(--ink-mute); line-height: 1.5; }
