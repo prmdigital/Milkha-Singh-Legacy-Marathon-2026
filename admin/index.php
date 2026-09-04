@@ -78,7 +78,7 @@ foreach (['gender', 'tshirt', 'city', 'age_min', 'age_max', 'id_proof'] as $k) {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>Registrations &middot; Marathon Admin</title>
-<link rel="stylesheet" href="assets/admin.css?v=20260904-7">
+<link rel="stylesheet" href="assets/admin.css?v=20260905-1">
 </head>
 <body>
 

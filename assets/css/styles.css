@@ -697,7 +697,15 @@ body::before {
 }
 
 /* ---------- Route ---------- */
-.route { margin: 30px 0 0; }
+/* Names what the map is, so it is not just a picture dropped under the cards. */
+.route__title {
+  margin: 38px 0 14px;
+  font-size: clamp(1.1rem, 2.2vw, 1.35rem);
+  font-weight: 800; color: var(--navy);
+  text-align: center;
+}
+
+.route { margin: 0; }
 /* Solid border now the real map is in — the dashed one read as a placeholder. */
 .route img {
   width: 100%; border-radius: var(--radius-lg);
@@ -787,19 +795,19 @@ body::before {
 
 /* ---------- Registration form ---------- */
 .reg {
-  max-width: 860px; margin: 0 auto; text-align: left;
+  max-width: 900px; margin: 0 auto; text-align: left;
   background: #fff;
   border: 1px solid var(--border);
   border-top: 4px solid var(--saffron);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-soft);
-  padding: 30px 30px 26px;
+  box-shadow: var(--shadow);
+  padding: 34px 34px 30px;
 }
 .reg__block { border: 0; margin: 0 0 26px; padding: 0; }
 .reg__legend {
-  padding: 0; margin-bottom: 14px;
-  font-size: var(--fs-xs); font-weight: 800; letter-spacing: .13em;
+  font-size: 1.06rem; font-weight: 800; letter-spacing: .04em;
   text-transform: uppercase; color: var(--green-deep);
+  margin-bottom: 16px; padding: 0;
 }
 
 /* Category tiles */
@@ -810,9 +818,10 @@ body::before {
 }
 .reg__cat-body {
   display: flex; flex-direction: column; gap: 3px;
-  padding: 14px 16px; height: 100%;
+  padding: 16px 18px; height: 100%;
   border: 1px solid var(--border); border-radius: var(--radius);
-  transition: border-color .18s var(--ease), background .18s var(--ease);
+  transition: border-color .18s var(--ease), background .18s var(--ease),
+              box-shadow .18s var(--ease), transform .18s var(--ease);
 }
 .reg__cat-body b { font-size: var(--fs-md); font-weight: 700; color: var(--navy); }
 .reg__cat-body em {
@@ -821,7 +830,11 @@ body::before {
 }
 .reg__cat-fee { margin-top: 6px; font-size: var(--fs-md); font-weight: 800; color: var(--green-deep); }
 .reg__cat-fee s { color: var(--ink-mute); font-weight: 500; font-size: .82rem; margin-right: 5px; }
-.reg__cat:hover .reg__cat-body { border-color: #C9D0DA; }
+.reg__cat:hover .reg__cat-body {
+  border-color: var(--saffron);
+  box-shadow: var(--shadow);
+  transform: translateY(-2px);
+}
 .reg__cat input:checked + .reg__cat-body {
   border-color: var(--saffron-deep); background: var(--bg-saffron);
 }
@@ -830,28 +843,52 @@ body::before {
 }
 
 /* Fields */
-.reg__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
-.reg__field { margin: 0; display: flex; flex-direction: column; gap: 6px; }
+/* A fieldset will not shrink below the intrinsic minimum width of its contents
+   unless told to — it is the one element that ignores its parent's width. With
+   the larger fields, that minimum grew past a 375px screen and the whole block
+   pushed out of the card. min-width:0 lets it behave like any other box. */
+.reg__block { min-width: 0; }
+
+.reg__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+/* Grid and flex children default to min-width:auto, which is the same trap one
+   level down: a wide control would stretch its column rather than shrink. */
+.reg__grid > *, .reg__field { min-width: 0; }
+.reg__field input, .reg__field select { min-width: 0; width: 100%; }
+.reg__field { margin: 0; display: flex; flex-direction: column; gap: 7px; }
 .reg__field--wide { grid-column: 1 / -1; }
-.reg__field label { font-size: var(--fs-sm); font-weight: 600; color: var(--navy); }
-.reg__field label span { font-weight: 500; color: var(--ink-mute); }
+
+/* Labels were --fs-sm (.88rem) and read as small print above a large control.
+   1rem is the size of ordinary body text, which is what a question deserves. */
+.reg__field label { font-size: 1rem; font-weight: 700; color: var(--navy); }
+.reg__field label span { font-weight: 500; font-size: .92rem; color: var(--ink-mute); }
 /* One fixed height for every control. Left to min-height, text inputs came out
    at 49px (they inherit the body's 1.75 line-height) while selects sat at 46. */
 .reg__field input,
 .reg__field select {
-  height: 48px; padding: 0 13px;
-  font: inherit; font-size: var(--fs-md); line-height: 1.4; color: var(--ink);
+  height: 54px; padding: 0 15px;
+  font: inherit; font-size: 1.02rem; line-height: 1.4; color: var(--ink);
   background: #fff;
-  border: 1px solid var(--border); border-radius: var(--radius);
-  transition: border-color .18s var(--ease);
+  border: 1.5px solid var(--border); border-radius: var(--radius);
+  transition: border-color .18s var(--ease), box-shadow .18s var(--ease);
 }
-.reg__field input:focus, .reg__field select:focus { border-color: var(--saffron-deep); outline: none; }
+/* Hovering says "this is where you type"; the focus ring says "this is where
+   you are". Without either, a long form reads as a wall of empty boxes. */
+.reg__field input:hover,
+.reg__field select:hover { border-color: #C9D0DA; }
+.reg__field input:focus,
+.reg__field select:focus {
+  border-color: var(--saffron-deep);
+  box-shadow: 0 0 0 3px rgba(232, 101, 11, .14);
+  outline: none;
+}
+/* A filled field steps back so the empty ones stand out as what is left. */
+.reg__field input:not(:placeholder-shown):not([type="file"]) { border-color: #CFD6E2; }
 
 /* File input: the native control is taller than a text input by default, so
    pin it to the same 46px and shrink the button to fit inside that. */
 .reg__field input[type="file"] {
-  height: 48px; padding: 0 12px;
-  font-size: var(--fs-md); line-height: 46px; cursor: pointer;
+  height: 54px; padding: 0 14px;
+  font-size: 1.02rem; line-height: 52px; cursor: pointer;
 }
 .reg__field input[type="file"]::file-selector-button {
   height: 30px; margin: 0 12px 0 0; padding: 0 14px;
@@ -865,8 +902,22 @@ body::before {
 }
 
 /* Required-field key and marker */
-.reg__required-note { margin: -4px 0 14px; font-size: var(--fs-xs); color: var(--ink-mute); }
-.reg__req { color: #C0392B; font-weight: 700; }
+/* This tells someone how to read the whole form, so it is set as a note they
+   will actually notice rather than grey small print under the heading. */
+.reg__required-note {
+  margin: 0 0 20px;
+  padding: 10px 14px;
+  border-left: 3px solid var(--saffron-deep);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  background: var(--bg-saffron);
+  font-size: .92rem; color: var(--ink);
+}
+.reg__req { color: #C0392B; font-weight: 800; font-size: 1.05em; }
+
+/* Hints and errors were --fs-xs (.78rem), small enough to be missed by exactly
+   the person who needs them. */
+.reg__hint { font-size: .86rem; }
+.reg__err  { font-size: .88rem; font-weight: 600; }
 .reg__field [aria-invalid="true"] { border-color: #C0392B; }
 
 .reg__err { display: block; margin: 0; font-size: var(--fs-xs); color: #C0392B; }
@@ -879,12 +930,12 @@ body::before {
    the value still reads as an answer rather than an empty box. */
 .reg__age {
   display: flex; align-items: center;
-  height: 48px;
-  padding: 0 13px;
-  border: 1px solid var(--border);
+  height: 54px;
+  padding: 0 15px;
+  border: 1.5px solid var(--border);
   border-radius: var(--radius);
   background: #fff;
-  font-size: var(--fs-md); font-weight: 400;
+  font-size: 1.02rem; font-weight: 400;
   color: var(--ink-mute);
 }
 .reg__age.is-set { color: var(--navy); font-weight: 700; }
