@@ -223,11 +223,15 @@ body::before {
      where the text and the countdown are, lightest across the middle so the
      portrait and the tricolour read clearly. */
   background:
+    /* A flat wash over the entire banner. The vertical gradient alone left the
+       middle of the picture untouched, so the shading read as a patch behind
+       the copy rather than a treatment of the whole image. */
+    linear-gradient(rgba(5,9,20,.20), rgba(5,9,20,.20)),
     linear-gradient(180deg,
-      rgba(10,16,32,.42) 0%,
-      rgba(10,16,32,.22) 34%,
-      rgba(10,16,32,.26) 64%,
-      rgba(10,16,32,.55) 100%),
+      rgba(10,16,32,.40) 0%,
+      rgba(10,16,32,.20) 34%,
+      rgba(10,16,32,.24) 64%,
+      rgba(10,16,32,.52) 100%),
     url('../../images/hero-bg.jpg') center 34% / cover no-repeat;
 }
 /* Dust motes drawn by main.js. Sits above the artwork, below the copy, and
@@ -262,11 +266,11 @@ body::before {
   margin-inline: auto;
   padding: 36px clamp(18px, 4vw, 60px) 30px;
   background: radial-gradient(
-    ellipse 78% 74% at 50% 46%,
-    rgba(5, 9, 20, .78) 0%,
-    rgba(5, 9, 20, .68) 38%,
-    rgba(5, 9, 20, .42) 66%,
-    rgba(5, 9, 20, .12) 84%,
+    ellipse 82% 78% at 50% 46%,
+    rgba(5, 9, 20, .62) 0%,
+    rgba(5, 9, 20, .54) 38%,
+    rgba(5, 9, 20, .34) 66%,
+    rgba(5, 9, 20, .10) 84%,
     rgba(5, 9, 20, 0) 100%);
 }
 

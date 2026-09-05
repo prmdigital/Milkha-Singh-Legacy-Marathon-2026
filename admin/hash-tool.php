@@ -34,7 +34,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>Create admin password</title>
-<link rel="stylesheet" href="assets/admin.css?v=20260905-4">
+<link rel="stylesheet" href="assets/admin.css?v=20260905-5">
 </head>
 <body class="login-body">
 <main class="login">
