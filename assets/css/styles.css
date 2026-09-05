@@ -619,16 +619,27 @@ body::before {
 }
 
 /* ---------- Race categories (confirmed) ---------- */
-/* grid-auto-rows: 1fr makes every card the same height across BOTH rows,
-   not just within a row, so the set reads as one consistent block. */
+/* The heading block is centred here, the way it is on the sister event's site:
+   the cards below are a symmetrical grid, and a left-aligned title over a
+   centred grid left the section looking off its axis. */
+#categories .section__eyebrow,
+#categories .section__title { text-align: center; }
+#categories .section__eyebrow { display: block; }
+#categories .section__sub { margin-inline: auto; text-align: center; }
+
+/* Rows size to their own content. `grid-auto-rows: 1fr` matched every card to
+   the tallest one on the page — the Disabled card, which carries an extra
+   note — so the two cards in the top row each ended with 90px of white space
+   under the last chip. Equal heights WITHIN a row still happen, which is the
+   part that was actually doing the work. */
 .race-grid {
   display: grid; grid-template-columns: repeat(2, 1fr);
-  grid-auto-rows: 1fr; gap: 20px;
+  gap: 20px;
 }
 
 .race-card {
   display: flex; flex-direction: column;
-  padding: 24px 24px 26px;
+  padding: 22px 22px 24px;
   background: #fff;
   border: 1px solid var(--border);
   border-top: 4px solid var(--saffron);
@@ -645,10 +656,13 @@ body::before {
 /* Title + distance pill */
 .race-card__head {
   display: flex; align-items: center; justify-content: space-between;
-  gap: 16px; margin-bottom: 14px;
+  gap: 14px; margin-bottom: 13px;
 }
 .race-card__head h3 {
-  font-size: 1.24rem; font-weight: 700; color: var(--navy); margin: 0;
+  font-size: 1.14rem; font-weight: 800; color: var(--navy); margin: 0;
+  /* Set in capitals, so the four names read as one set of labels rather than
+     four headlines. Tracked out slightly: uppercase at this weight closes up. */
+  text-transform: uppercase; letter-spacing: .045em; line-height: 1.25;
 }
 .race-card__dist {
   flex: none;
@@ -1395,9 +1409,6 @@ body::before {
 @media (max-width: 860px) {
   .about__grid, .cause__grid, .race-grid, .fees { grid-template-columns: 1fr; }
   .fees__includes { max-width: 460px; }
-  /* Equal heights only help when cards sit side by side; stacked, they just
-     leave dead space inside the shorter ones. */
-  .race-grid { grid-auto-rows: auto; }
   .about__media { order: -1; max-width: 440px; margin-inline: auto; }
 }
 
