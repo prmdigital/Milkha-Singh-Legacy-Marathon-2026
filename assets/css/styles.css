@@ -740,7 +740,7 @@ body::before {
 /* display:flex, not the default block: the button is inline-flex, so inside a
    normal paragraph it sits on the text baseline and leaves ~21px of
    descender space below it, breaking the alignment. */
-.fees__cta { display: flex; margin: auto 0 0; }
+.fees__cta { display: flex; margin: 0; }
 .fees__cta .btn { width: 100%; }
 
 .fee-table { width: 100%; border-collapse: collapse; }
@@ -758,6 +758,15 @@ body::before {
 .fee-table__price s { color: var(--ink-mute); font-size: .88rem; margin-right: 9px; }
 .fee-table__price b { font-size: 1.32rem; font-weight: 800; color: var(--green-deep); }
 .fee-table__price b.is-free { font-size: 1.1rem; letter-spacing: .01em; }
+
+/* Sits at the top of the sidebar so its edge lines up with the Entry Fees
+   heading opposite. Square, so it holds that alignment at any column width. */
+.fees__art {
+  display: block; width: 100%; height: auto;
+  aspect-ratio: 1 / 1; object-fit: cover;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+}
 
 /* The early-entry banner. It used to be a quiet strip in the sidebar, three
    columns away from the prices it was describing; it now sits directly under
