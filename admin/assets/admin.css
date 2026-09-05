@@ -127,11 +127,14 @@ code {
 .btn:focus-visible { outline: 2px solid var(--saffron-deep); outline-offset: 2px; }
 
 .btn--primary {
-  background: var(--saffron-deep);
-  border-color: var(--saffron-deep);
+  /* Same fix as the public site: white on --saffron-deep is 3.33:1, under the
+     4.5:1 that text this size needs. This deeper saffron carries white at
+     4.72:1, and keeps the two surfaces looking like one product. */
+  background: #B94D06;
+  border-color: #B94D06;
   color: #fff;
 }
-.btn--primary:hover { background: #D25C08; border-color: #D25C08; }
+.btn--primary:hover { background: #A8410A; border-color: #A8410A; }
 
 .btn--ghost { background: transparent; }
 .topbar .btn--ghost { color: #fff; border-color: rgba(255, 255, 255, .35); }
