@@ -61,7 +61,7 @@ if (!$r) {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title><?= isset($notFound) ? 'Not found' : h($r['full_name']) ?> &middot; Marathon Admin</title>
-<link rel="stylesheet" href="assets/admin.css?v=20260905-5">
+<link rel="stylesheet" href="assets/admin.css?v=20260905-6">
 </head>
 <body>
 
