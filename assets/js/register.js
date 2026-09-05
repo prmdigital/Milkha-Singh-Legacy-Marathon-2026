@@ -19,12 +19,11 @@
   var SUBMIT_LABEL = 'Submit registration';
 
   var CATEGORIES = {
-    half:  { label: 'Half Marathon',     base: 150000 },
-    mini:  { label: 'Mini Marathon',     base: 100000 },
-    cause: { label: 'Run for Cause',     base: 65000  },
-    para:  { label: 'Disabled Category', base: 0      }
+    half:  { label: 'Half Marathon',     base: 150000, early: 120000 },
+    mini:  { label: 'Mini Marathon',     base: 120000, early: 100000 },
+    cause: { label: 'Run for Cause',     base: 65000,  early: 52000  },
+    para:  { label: 'Disabled Category', base: 0,      early: 0      }
   };
-  var EARLY_PERCENT = 20;
   var EARLY_UNTIL   = '2026-11-07T23:59:59+05:30';
 
   var summary   = document.getElementById('regSummary');
@@ -45,7 +44,7 @@
     var c = CATEGORIES[key];
     if (!c) return null;
     var early = c.base > 0 && earlyActive();
-    var payable = early ? Math.round(c.base * (100 - EARLY_PERCENT) / 100) : c.base;
+    var payable = early ? c.early : c.base;
     return { base: c.base, payable: payable, early: early, label: c.label };
   }
 
@@ -84,7 +83,7 @@
     amountEl.textContent = p.base === 0 ? 'Free' : rupees(p.payable);
     noteEl.textContent = p.base === 0
       ? 'No payment needed for the 1 KM category.'
-      : (p.early ? 'Early entry price, 20% off until 7 November 2026.' : 'Standard entry price.')
+      : (p.early ? 'Early entry price, until 7 November 2026.' : 'Standard entry price.')
         + ' Our team will contact you to collect it.';
     submitBtn.textContent = SUBMIT_LABEL;
   }

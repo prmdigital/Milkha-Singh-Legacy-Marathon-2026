@@ -263,10 +263,10 @@ function db(): PDO
  * client could name its own price, anyone could register for one rupee.
  */
 const CATEGORIES = [
-    'half'  => ['label' => 'Half Marathon',     'distance' => '21 KM', 'base_paise' => 150000],
-    'mini'  => ['label' => 'Mini Marathon',     'distance' => '10 KM', 'base_paise' => 100000],
-    'cause' => ['label' => 'Run for Cause',     'distance' => '5 KM',  'base_paise' => 65000],
-    'para'  => ['label' => 'Disabled Category', 'distance' => '1 KM',  'base_paise' => 0],
+    'half'  => ['label' => 'Half Marathon',     'distance' => '21 KM', 'base_paise' => 150000, 'early_paise' => 120000],
+    'mini'  => ['label' => 'Mini Marathon',     'distance' => '10 KM', 'base_paise' => 120000, 'early_paise' => 100000],
+    'cause' => ['label' => 'Run for Cause',     'distance' => '5 KM',  'base_paise' => 65000,  'early_paise' => 52000],
+    'para'  => ['label' => 'Disabled Category', 'distance' => '1 KM',  'base_paise' => 0,      'early_paise' => 0],
 ];
 
 /** Assembly and flag-off, as published on the site. Used in the email. */
@@ -328,6 +328,10 @@ function age_on_race_day(string $dob): ?int
     return (int) $born->diff($race)->y;
 }
 
+/* Each category now carries its own early price rather than one percentage
+   applied to all of them: 1500->1200 and 650->520 are 20% off, but 1200->1000
+   is not, and a single multiplier cannot express all three. Stating the amounts
+   outright also removes any rounding argument about what someone owes. */
 const EARLY_BIRD_PERCENT = 20;
 const EARLY_BIRD_UNTIL   = '2026-11-07 23:59:59';   // IST, inclusive
 
@@ -351,9 +355,7 @@ function price_for(string $key): array
     $base  = $c['base_paise'];
     $early = $base > 0 && early_bird_active();
 
-    $payable = $early
-        ? (int) round($base * (100 - EARLY_BIRD_PERCENT) / 100)
-        : $base;
+    $payable = $early ? (int) $c['early_paise'] : $base;
 
     return [
         'base'     => $base,

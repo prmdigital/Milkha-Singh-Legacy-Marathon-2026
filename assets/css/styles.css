@@ -217,14 +217,17 @@ body::before {
 }
 .hero__bg {
   position: absolute; inset: 0; z-index: 0;
-  /* Artwork ghosted under a white veil: strongest where the headline sits,
-     lighter towards the bottom so the art shows through. */
+  /* The artwork was ghosted under a white veil at 95% opacity, which made it
+     effectively invisible. It now shows at full strength, with only a dark
+     gradient for the copy to sit against — heaviest at the top and bottom
+     where the text and the countdown are, lightest across the middle so the
+     portrait and the tricolour read clearly. */
   background:
     linear-gradient(180deg,
-      rgba(255,254,252,.95) 0%,
-      rgba(255,253,249,.93) 46%,
-      rgba(255,251,245,.84) 74%,
-      rgba(252,252,250,.70) 100%),
+      rgba(10,16,32,.62) 0%,
+      rgba(10,16,32,.40) 34%,
+      rgba(10,16,32,.44) 64%,
+      rgba(10,16,32,.72) 100%),
     url('../../images/hero-bg.jpg') center 34% / cover no-repeat;
 }
 /* Dust motes drawn by main.js. Sits above the artwork, below the copy, and
@@ -238,13 +241,13 @@ body::before {
 .hero__bg::after {
   content: ''; position: absolute; inset: 0;
   /* Fade into the white About section below */
-  background: linear-gradient(180deg, transparent 80%, #FFFFFF 100%);
+  background: linear-gradient(180deg, transparent 86%, #FFFFFF 100%);
 }
 .hero__inner { position: relative; z-index: 1; }
 
 .hero__eyebrow {
   font-size: .78rem; font-weight: 700; letter-spacing: .2em; text-transform: uppercase;
-  color: var(--saffron-deep); margin-bottom: 18px;
+  color: var(--saffron); margin-bottom: 18px;
 }
 
 .hero__title {
@@ -258,7 +261,10 @@ body::before {
   letter-spacing: 0;
   line-height: 1.1;
   text-transform: uppercase;
-  color: var(--navy);
+  color: #fff;
+  /* A soft shadow rather than a heavier scrim: it holds the letters together
+     over the busiest part of the artwork without dimming the picture. */
+  text-shadow: 0 2px 18px rgba(6, 10, 24, .55);
   margin-bottom: 20px;
 }
 .hero__title span { display: block; }
@@ -267,22 +273,23 @@ body::before {
   font-weight: 800;
   letter-spacing: .32em; text-indent: .32em;
   text-transform: uppercase;
-  color: var(--saffron-deep);
+  color: var(--saffron);
   margin-bottom: 10px;
 }
-.hero__title--accent { color: var(--saffron-deep); }
+.hero__title--accent { color: var(--saffron); }
 .hero__year {
   /* Was .44em in --ink-mute with .42em tracking: small, grey and spaced so
      wide it read as a caption rather than part of the title. Bigger, heavier,
      navy, and less airy. */
   font-size: .54em; font-weight: 800; letter-spacing: .26em;
-  color: var(--navy);
+  color: #fff;
   margin-top: 8px; text-indent: .26em;
 }
 
 .hero__tagline {
   font-size: clamp(1.05rem, 2.4vw, 1.45rem);
-  font-weight: 700; color: var(--ink); margin-bottom: 8px;
+  font-weight: 700; color: #fff; margin-bottom: 8px;
+  text-shadow: 0 1px 12px rgba(6, 10, 24, .5);
   /* Set in capitals, which need a little tracking to stay readable at this
      size, and a touch more weight to hold up against the title above. */
   text-transform: uppercase;
@@ -295,21 +302,22 @@ body::before {
 .hero__cause {
   font-size: clamp(.82rem, 1.7vw, .98rem);
   font-weight: 800; letter-spacing: .16em; text-transform: uppercase;
-  /* A deeper saffron than the token: --saffron-deep measures 3.13:1 against
-     the hero at this point, and at 15.7px this line is not "large text", so it
-     needs 4.5:1. #AE4405 reaches 5.43:1 and still reads as saffron. */
-  color: #AE4405;
+  /* Measured against the brightest point of the artwork behind it, full saffron
+     reaches only 3.07:1 and this line is too small to count as large text, so
+     it needs 4.5:1. A pale saffron gets to 4.91:1 and still reads warm rather
+     than plain white. */
+  color: #FFD9A8;
+  text-shadow: 0 1px 10px rgba(6, 10, 24, .6);
   margin-bottom: 20px;
 }
 
 .hero__lead {
   max-width: 720px; margin: 0 auto 30px;
-  /* Full-strength ink, not the dimmed grey: this sits over artwork, and a
-     softened colour that works on flat white loses its footing there. */
-  color: var(--ink);
+  color: #EEF1F7;
   font-size: 1.08rem;
   font-weight: 500;
   line-height: 1.8;
+  text-shadow: 0 1px 10px rgba(6, 10, 24, .55);
 }
 
 .hero__meta {
@@ -318,11 +326,12 @@ body::before {
 }
 .hero__meta-item {
   display: inline-flex; align-items: center; gap: 11px;
-  font-weight: 800; font-size: clamp(1.15rem, 2.4vw, 1.45rem); color: var(--navy);
+  font-weight: 800; font-size: clamp(1.15rem, 2.4vw, 1.45rem); color: #fff;
+  text-shadow: 0 1px 10px rgba(6, 10, 24, .5);
 }
 .hero__meta-item svg {
   width: 26px; height: 26px; flex: none;
-  fill: none; stroke: var(--saffron-deep); stroke-width: 2;
+  fill: none; stroke: var(--saffron); stroke-width: 2;
   stroke-linecap: round; stroke-linejoin: round;
 }
 .hero__meta-sep { width: 5px; height: 5px; border-radius: 50%; background: var(--green); }
@@ -332,19 +341,20 @@ body::before {
   display: inline-block;
   padding: 7px 22px;
   border-radius: 999px;
-  background: #fff;
-  border: 1px solid rgba(249,115,22,.35);
-  box-shadow: var(--shadow-soft);
+  background: rgba(255, 255, 255, .14);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, .32);
   font-size: .74rem; font-weight: 800;
   letter-spacing: .18em; text-transform: uppercase;
-  color: var(--saffron-deep);
+  color: #fff;
 }
 
 .hero__slogan {
   display: inline-block;
   font-size: clamp(1rem, 2.2vw, 1.3rem);
   font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
-  color: var(--navy);
+  color: #fff;
+  text-shadow: 0 1px 12px rgba(6, 10, 24, .5);
   padding-bottom: 10px; margin-bottom: 34px;
   border-bottom: 4px solid;
   border-image: var(--tricolor) 1;
@@ -359,26 +369,29 @@ body::before {
 }
 .countdown__unit {
   padding: 16px 8px;
-  background: #fff;
-  border: 1px solid var(--border);
+  /* Frosted rather than solid white, so the tiles sit in the picture instead
+     of punching four white holes through it. */
+  background: rgba(255, 255, 255, .14);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, .28);
   border-top: 3px solid var(--saffron);
   border-radius: var(--radius);
-  box-shadow: var(--shadow-soft);
 }
-.countdown__unit:nth-child(2) { border-top-color: var(--navy); }
+/* White, not navy: a navy edge is invisible against the darkened artwork. */
+.countdown__unit:nth-child(2) { border-top-color: #fff; }
 .countdown__unit:nth-child(3) { border-top-color: var(--green); }
 .countdown__unit:nth-child(4) { border-top-color: var(--saffron); }
 .countdown__unit b {
   display: block;
   font-size: clamp(1.5rem, 4vw, 2.2rem);
   font-weight: 800;
-  line-height: 1.1; color: var(--navy);
+  line-height: 1.1; color: #fff;
   font-variant-numeric: tabular-nums;
 }
 .countdown__unit span {
   display: block; margin-top: 6px;
   font-size: .66rem; font-weight: 700; letter-spacing: .14em;
-  text-transform: uppercase; color: var(--ink-mute);
+  text-transform: uppercase; color: rgba(255, 255, 255, .82);
 }
 
 /* ---------- Sections ---------- */

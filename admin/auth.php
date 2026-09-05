@@ -175,7 +175,7 @@ function require_can(string $permission): void
         no_store();
         header('Content-Type: text/html; charset=utf-8');
         echo '<!doctype html><meta charset="utf-8"><title>Not allowed</title>'
-           . '<link rel="stylesheet" href="assets/admin.css?v=20260905-1">'
+           . '<link rel="stylesheet" href="assets/admin.css?v=20260905-2">'
            . '<main class="wrap"><p class="empty">'
            . 'Your account does not have access to that. '
            . '<a href="index.php">Back to registrations</a>.'
