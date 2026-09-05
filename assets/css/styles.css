@@ -740,7 +740,7 @@ body::before {
 /* display:flex, not the default block: the button is inline-flex, so inside a
    normal paragraph it sits on the text baseline and leaves ~21px of
    descender space below it, breaking the alignment. */
-.fees__cta { display: flex; margin: 0; }
+.fees__cta { display: flex; margin: auto 0 0; }
 .fees__cta .btn { width: 100%; }
 
 .fee-table { width: 100%; border-collapse: collapse; }
@@ -757,21 +757,33 @@ body::before {
 .fee-table__price { text-align: right !important; white-space: nowrap; }
 .fee-table__price s { color: var(--ink-mute); font-size: .88rem; margin-right: 9px; }
 .fee-table__price b { font-size: 1.32rem; font-weight: 800; color: var(--green-deep); }
+.fee-table__price b.is-free { font-size: 1.1rem; letter-spacing: .01em; }
 
-.fees__earlybird {
-  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
-  /* margin-top:auto absorbs the sidebar's leftover height, pushing this and
-     the button to the foot so the button lines up with the last fee row.
-     It must live in THIS rule — a later `margin: 0` shorthand would reset it. */
-  margin: auto 0 0; padding: 13px 16px;
-  border-left: 3px solid var(--saffron-deep); background: var(--bg-saffron);
-  border-radius: 0 var(--radius) var(--radius) 0;
-  font-size: var(--fs-sm); color: var(--ink-dim);
+/* The early-entry banner. It used to be a quiet strip in the sidebar, three
+   columns away from the prices it was describing; it now sits directly under
+   the fee table so the saving is read in the same glance as the numbers. */
+.fees__deal {
+  display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  margin: 22px 0 0; padding: 16px 20px;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(100deg, #FFF1DC 0%, #FFE6C0 52%, #FFF4E6 100%);
+  border: 1px solid #F0C489;
+  box-shadow: var(--shadow-soft);
 }
-.fees__earlybird b {
-  font-size: .74rem; font-weight: 800; letter-spacing: .07em;
-  text-transform: uppercase; color: var(--saffron-text);
+/* #B94D06 rather than --saffron-deep: this label is 11px uppercase, which AA
+   treats as small text, and white on --saffron-deep only reaches 3.33:1. */
+.fees__deal-tag {
+  flex: none;
+  padding: 6px 13px; border-radius: 999px;
+  background: #B94D06; color: #fff;
+  font-size: .7rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase;
+  white-space: nowrap;
 }
+.fees__deal-line {
+  flex: 1 1 280px; min-width: 0;
+  font-size: var(--fs-sm); color: var(--ink); line-height: 1.6;
+}
+.fees__deal-line b { color: var(--navy); font-weight: 800; }
 
 /* Now a sidebar card rather than a strip under the table. */
 .fees__includes {
