@@ -8,7 +8,7 @@ $me      = current_user();
 <header class="topbar">
   <div class="topbar__in">
     <a class="topbar__brand" href="index.php">
-      <img class="topbar__logo" src="../images/logo-lockup.png"
+      <img class="topbar__logo" src="../images/logo-lockup-white.png"
            alt="The Flying Sikh Milkha Singh Legacy Marathon 2026" width="600" height="200" />
     </a>
 
@@ -31,7 +31,6 @@ $me      = current_user();
     <div class="topbar__user">
       <span class="topbar__who">
         <b><?= h($me['name'] !== '' ? $me['name'] : $me['username']) ?></b>
-        <span><?= h(role_label($me['role'])) ?></span>
       </span>
       <a class="btn btn--sm btn--ghost" href="password.php">Password</a>
       <a class="btn btn--sm btn--ghost" href="logout.php">Sign out</a>

@@ -84,16 +84,10 @@ code {
   display: flex; align-items: center; gap: 11px;
   color: #fff; text-decoration: none;
 }
-/* The colour artwork has a white background, and this bar is navy, so it sits
-   on a white plate rather than as a bare rectangle butted against the blue.
-   40px keeps the header compact: this is a working tool, not a landing page. */
-.topbar__logo {
-  height: 40px; width: auto; display: block;
-  background: #fff;
-  padding: 5px 9px;
-  border-radius: var(--radius);
-  box-sizing: content-box;
-}
+/* The white-text artwork, so it sits straight on the navy with no plate behind
+   it. 40px keeps the header compact: this is a working tool, not a landing
+   page. */
+.topbar__logo { height: 40px; width: auto; display: block; }
 
 .topbar__nav { display: flex; gap: 4px; margin-left: auto; }
 .topbar__nav a {
@@ -445,9 +439,10 @@ code {
 
 /* ---------- Who is signed in ---------- */
 
-.topbar__who { display: grid; line-height: 1.2; text-align: right; }
+/* Just the name now. The role sat under it as a second line, which made a
+   two-line block out of one piece of information — and the panel already only
+   shows what the role allows. */
 .topbar__who b { font-size: .84rem; font-weight: 600; }
-.topbar__who span { font-size: .72rem; opacity: .7; }
 
 /* ---------- Advanced filters ---------- */
 

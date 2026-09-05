@@ -175,7 +175,7 @@ function secret_state($v): string
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>Settings &middot; Marathon Admin</title>
-<link rel="stylesheet" href="assets/admin.css?v=20260905-9">
+<link rel="stylesheet" href="assets/admin.css?v=20260905-10">
 </head>
 <body>
 
