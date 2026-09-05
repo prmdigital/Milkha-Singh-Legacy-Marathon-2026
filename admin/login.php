@@ -72,7 +72,7 @@ $csrf = csrf_token();
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>Sign in · Marathon Admin</title>
-<link rel="stylesheet" href="assets/admin.css?v=20260905-6">
+<link rel="stylesheet" href="assets/admin.css?v=20260905-7">
 </head>
 <body class="login-body">
 

@@ -223,6 +223,17 @@ body::before {
      where the text and the countdown are, lightest across the middle so the
      portrait and the tricolour read clearly. */
   background:
+    /* The shade behind the copy, stretched across the whole section. It is very
+       wide and comparatively shallow, so it still falls away above and below
+       the text — a band of shade rather than a flat dark over everything — but
+       reaches both edges instead of ending at the text column. */
+    radial-gradient(
+      ellipse 96% 62% at 50% 44%,
+      rgba(5, 9, 20, .74) 0%,
+      rgba(5, 9, 20, .66) 40%,
+      rgba(5, 9, 20, .44) 68%,
+      rgba(5, 9, 20, .16) 88%,
+      rgba(5, 9, 20, .04) 100%),
     linear-gradient(180deg,
       rgba(10,16,32,.42) 0%,
       rgba(10,16,32,.22) 34%,
@@ -261,13 +272,8 @@ body::before {
   max-width: 1000px;
   margin-inline: auto;
   padding: 36px clamp(18px, 4vw, 60px) 30px;
-  background: radial-gradient(
-    ellipse 78% 74% at 50% 46%,
-    rgba(5, 9, 20, .78) 0%,
-    rgba(5, 9, 20, .68) 38%,
-    rgba(5, 9, 20, .42) 66%,
-    rgba(5, 9, 20, .12) 84%,
-    rgba(5, 9, 20, 0) 100%);
+  /* No background of its own: the shade lives on .hero__bg so it can span the
+     whole section rather than stopping at the width of the text column. */
 }
 
 .hero__eyebrow {
