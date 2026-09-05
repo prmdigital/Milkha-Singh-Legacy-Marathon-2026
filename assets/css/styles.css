@@ -9,16 +9,21 @@
   --saffron-deep:  #E8650B;  /* darkened for text contrast on white */
   --green:         #128807;
   --green-deep:    #0E6B06;
-  --navy:          #12295B;   /* chakra navy — headings */
+  --navy:          #0D2150;   /* chakra navy — headings. Deepened: the old
+                                 #12295B read washed out beside saffron */
   --ink:           #26303F;   /* body text */
   --ink-dim:       #57616F;
-  --ink-mute:      #6B7280;  /* 4.83:1 on white — #8B93A1 was 3.09:1, failing AA */
+  --ink-mute:      #616B7A;
 
   --bg:            #FFFFFF;
-  --bg-saffron:    #FFF7ED;   /* soft saffron tint */
-  --bg-green:      #F4FAF2;   /* soft green tint */
+  /* The tints were within a couple of steps of white, so alternating sections
+     read as one flat expanse. Deepened enough to actually separate, and no
+     further — every value here is still checked against --ink-mute below. */
+  --bg-saffron:    #FFF3E4;   /* soft saffron tint */
+  --bg-green:      #EEF7EB;   /* soft green tint */
   --surface:       #FFFFFF;
-  --border:        #E7EAF0;
+  --border:        #DBE2ED;   /* was #E7EAF0: card edges barely registered */
+  --border-strong: #C7D0DF;   /* for edges that should be seen, not felt */
 
   /* Type scale. The form had drifted to seven near-miss sizes (15.2, 14.88,
      14.72, 13.76, 13.12, 12.48, 12.16px) with no system behind them. */
@@ -34,8 +39,28 @@
   --font-display: var(--font);          /* single unified family */
   --accent: var(--saffron-deep);        /* kept for JS compatibility */
 
-  --shadow:      0 6px 20px rgba(18, 41, 91, .07);
-  --shadow-soft: 0 1px 3px rgba(18, 41, 91, .05);
+  /* --saffron-deep is a fine colour for a fill, a border or an icon, but as
+     TEXT it measures about 3.1:1 on white and less on the tints — below the
+     4.5:1 that body-sized text needs. This is the same hue taken far enough
+     down to be readable, and it is what every text rule uses now. Audited
+     across the whole page, not guessed. */
+  --saffron-text:  #A8410A;
+
+  /* --ink-mute was chosen at 4.83:1 against pure white. On the deepened
+     section tints it fell to 4.42:1, so it comes down a step to hold 4.5:1
+     everywhere it is actually used. */
+
+  /* Shadows were single layers at .05 and .07 alpha — technically present,
+     visually absent, which is most of why the site read as flat. Each is now
+     two layers: a tight contact shadow that seats the card on the page, and a
+     wider ambient one that gives it height. Tinted with the brand navy rather
+     than neutral black, so they warm into the palette instead of greying it. */
+  --shadow-soft: 0 1px 2px rgba(13, 33, 80, .07),
+                 0 2px 6px rgba(13, 33, 80, .05);
+  --shadow:      0 2px 4px rgba(13, 33, 80, .07),
+                 0 10px 26px rgba(13, 33, 80, .10);
+  --shadow-lift: 0 4px 8px rgba(13, 33, 80, .09),
+                 0 18px 44px rgba(13, 33, 80, .16);
   --ease:        cubic-bezier(.22,.61,.36,1);
 
   --tricolor: linear-gradient(90deg,
@@ -82,7 +107,7 @@ p  { margin: 0 0 1.1em; }
 
 :focus-visible { outline: 3px solid var(--saffron-deep); outline-offset: 3px; border-radius: 4px; }
 
-.accent { color: var(--saffron-deep); }
+.accent { color: var(--saffron-text); }
 .muted  { color: var(--ink-mute); font-size: .92rem; }
 
 /* Tricolor ribbon across the very top of every page */
@@ -107,10 +132,13 @@ body::before {
 }
 
 .btn--primary {
-  background: var(--saffron-deep);
+  /* White on --saffron-deep measures 3.33:1 — below AA for text this size, on
+     the one control the whole page is pointing at. This deeper saffron carries
+     white at 4.72:1 and, being richer, reads as the more expensive colour. */
+  background: #B94D06;
   color: #fff;
 }
-.btn--primary:hover { background: #C9540A; box-shadow: 0 4px 14px rgba(232,101,11,.28); }
+.btn--primary:hover { background: #A8410A; }
 
 /* Presses should feel like presses. A 0ms state change reads as a dead
    control, especially on touch where there is no hover to confirm the tap. */
@@ -164,12 +192,12 @@ body::before {
   text-decoration: none; white-space: nowrap;
   transition: color .18s var(--ease), background .18s var(--ease);
 }
-.nav__links a:not(.btn):hover { color: var(--saffron-deep); background: var(--bg-saffron); }
+.nav__links a:not(.btn):hover { color: var(--saffron-text); background: var(--bg-saffron); }
 .nav__links .btn { color: #fff; margin-left: 8px; }
 
 /* Current section, set by the scroll-spy in main.js */
 .nav__links a[aria-current="true"]:not(.btn) {
-  color: var(--saffron-deep);
+  color: var(--saffron-text);
   background: var(--bg-saffron);
 }
 
@@ -478,7 +506,7 @@ body::before {
 }
 .about__copy p { color: var(--ink-dim); }
 .about__copy .lead { color: var(--ink); }
-.about__copy strong { color: var(--saffron-deep); }
+.about__copy strong { color: var(--saffron-text); }
 
 .about__media { margin: 0; }
 .about__media img {
@@ -499,7 +527,7 @@ body::before {
   margin-top: 32px;
   font-size: clamp(1.15rem, 2.8vw, 1.7rem);
   font-weight: 800; letter-spacing: .04em;
-  color: var(--saffron-deep);
+  color: var(--saffron-text);
   padding-bottom: 10px;
   border-bottom: 4px solid;
   border-image: var(--tricolor) 1;
@@ -587,7 +615,7 @@ body::before {
   padding: 5px 12px; border-radius: 999px;
   background: var(--bg-saffron); border: 1px solid rgba(249,115,22,.3);
   font-size: .66rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase;
-  color: var(--saffron-deep);
+  color: var(--saffron-text);
 }
 
 /* ---------- Race categories (confirmed) ---------- */
@@ -728,7 +756,7 @@ body::before {
 }
 .fees__earlybird b {
   font-size: .74rem; font-weight: 800; letter-spacing: .07em;
-  text-transform: uppercase; color: var(--saffron-deep);
+  text-transform: uppercase; color: var(--saffron-text);
 }
 
 /* Now a sidebar card rather than a strip under the table. */
@@ -803,7 +831,7 @@ body::before {
   border: 1px dashed rgba(249,115,22,.4);
   border-radius: var(--radius-lg);
 }
-.info__note h3 { font-size: 1rem; font-weight: 800; color: var(--saffron-deep); margin-bottom: 12px; }
+.info__note h3 { font-size: 1rem; font-weight: 800; color: var(--saffron-text); margin-bottom: 12px; }
 .info__note p { color: var(--ink-dim); font-size: .93rem; }
 
 /* ---------- Participation ---------- */
@@ -962,7 +990,7 @@ body::before {
   cursor: pointer;
 }
 .reg__field input[type="file"]::file-selector-button:hover {
-  border-color: var(--saffron-deep); color: var(--saffron-deep);
+  border-color: var(--saffron-deep); color: var(--saffron-text);
 }
 
 /* Required-field key and marker */
@@ -1029,14 +1057,14 @@ body::before {
   accent-color: var(--saffron-deep); cursor: pointer;
 }
 .reg__consent span { font-size: var(--fs-sm); color: var(--ink-dim); line-height: 1.6; }
-.reg__consent a { color: var(--saffron-deep); font-weight: 600; }
+.reg__consent a { color: var(--saffron-text); font-weight: 600; }
 
 .reg__actions { display: flex; flex-direction: column; gap: 12px; align-items: flex-start; }
 .reg__actions .btn:disabled { opacity: .65; cursor: not-allowed; }
 .reg__status { margin: 0; font-size: var(--fs-sm); line-height: 1.6; }
 .reg__status.is-ok   { color: var(--green-deep); font-weight: 600; }
 .reg__status.is-err  { color: #C0392B; font-weight: 600; }
-.reg__status.is-warn { color: var(--saffron-deep); font-weight: 600; }
+.reg__status.is-warn { color: var(--saffron-text); font-weight: 600; }
 
 /* Success panel */
 .reg__done {
@@ -1082,7 +1110,7 @@ body::before {
 }
 .contact__card p { margin: 0 0 6px; font-size: var(--fs-md); }
 .contact__card a { color: var(--navy); text-decoration: none; font-weight: 600; word-break: break-word; }
-.contact__card a:hover { color: var(--saffron-deep); text-decoration: underline; }
+.contact__card a:hover { color: var(--saffron-text); text-decoration: underline; }
 
 /* ---------- Footer ---------- */
 .footer {
@@ -1193,7 +1221,7 @@ body::before {
   stroke-linecap: round; stroke-linejoin: round;
 }
 .ambassador-card h4 { font-size: 1rem; font-weight: 700; color: var(--ink-mute); margin-bottom: 4px; }
-.ambassador-card p { margin: 0; font-size: .82rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--saffron-deep); }
+.ambassador-card p { margin: 0; font-size: .82rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--saffron-text); }
 
 /* ---------- Footer stay connected ---------- */
 .footer__connect { color: #B9C2D6; font-size: .9rem; margin-bottom: 6px; }
@@ -1310,7 +1338,7 @@ body::before {
   border-radius: var(--radius);
   font-size: .92rem; color: var(--ink-dim);
 }
-.policy__note strong { color: var(--saffron-deep); }
+.policy__note strong { color: var(--saffron-text); }
 
 .policy h2 {
   font-size: 1.22rem; font-weight: 800;
@@ -1321,7 +1349,7 @@ body::before {
 .policy ul { padding-left: 22px; margin: 0 0 1.1em; }
 .policy li { margin-bottom: 8px; }
 .policy em { color: var(--green-deep); font-style: normal; font-weight: 600; }
-.policy a { color: var(--saffron-deep); }
+.policy a { color: var(--saffron-text); }
 .policy .wrap { max-width: 820px; }
 .policy__back { margin-top: 44px; }
 
@@ -1525,4 +1553,87 @@ body::before {
   .card:hover .card__icon, .race-card:hover .race-card__dist { transform: none; }
   .countdown__unit b.is-rolling { animation: none; }
   .nav__links a:not(.btn)::after { transition: none; }
+}
+
+
+/* ==========================================================================
+   Depth and response
+   ==========================================================================
+
+   Added as a polish pass. Two ideas only:
+
+   1. Anything presented as a card gets a real shadow and lifts a little when
+      pointed at, so the page has a surface hierarchy instead of everything
+      sitting on one plane.
+   2. Hover is a colour shift as well as a movement, because movement alone is
+      invisible to anyone who has asked for reduced motion.
+   ========================================================================== */
+
+.card,
+.race-card,
+.ambassador-card,
+.press-card,
+.contact__card,
+.sponsor-tile,
+.countdown__unit,
+.prize {
+  transition: box-shadow .24s var(--ease),
+              transform .24s var(--ease),
+              border-color .24s var(--ease);
+}
+
+.card:hover,
+.race-card:hover,
+.ambassador-card:hover,
+.press-card:hover,
+.contact__card:hover,
+.sponsor-tile:hover,
+.prize:hover {
+  box-shadow: var(--shadow-lift);
+  transform: translateY(-4px);
+}
+
+/* The countdown sits on the artwork and is already frosted; lifting it would
+   detach it from the picture, so it brightens instead. */
+.countdown__unit:hover { border-color: rgba(255, 255, 255, .45); }
+
+/* Buttons: a deeper press and a fuller shadow, so the primary action reads as
+   the heaviest thing on the page. */
+.btn--primary {
+  box-shadow: 0 2px 6px rgba(232, 101, 11, .28),
+              0 8px 22px rgba(232, 101, 11, .22);
+}
+.btn--primary:hover {
+  box-shadow: 0 4px 10px rgba(232, 101, 11, .34),
+              0 14px 34px rgba(232, 101, 11, .28);
+  transform: translateY(-2px);
+}
+.btn--primary:active { transform: translateY(0); }
+
+.btn--ghost:hover {
+  box-shadow: var(--shadow-soft);
+  transform: translateY(-2px);
+}
+
+/* Fee rows respond too: it is a table people read down, and a hover cue tells
+   them which row they are on. */
+.fee-table tbody tr {
+  transition: background .18s var(--ease);
+}
+.fee-table tbody tr:hover { background: var(--bg-saffron); }
+
+/* Everything above is decoration. Under reduced motion the colour and shadow
+   changes stay — they carry the same information — and only the movement goes. */
+@media (prefers-reduced-motion: reduce) {
+  .card:hover,
+  .race-card:hover,
+  .ambassador-card:hover,
+  .press-card:hover,
+  .contact__card:hover,
+  .sponsor-tile:hover,
+  .prize:hover,
+  .btn--primary:hover,
+  .btn--ghost:hover {
+    transform: none;
+  }
 }

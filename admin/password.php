@@ -53,7 +53,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' && !$isBootstrap) {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>Your password &middot; Marathon Admin</title>
-<link rel="stylesheet" href="assets/admin.css?v=20260905-7">
+<link rel="stylesheet" href="assets/admin.css?v=20260905-8">
 </head>
 <body>
 
