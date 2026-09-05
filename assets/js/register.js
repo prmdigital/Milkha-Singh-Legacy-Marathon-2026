@@ -145,6 +145,16 @@
      could be turned away at bib collection for a category they do qualify for. */
   var RACE_DAY = new Date(2026, 11, 20);
 
+  /* The field is typed as DD-MM-YYYY because that is how people write a date of
+     birth here; everything downstream — validation, the API, the database —
+     still speaks ISO, so the conversion happens once, at the edge. Returns ''
+     for anything that is not eight digits in the right shape, which is what
+     makes the "valid date" check downstream fire. */
+  function dobToIso(typed) {
+    var m = /^([0-9]{2})-([0-9]{2})-([0-9]{4})$/.exec(String(typed || '').trim());
+    return m ? m[3] + '-' + m[2] + '-' + m[1] : '';
+  }
+
   function ageOnRaceDay(dobString) {
     if (!dobString) return null;
     var parts = dobString.split('-');
@@ -173,14 +183,23 @@
 
   function refreshAge() {
     if (!dobInput || !ageOut) return;
-    var age = ageOnRaceDay(dobInput.value);
+    var age = ageOnRaceDay(dobToIso(dobInput.value));
     ageOut.textContent = age === null ? '—' : age + (age === 1 ? ' year' : ' years');
     ageOut.classList.toggle('is-set', age !== null);
   }
 
   if (dobInput) {
+    dobInput.addEventListener('input', function () {
+      var digits = dobInput.value.replace(/[^0-9]/g, '').slice(0, 8);
+      var out = digits.slice(0, 2);
+      if (digits.length > 2) out += '-' + digits.slice(2, 4);
+      if (digits.length > 4) out += '-' + digits.slice(4, 8);
+      /* Only write back when it actually differs, or the caret jumps to the end
+         every time someone edits a digit in the middle. */
+      if (out !== dobInput.value) dobInput.value = out;
+      refreshAge();
+    });
     dobInput.addEventListener('change', refreshAge);
-    dobInput.addEventListener('input', refreshAge);
     refreshAge();
   }
 
@@ -249,11 +268,20 @@
         : 'Please enter a 10-digit mobile number (you entered ' + digits.length + ').';
     }
 
+    /* d.dob has already been converted to ISO, and an unparseable date converts
+       to '' — so emptiness is judged on what was actually typed, or someone who
+       mistyped a date would be told they left the field blank. */
+    var typedDob = form.elements.dob ? form.elements.dob.value.trim() : '';
     var age = ageOnRaceDay(d.dob);
-    if (!d.dob) {
+    if (!typedDob) {
       f.dob = 'Please enter your date of birth.';
+    } else if (!d.dob) {
+      f.dob = 'Please enter your date of birth as DD-MM-YYYY.';
     } else if (age === null) {
-      f.dob = 'Please enter a valid date of birth.';
+      /* The shape was right but the day is not real — 31-02, or a date after
+         race day. Saying "use DD-MM-YYYY" here would send someone back to fix
+         formatting that was already correct. */
+      f.dob = 'That is not a real date. Please check the day and month.';
     } else if (age < 5 || age > 100) {
       f.dob = 'Runners must be between 5 and 100 on race day.';
     } else if (d.category && age < MIN_AGE[d.category]) {
@@ -295,6 +323,8 @@
       var el = form.elements[n];
       d[n] = el ? el.value.trim() : '';
     });
+    /* Typed as DD-MM-YYYY, sent as YYYY-MM-DD. */
+    d.dob = dobToIso(d.dob);
     d.category = selectedCategory();
     d.declaration = form.elements.declaration.checked ? 1 : 0;
     return d;

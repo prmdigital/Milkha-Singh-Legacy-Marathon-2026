@@ -32,7 +32,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="assets/css/styles.css?v=20260906-2" />
+<link rel="stylesheet" href="assets/css/styles.css?v=20260906-3" />
 
 <!-- Event schema: this is what makes Google show your date + venue in search results. -->
 <script type="application/ld+json">
@@ -638,12 +638,7 @@
 <section class="section section--register" id="register">
   <div class="wrap">
     <p class="section__eyebrow">Registration</p>
-    <h2 class="section__title">Be Part of the Legacy.<br /><span class="accent">Be Part of the Change.</span></h2>
-
-    <p class="section__sub">
-      On 20 December 2026, Chandigarh will run with one purpose: to honour a legend and
-      inspire a drug-free India.
-    </p>
+    <h2 class="section__title">Be Part of the Legacy.</h2>
 
     <p class="register__slogan">One Run. One Pledge. One Nation.</p>
 
@@ -711,8 +706,9 @@
           </p>
           <p class="reg__field">
             <label for="regDob">Date of birth <span class="reg__req" aria-hidden="true">*</span></label>
-            <input aria-describedby="dob-err" id="regDob" name="dob" type="date"
-                   min="1920-01-01" max="2021-12-20" required />
+            <input aria-describedby="dob-err" id="regDob" name="dob" type="text"
+                   inputmode="numeric" autocomplete="bday" placeholder="DD-MM-YYYY"
+                   pattern="[0-9]{2}-[0-9]{2}-[0-9]{4}" maxlength="10" required />
             <span class="reg__err" id="dob-err" data-err="dob"></span>
           </p>
           <p class="reg__field">
@@ -1026,7 +1022,7 @@
   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
 </button>
 
-<script src="assets/js/main.js?v=20260906-2" defer></script>
-<script src="assets/js/register.js?v=20260906-2" defer></script>
+<script src="assets/js/main.js?v=20260906-3" defer></script>
+<script src="assets/js/register.js?v=20260906-3" defer></script>
 </body>
 </html>
