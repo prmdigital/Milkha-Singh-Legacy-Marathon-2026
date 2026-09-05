@@ -743,7 +743,7 @@ body::before {
 .fees__cta { display: flex; margin: 0; }
 .fees__cta .btn { width: 100%; }
 
-.fee-table { width: 100%; border-collapse: collapse; }
+.fee-table { width: 100%; border-collapse: collapse; margin-bottom: 22px; }
 .fee-table th, .fee-table td { text-align: left; padding: 15px 0; }
 .fee-table thead th {
   padding-bottom: 11px;
@@ -762,8 +762,9 @@ body::before {
 /* Sits at the top of the sidebar so its edge lines up with the Entry Fees
    heading opposite. Square, so it holds that alignment at any column width. */
 .fees__art {
-  display: block; width: 100%; height: auto;
-  aspect-ratio: 1 / 1; object-fit: cover;
+  display: block; width: 100%;
+  flex: 1 1 0; min-height: 200px;
+  object-fit: cover; object-position: 50% 32%;
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow);
 }
@@ -773,7 +774,7 @@ body::before {
    the fee table so the saving is read in the same glance as the numbers. */
 .fees__deal {
   display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
-  margin: 22px 0 0; padding: 16px 20px;
+  margin: 0; padding: 16px 20px;
   border-radius: var(--radius-lg);
   background: linear-gradient(100deg, #FFF1DC 0%, #FFE6C0 52%, #FFF4E6 100%);
   border: 1px solid #F0C489;
@@ -793,6 +794,17 @@ body::before {
   font-size: var(--fs-sm); color: var(--ink); line-height: 1.6;
 }
 .fees__deal-line b { color: var(--navy); font-weight: 800; }
+
+.fees__deal-save {
+  flex: none; display: flex; flex-direction: column; align-items: flex-end;
+  gap: 2px; padding-left: 18px; border-left: 1px solid #EFC69A;
+  line-height: 1.15;
+}
+.fees__deal-save em {
+  font-style: normal; font-size: .7rem; font-weight: 700;
+  letter-spacing: .08em; text-transform: uppercase; color: var(--saffron-text);
+}
+.fees__deal-save b { font-size: 1.5rem; font-weight: 800; color: var(--navy); }
 
 /* Now a sidebar card rather than a strip under the table. */
 .fees__includes {
@@ -1430,6 +1442,9 @@ body::before {
 @media (max-width: 860px) {
   .about__grid, .cause__grid, .race-grid, .fees { grid-template-columns: 1fr; }
   .fees__includes { max-width: 460px; }
+  /* Stacked, there is no neighbouring column to match, so the artwork stops
+     absorbing slack and takes a fixed band instead of a 200px letterbox. */
+  .fees__art { flex: none; height: 300px; }
   .about__media { order: -1; max-width: 440px; margin-inline: auto; }
 }
 
@@ -1446,6 +1461,10 @@ body::before {
   .ambassadors__grid { grid-template-columns: 1fr 1fr; }
   .countdown { grid-template-columns: repeat(4, 1fr); gap: 8px; }
   .race-card__head { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .fees__deal-save {
+    flex-direction: row; align-items: baseline; gap: 8px;
+    padding-left: 0; border-left: 0;
+  }
   .reg { padding: 22px 18px 20px; }
   .reg__grid { grid-template-columns: 1fr; }
   .reg__actions .btn { width: 100%; }
