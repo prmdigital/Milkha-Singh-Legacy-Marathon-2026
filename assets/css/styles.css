@@ -895,10 +895,9 @@ body::before {
 /* display:flex, not the default block: the button is inline-flex, so inside a
    normal paragraph it sits on the text baseline and leaves ~21px of
    descender space below it, breaking the alignment. */
-/* The inclusions list moved to the other column, so the sidebar is just the
-   artwork and this button. Pinned to the foot so it lines up with the offer
-   strip opposite instead of leaving the gap below itself. */
-.fees__cta { display: flex; margin: auto 0 0; }
+/* No auto margin: the artwork above takes the spare height, so the button is
+   always one gap below it rather than pushed to the foot of an empty column. */
+.fees__cta { display: flex; margin: 0; }
 .fees__cta .btn { width: 100%; }
 
 .fee-table {
@@ -934,8 +933,13 @@ body::before {
  * which stretches to meet it — see .fees__main below. */
 .fees__art {
   display: block; width: 100%;
-  flex: none; aspect-ratio: 17 / 25;
-  object-fit: cover;
+  /* flex-basis 0 so the picture contributes nothing to the sidebar's own
+     height: the row is measured on the copy opposite and the artwork is then
+     given whatever is left, which keeps the button hard under it at every
+     width. At the sizes this column actually takes, the frame lands within a
+     few percent of the source's own 17:25, so cover barely crops. */
+  flex: 1 1 0; min-height: 360px;
+  object-fit: cover; object-position: 50% 30%;
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow);
 }
@@ -1070,22 +1074,23 @@ body::before {
 /* Four across works at full width; in the left half of the fees grid it would
    give each card about 130px. Two across, and the list grows to take whatever
    height the sidebar's artwork needs, so the two columns still finish level. */
+/* Two across in half a column; four would give each card about 130px. */
 .fees__main .reasons {
   grid-template-columns: repeat(2, 1fr);
-  /* Grows into the slack the sidebar's square artwork creates, but only so far:
-     one line of text in a 200px card reads as a mistake. Whatever is left over
-     is shared out between the blocks by the space-between below, which looks
-     deliberate where a single stretched element does not. */
+  /* 46px between the paragraph and the cards was the lead's bottom margin and
+     this top margin stacking. One gap, not two — see .lead below. */
+  margin-top: 26px;
   flex: 0 1 auto;
 }
 .fees__main .reasons li { display: flex; align-items: center; }
+.fees__main .lead { max-width: none; margin-bottom: 0; }
 
-/* The offer strip is pinned to the foot so it lines up with the Register
-   button opposite; everything above it keeps its own natural spacing, which
-   space-between was stretching into gaps under the heading and the cards. */
-.fees__main .fees__includes { margin-top: 22px; }
-.fees__main .fees__deal { margin-top: auto; padding-top: 22px; }
-.fees__main .lead { max-width: none; }
+/* Both of these are bordered blocks. At 2px apart their edges read as one
+   thick, muddled line; the gap has to be bigger than the borders it separates
+   for either to look deliberate. */
+.fees__main .fees__includes { margin-top: 20px; }
+.fees__main .fees__deal { margin-top: 18px; }
+
 
 .reasons li {
   position: relative;
@@ -1682,6 +1687,10 @@ body::before {
     position: static; height: auto; width: 100%; max-width: none;
   }
   .fees__includes { max-width: 460px; }
+  /* Stacked, there is no column for the artwork to match the height of, so it
+     stops flexing and shows at its own proportions — min-height was giving it
+     a near-square frame and cropping the runner out of the bottom. */
+  .fees__art { flex: none; aspect-ratio: 17 / 25; min-height: 0; }
   .about__media { order: -1; max-width: 440px; margin-inline: auto; }
 }
 
