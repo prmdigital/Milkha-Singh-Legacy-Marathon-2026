@@ -895,7 +895,10 @@ body::before {
 /* display:flex, not the default block: the button is inline-flex, so inside a
    normal paragraph it sits on the text baseline and leaves ~21px of
    descender space below it, breaking the alignment. */
-.fees__cta { display: flex; margin: 0; }
+/* The inclusions list moved to the other column, so the sidebar is just the
+   artwork and this button. Pinned to the foot so it lines up with the offer
+   strip opposite instead of leaving the gap below itself. */
+.fees__cta { display: flex; margin: auto 0 0; }
 .fees__cta .btn { width: 100%; }
 
 .fee-table {
@@ -987,6 +990,13 @@ body::before {
   font-size: var(--fs-xs); font-weight: 700; letter-spacing: .13em;
   text-transform: uppercase; color: var(--ink-mute); margin-bottom: 16px;
 }
+/* auto-fit rather than a fixed three: forcing three columns pushed the row
+   48px past the viewport on a phone. It lays out three across where there is
+   room and folds down on its own where there is not. */
+.fees__main .fees__includes ul {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(165px, 1fr));
+  gap: 10px;
+}
 .fees__includes ul {
   list-style: none; margin: 0; padding: 0;
   display: grid; grid-template-columns: 1fr; gap: 8px;
@@ -1070,10 +1080,11 @@ body::before {
 }
 .fees__main .reasons li { display: flex; align-items: center; }
 
-/* The column is taller than its content because the artwork opposite is square.
-   Distributing that difference across the gaps beats parking it in one place. */
-.fees__main { justify-content: space-between; gap: 8px; }
-.fees__main .fees__deal { margin-top: 8px; }
+/* The offer strip is pinned to the foot so it lines up with the Register
+   button opposite; everything above it keeps its own natural spacing, which
+   space-between was stretching into gaps under the heading and the cards. */
+.fees__main .fees__includes { margin-top: 22px; }
+.fees__main .fees__deal { margin-top: auto; padding-top: 22px; }
 .fees__main .lead { max-width: none; }
 
 .reasons li {
