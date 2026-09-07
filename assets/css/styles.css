@@ -2020,3 +2020,63 @@ body::before {
   }
   .offer__text { order: 3; flex: 1 0 100%; }
 }
+
+/* ---------- Sponsor strip ----------
+   The band under the hero, built the way the sister event's is: a flex track
+   holding two identical sets, shifted by exactly half its width so the loop is
+   seamless — at -50% the second set is sitting precisely where the first
+   started, and the jump back to 0 is invisible.
+
+   The second set is aria-hidden with empty alt text: it is the same logos
+   again, and a screen reader should not read the list twice. */
+.marquee {
+  overflow: hidden;
+  padding: 26px 0;
+  background: var(--surface);
+  border-block: 1px solid var(--border);
+}
+/* Eight identical sets, shifted by exactly one of them. Two sets shifted -50%
+   is the usual trick, but it only holds while one set is wider than the
+   viewport — with three logos a set is 570px, so on a 1440 screen the track ran
+   out and left a gap at the right edge mid-loop. Eight sets means the track is
+   always far wider than any screen, and after shifting one set's width the
+   picture is identical, so the reset is still invisible. */
+.marquee__track {
+  display: flex; width: max-content;
+  animation: marquee-scroll 34s linear infinite;
+}
+.marquee__set {
+  display: flex; align-items: center;
+  list-style: none; margin: 0; padding: 0;
+}
+.marquee__set li {
+  flex: none;
+  display: flex; align-items: center; justify-content: center;
+  width: 190px; padding: 0 26px;
+}
+.marquee__set img {
+  max-width: 100%; max-height: 64px;
+  width: auto; height: auto;
+  object-fit: contain;
+}
+
+@keyframes marquee-scroll {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(calc(-100% / 8), 0, 0); }   /* one set of eight */
+}
+
+/* Somewhere to stop and read a logo. */
+.marquee:hover .marquee__track,
+.marquee:focus-within .marquee__track { animation-play-state: paused; }
+
+/* Continuous motion is exactly what a reduced-motion preference is asking to be
+   spared. The logos stay, the strip just becomes a static row. */
+@media (prefers-reduced-motion: reduce) {
+  .marquee__track { animation: none; }
+}
+
+@media (max-width: 620px) {
+  .marquee { padding: 20px 0; }
+  .marquee__set li { width: 150px; padding: 0 18px; }
+  .marquee__set img { max-height: 52px; }
+}
