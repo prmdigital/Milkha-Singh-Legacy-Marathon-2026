@@ -716,6 +716,41 @@ body::before {
   color: var(--saffron-text);
 }
 
+/* ---------- The offer banner ----------
+   Sits under the section intro, centred with the rest of the header. Filled
+   rather than tinted: this is the one promotional line on the page and it has
+   to survive being read at a glance on a saffron background, which a pale
+   callout would not. The gradient runs between two saffrons that both carry
+   white above 4.5:1 — a lighter one would look brighter and fail. */
+.offer {
+  display: inline-flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  justify-content: center;
+  margin: 0 auto 30px; padding: 11px 22px 11px 12px;
+  border-radius: 999px;
+  background: linear-gradient(100deg, #B94D06 0%, #A03F04 55%, #8F3703 100%);
+  box-shadow: 0 2px 6px rgba(146, 57, 4, .30),
+              0 10px 28px rgba(146, 57, 4, .26);
+}
+/* The section header is centred by a text-align on its children, and an
+   inline-flex needs the block above it to do the centring. */
+#categories .offer { display: flex; width: fit-content; }
+
+.offer__tag {
+  flex: none;
+  padding: 5px 13px; border-radius: 999px;
+  background: #fff; color: #8F3703;
+  font-size: var(--fs-xs); font-weight: 800;
+  letter-spacing: .1em; text-transform: uppercase;
+  white-space: nowrap;
+}
+.offer__text {
+  color: #fff; font-size: var(--fs-sm); font-weight: 600; letter-spacing: .01em;
+}
+.offer__text b {
+  font-size: 1.22em; font-weight: 800;
+  margin-left: 2px;
+}
+
 /* ---------- Race categories (confirmed) ---------- */
 /* The heading block is centred here, the way it is on the sister event's site:
    the cards below are a symmetrical grid, and a left-aligned title over a
@@ -817,6 +852,24 @@ body::before {
   background: #fff; border: 1px solid var(--border);
   font-size: .81rem; font-weight: 500; color: var(--ink-dim);
 }
+
+/* The fee, at the foot of the card. margin-top:auto pins it there, so the four
+   prices line up with each other across a row instead of floating wherever the
+   age chips happen to end. */
+.race-card__fee {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: 14px; flex-wrap: wrap;
+  margin: auto 0 0; padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+.race-card__fee-label {
+  font-size: var(--fs-xs); font-weight: 700; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--ink-mute);
+}
+.race-card__fee-amt { display: inline-flex; align-items: baseline; gap: 9px; }
+.race-card__fee-amt s { font-size: var(--fs-sm); color: var(--ink-mute); }
+.race-card__fee-amt b { font-size: 1.3rem; font-weight: 800; color: var(--green-deep); }
+.race-card__fee-amt b.is-free { letter-spacing: .01em; }
 
 /* Sits directly under the age categories it qualifies, not pinned to the foot
    of the card. `margin-top: auto` pushed it to the bottom, which on the short
