@@ -1254,6 +1254,14 @@ body::before {
 .reg__done p { margin: 0; color: var(--ink-dim); font-size: var(--fs-md); line-height: 1.7; }
 .reg__done b { color: var(--navy); font-size: 1.02rem; }
 
+/* The form is still above this panel and empty, so say so — otherwise the only
+   way to tell it is reusable is to try it. */
+.reg__done-again {
+  margin-top: 14px !important;
+  font-size: var(--fs-sm) !important;
+  color: var(--ink-mute) !important;
+}
+
 /* What is still owed. Saffron rather than green: the registration is done, the
    payment is not, and the two must not read as the same thing. */
 .reg__done-due {

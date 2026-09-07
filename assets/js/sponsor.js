@@ -128,9 +128,15 @@
         return;
       }
 
-      form.hidden = true;
+      /* Same reasoning as the registration form: the form stays put and is
+         emptied, so the panel confirms what happened without the page going
+         blank underneath it. */
       document.getElementById('spDoneRef').textContent = r.body.reference;
       done.hidden = false;
+      form.reset();
+      showErrors({});
+      setStatus('');
+      submit.disabled = false;
       done.scrollIntoView({ block: 'center' });
     }).catch(function () {
       setStatus('We could not reach the server. Please check your connection and try again.', 'err');

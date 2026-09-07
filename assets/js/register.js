@@ -359,7 +359,6 @@
   }
 
   function succeed(registrationId, amountDue) {
-    form.hidden = true;
     doneId.textContent = registrationId;
 
     /* Say plainly what happens next. Someone who has just filled in a long form
@@ -377,6 +376,19 @@
     }
 
     doneBox.hidden = false;
+
+    /* The form stays on the page and is emptied instead of being hidden.
+       Hiding it left someone who had just filled in a long form looking at a
+       page with nothing on it, and it made registering a second person — a
+       family, a school group, a running club — impossible without a reload.
+       form.reset() also clears the file input, and the existing 'reset'
+       listener puts the fee summary back. */
+    form.reset();
+    clearErrors();
+    setStatus('');
+    refreshAge();
+    busy(false);
+
     doneBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 
