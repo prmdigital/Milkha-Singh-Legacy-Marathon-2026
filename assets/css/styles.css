@@ -731,6 +731,13 @@ body::before {
   box-shadow: 0 2px 6px rgba(146, 57, 4, .30),
               0 10px 28px rgba(146, 57, 4, .26);
 }
+.offer__until {
+  flex: none;
+  padding-left: 12px; border-left: 1px solid rgba(255, 255, 255, .32);
+  color: rgba(255, 255, 255, .92);
+  font-size: var(--fs-xs); font-weight: 600; letter-spacing: .02em;
+  white-space: nowrap;
+}
 /* The section header is centred by a text-align on its children, and an
    inline-flex needs the block above it to do the centring. */
 #categories .offer { display: flex; width: fit-content; }
@@ -813,8 +820,8 @@ body::before {
 }
 .race-card__tags li {
   padding: 6px 14px; border-radius: 999px;
-  background: #fff; border: 1px solid var(--border);
-  font-size: .82rem; font-weight: 500; color: var(--ink-dim);
+  background: #fff; border: 1px solid var(--border-strong);
+  font-size: .82rem; font-weight: 600; color: var(--ink);
 }
 .race-card__tags .is-live {
   background: var(--green); border-color: var(--green);
@@ -829,8 +836,8 @@ body::before {
 .race-card__times li {
   display: inline-flex; align-items: center; gap: 9px;
   padding: 9px 14px; border-radius: var(--radius-lg);
-  background: #F5F6F8;
-  font-size: .86rem; font-weight: 600; color: var(--ink);
+  background: #EEF1F6;
+  font-size: .86rem; font-weight: 700; color: var(--ink);
 }
 .race-card__times svg {
   width: 16px; height: 16px; flex: none;
@@ -840,7 +847,7 @@ body::before {
 
 /* Age brackets */
 .race-card__ages h4 {
-  font-size: .85rem; font-weight: 500; color: var(--ink-dim);
+  font-size: .85rem; font-weight: 700; color: var(--ink);
   margin: 0 0 9px;
 }
 .race-card__ages ul {
@@ -849,22 +856,29 @@ body::before {
 }
 .race-card__ages li {
   padding: 6px 13px; border-radius: var(--radius-lg);
-  background: #fff; border: 1px solid var(--border);
-  font-size: .81rem; font-weight: 500; color: var(--ink-dim);
+  background: #fff; border: 1px solid var(--border-strong);
+  font-size: .81rem; font-weight: 600; color: var(--ink);
 }
 
 /* The fee, at the foot of the card. margin-top:auto pins it there, so the four
    prices line up with each other across a row instead of floating wherever the
-   age chips happen to end. */
+   age chips happen to end.
+ *
+ * A tinted band bled out to the card's edges rather than a rule across the
+ * middle: the age chips have borders of their own, and a hairline sitting a few
+ * pixels under the last of them read as two lines fighting each other. The band
+ * also gives the price somewhere to sit, which a bare row did not. */
 .race-card__fee {
   display: flex; align-items: baseline; justify-content: space-between;
   gap: 14px; flex-wrap: wrap;
-  margin: auto 0 0; padding-top: 16px;
-  border-top: 1px solid var(--border);
+  margin: auto -22px -24px; padding: 15px 22px 16px;
+  background: var(--bg-saffron);
+  border-top: 1px solid #F0D9BC;
+  border-radius: 0 0 calc(var(--radius-lg) - 1px) calc(var(--radius-lg) - 1px);
 }
 .race-card__fee-label {
-  font-size: var(--fs-xs); font-weight: 700; letter-spacing: .1em;
-  text-transform: uppercase; color: var(--ink-mute);
+  font-size: var(--fs-xs); font-weight: 800; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--saffron-text);
 }
 .race-card__fee-amt { display: inline-flex; align-items: baseline; gap: 9px; }
 .race-card__fee-amt s { font-size: var(--fs-sm); color: var(--ink-mute); }
@@ -898,7 +912,11 @@ body::before {
 /* No auto margin: the artwork above takes the spare height, so the button is
    always one gap below it rather than pushed to the foot of an empty column. */
 .fees__cta { display: flex; margin: 0; }
-.fees__cta .btn { width: 100%; }
+/* btn--lg at 100% of a 340px column is a 56px slab. Sized to its own content
+   and centred: it is still the only button in the sidebar, so it does not need
+   to be the widest thing there to be found. */
+.fees__cta { justify-content: center; }
+.fees__cta .btn { width: auto; min-height: 48px; padding: 11px 32px; font-size: .95rem; }
 
 .fee-table {
   width: 100%; border-collapse: collapse; margin-bottom: 22px;
@@ -1019,11 +1037,19 @@ body::before {
 
 /* ---------- Route ---------- */
 /* Names what the map is, so it is not just a picture dropped under the cards. */
+/* This introduces the map, which is the largest single thing in the section;
+   at card-title size it read as a caption for the block above it instead. */
 .route__title {
-  margin: 38px 0 14px;
-  font-size: clamp(1.1rem, 2.2vw, 1.35rem);
-  font-weight: 800; color: var(--navy);
+  margin: 44px 0 20px;
+  font-size: clamp(1.3rem, 2.8vw, 1.75rem);
+  font-weight: 800; letter-spacing: -.015em; color: var(--navy);
   text-align: center;
+}
+.route__title::after {
+  content: ''; display: block;
+  width: 84px; height: 3px; margin: 14px auto 0;
+  border-radius: 2px;
+  background: var(--tricolor);
 }
 
 .route { margin: 0; }
@@ -1156,6 +1182,15 @@ body::before {
 .reg__cat input {
   position: absolute; opacity: 0; width: 0; height: 0;
 }
+/* Each category carries a wash of its own colour — the same one its card uses
+   in the section above — so the four read as a set of choices rather than four
+   identical white boxes, and the selected one still stands out because it is
+   the only one with a saffron edge. */
+.reg__cat:nth-child(1) .reg__cat-body { background: #FFF6EC; border-color: #F2D6B4; }
+.reg__cat:nth-child(2) .reg__cat-body { background: #F1F8EF; border-color: #C9E2C4; }
+.reg__cat:nth-child(3) .reg__cat-body { background: #F0F3FA; border-color: #C8D3E8; }
+.reg__cat:nth-child(4) .reg__cat-body { background: #FFF4E8; border-color: #F0CDA6; }
+
 .reg__cat-body {
   display: flex; flex-direction: column; gap: 3px;
   padding: 16px 18px; height: 100%;
@@ -1165,18 +1200,17 @@ body::before {
 }
 .reg__cat-body b { font-size: var(--fs-md); font-weight: 700; color: var(--navy); }
 .reg__cat-body em {
-  font-style: normal; font-size: var(--fs-xs); font-weight: 600;
-  letter-spacing: .08em; text-transform: uppercase; color: var(--ink-mute);
+  font-style: normal; font-size: var(--fs-xs); font-weight: 700;
+  letter-spacing: .08em; text-transform: uppercase; color: var(--ink-dim);
 }
-.reg__cat-fee { margin-top: 6px; font-size: var(--fs-md); font-weight: 800; color: var(--green-deep); }
-.reg__cat-fee s { color: var(--ink-mute); font-weight: 500; font-size: .82rem; margin-right: 5px; }
 .reg__cat:hover .reg__cat-body {
   border-color: var(--saffron);
   box-shadow: var(--shadow);
   transform: translateY(-2px);
 }
 .reg__cat input:checked + .reg__cat-body {
-  border-color: var(--saffron-deep); background: var(--bg-saffron);
+  border-color: var(--saffron-deep);
+  box-shadow: inset 0 0 0 1px var(--saffron-deep), var(--shadow-soft);
 }
 .reg__cat input:focus-visible + .reg__cat-body {
   outline: 3px solid var(--saffron-deep); outline-offset: 2px;
@@ -1831,6 +1865,22 @@ body::before {
   transition: transform .5s var(--ease) .1s;
 }
 .section__eyebrow.is-visible::before { transform: scaleX(1); }
+
+/* Where the eyebrow is centred, a rule on the left only makes the WORD sit
+   right of centre even though the box is dead centre — which is what reads as
+   "not centred". Mirrored, so the text is centred to the eye as well as to the
+   layout. The trailing letter-space of the last character is pulled back for
+   the same reason. */
+.tribute .section__eyebrow::after,
+#categories .section__eyebrow::after,
+.section--register .section__eyebrow::after {
+  content: ''; display: inline-block; vertical-align: middle;
+  width: 22px; height: 2px; margin-left: 10px; margin-bottom: 2px;
+  background: var(--saffron);
+}
+.tribute .section__eyebrow,
+#categories .section__eyebrow,
+.section--register .section__eyebrow { text-indent: .16em; }
 /* No JS, or reduced motion: show the rule rather than leave it invisible. */
 .no-js .section__eyebrow::before { transform: scaleX(1); }
 @media (prefers-reduced-motion: reduce) { .section__eyebrow::before { transform: scaleX(1); } }
@@ -1945,4 +1995,28 @@ body::before {
   min-height: 110px;
   font-family: inherit;
   line-height: 1.6;
+}
+
+/* The offer banner on a narrow screen.
+   A fully rounded pill only works while its content is one line. Wrapped, the
+   999px radius leaves great curved voids at either end and the tag floats in
+   the middle of them — which is what looked unprofessional. Under 640px it
+   becomes a left-aligned strip with a modest radius: same colour, same weight,
+   but a shape that survives three lines of content. */
+@media (max-width: 640px) {
+  .offer {
+    display: flex; width: 100%;
+    align-items: flex-start; justify-content: flex-start;
+    gap: 10px 12px;
+    padding: 14px 16px;
+    border-radius: var(--radius-lg);
+    text-align: left;
+  }
+  .offer__tag { order: 1; }
+  .offer__until {
+    order: 2;
+    padding-left: 0; border-left: 0;
+    align-self: center;
+  }
+  .offer__text { order: 3; flex: 1 0 100%; }
 }

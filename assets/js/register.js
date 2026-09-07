@@ -53,18 +53,6 @@
   }
 
   /* Fill the fee chip on each category tile. */
-  Object.keys(CATEGORIES).forEach(function (key) {
-    var el = document.querySelector('[data-fee="' + key + '"]');
-    if (!el) return;
-    var p = priceFor(key);
-    if (p.base === 0) {
-      el.textContent = 'Free entry';
-      return;
-    }
-    el.innerHTML = p.early
-      ? '<s>' + rupees(p.base) + '</s> ' + rupees(p.payable)
-      : rupees(p.payable);
-  });
 
   function selectedCategory() {
     var picked = form.querySelector('input[name="category"]:checked');
