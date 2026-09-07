@@ -564,8 +564,12 @@ body::before {
   display: grid; grid-template-columns: 1.15fr .85fr;
   gap: clamp(30px, 5vw, 64px); align-items: start;
 }
-.about__copy p { color: var(--ink-dim); }
-.about__copy .lead { color: var(--ink); }
+/* All three paragraphs read as one block. The first was a .lead — 17.92px in
+   --ink against 17px in --ink-dim for the other two. Not enough of a jump to
+   register as hierarchy, just enough to look like two different sizes had been
+   used by accident. Unified on the darker ink, which is also the more legible
+   of the two. */
+.about__copy p { color: var(--ink); }
 .about__copy strong { color: var(--saffron-text); }
 
 .about__media { margin: 0; }
