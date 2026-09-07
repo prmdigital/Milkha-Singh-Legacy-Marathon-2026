@@ -551,6 +551,10 @@ body::before {
   line-height: 1.4;
   color: var(--navy);
 }
+/* The browser's default figure margin is 16px 40px. .about__media and .route
+   both clear it; this one never did, so on a phone 80px of the column went to
+   margin and the picture sat inset from everything around it. */
+.cause__media { margin: 0; }
 .cause__media img {
   width: 100%; border-radius: var(--radius-lg);
   border: 1px solid var(--border); box-shadow: var(--shadow);
