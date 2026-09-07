@@ -868,22 +868,42 @@ body::before {
  * middle: the age chips have borders of their own, and a hairline sitting a few
  * pixels under the last of them read as two lines fighting each other. The band
  * also gives the price somewhere to sit, which a bare row did not. */
+/* The band had a 1px top edge landing a few pixels under a row of bordered
+   chips, so the two lines fought. There is no rule at all now — the change of
+   ground is the separation, and it is given 22px of clearance above so the
+   chips finish well before it starts.
+ *
+ * The price is the reason anyone reads this row, so it is set as the figure it
+ * is: navy on saffron rather than green on white, with the old price struck
+ * through beside it at label size and a "save" chip carrying the difference. */
 .race-card__fee {
-  display: flex; align-items: baseline; justify-content: space-between;
-  gap: 14px; flex-wrap: wrap;
-  margin: auto -22px -24px; padding: 15px 22px 16px;
-  background: var(--bg-saffron);
-  border-top: 1px solid #F0D9BC;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; flex-wrap: wrap;
+  margin: auto -22px -24px; padding: 16px 22px 17px;
+  background: linear-gradient(180deg, #FFF6EA 0%, #FFEFDD 100%);
   border-radius: 0 0 calc(var(--radius-lg) - 1px) calc(var(--radius-lg) - 1px);
 }
+.race-card__ages { margin-bottom: 22px; }
+
 .race-card__fee-label {
-  font-size: var(--fs-xs); font-weight: 800; letter-spacing: .1em;
+  font-size: var(--fs-xs); font-weight: 800; letter-spacing: .11em;
   text-transform: uppercase; color: var(--saffron-text);
 }
-.race-card__fee-amt { display: inline-flex; align-items: baseline; gap: 9px; }
-.race-card__fee-amt s { font-size: var(--fs-sm); color: var(--ink-mute); }
-.race-card__fee-amt b { font-size: 1.3rem; font-weight: 800; color: var(--green-deep); }
-.race-card__fee-amt b.is-free { letter-spacing: .01em; }
+.race-card__fee-amt {
+  display: inline-flex; align-items: baseline; gap: 10px;
+}
+/* #A08469 measured 3.11:1 on this band — a struck price is still information
+   somebody reads, so it has to clear 4.5 like anything else. This is the same
+   warm brown taken down until it does: 5.4:1 on the band's darker stop. */
+.race-card__fee-amt s {
+  font-size: var(--fs-sm); font-weight: 600; color: #7A5C43;
+  text-decoration-thickness: 1px;
+}
+.race-card__fee-amt b {
+  font-size: 1.42rem; font-weight: 800; letter-spacing: -.02em;
+  color: var(--navy);
+}
+.race-card__fee-amt b.is-free { font-size: 1.24rem; color: var(--green-deep); }
 
 /* Sits directly under the age categories it qualifies, not pinned to the foot
    of the card. `margin-top: auto` pushed it to the bottom, which on the short
@@ -1037,19 +1057,37 @@ body::before {
 
 /* ---------- Route ---------- */
 /* Names what the map is, so it is not just a picture dropped under the cards. */
-/* This introduces the map, which is the largest single thing in the section;
-   at card-title size it read as a caption for the block above it instead. */
-.route__title {
-  margin: 44px 0 20px;
-  font-size: clamp(1.3rem, 2.8vw, 1.75rem);
-  font-weight: 800; letter-spacing: -.015em; color: var(--navy);
-  text-align: center;
+/* Introduces the map, which is the largest single thing in the section. A
+   heading and a stub of rule under it was still just a heading; it now gets the
+   same eyebrow-then-title treatment every other block on the page has, so it
+   reads as the start of something rather than a caption floating above it. */
+.route__head { text-align: center; margin: 48px 0 24px; }
+.route__eyebrow {
+  display: block; margin-bottom: 12px;
+  font-size: var(--fs-xs); font-weight: 800;
+  letter-spacing: .16em; text-transform: uppercase;
+  color: var(--green-deep);
 }
-.route__title::after {
-  content: ''; display: block;
-  width: 84px; height: 3px; margin: 14px auto 0;
-  border-radius: 2px;
-  background: var(--tricolor);
+.route__eyebrow::before,
+.route__eyebrow::after {
+  content: ''; display: inline-block; vertical-align: middle;
+  width: 22px; height: 2px; margin-bottom: 3px;
+  background: var(--saffron);
+}
+.route__eyebrow::before { margin-right: 10px; }
+.route__eyebrow::after  { margin-left: 10px; }
+
+.route__title {
+  margin: 0;
+  font-size: clamp(1.45rem, 3.2vw, 2rem);
+  font-weight: 800; letter-spacing: -.02em; line-height: 1.2;
+  color: var(--navy);
+}
+.route__title .accent { color: var(--saffron-text); }
+
+.route__note {
+  margin: 12px auto 0; max-width: 620px;
+  font-size: var(--fs-sm); color: var(--ink-dim);
 }
 
 .route { margin: 0; }
@@ -1184,17 +1222,21 @@ body::before {
 }
 /* Each category carries a wash of its own colour — the same one its card uses
    in the section above — so the four read as a set of choices rather than four
-   identical white boxes, and the selected one still stands out because it is
-   the only one with a saffron edge. */
-.reg__cat:nth-child(1) .reg__cat-body { background: #FFF6EC; border-color: #F2D6B4; }
-.reg__cat:nth-child(2) .reg__cat-body { background: #F1F8EF; border-color: #C9E2C4; }
-.reg__cat:nth-child(3) .reg__cat-body { background: #F0F3FA; border-color: #C8D3E8; }
-.reg__cat:nth-child(4) .reg__cat-body { background: #FFF4E8; border-color: #F0CDA6; }
+   identical white boxes. The tint is held in a variable because the selected
+   state has to paint it again, over the gradient border. */
+.reg__cat:nth-child(1) .reg__cat-body { --tile: #FFF6EC; --tile-edge: #F2D6B4; }
+.reg__cat:nth-child(2) .reg__cat-body { --tile: #F1F8EF; --tile-edge: #C9E2C4; }
+.reg__cat:nth-child(3) .reg__cat-body { --tile: #F0F3FA; --tile-edge: #C8D3E8; }
+.reg__cat:nth-child(4) .reg__cat-body { --tile: #FFF4E8; --tile-edge: #F0CDA6; }
 
 .reg__cat-body {
   display: flex; flex-direction: column; gap: 3px;
-  padding: 16px 18px; height: 100%;
-  border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 15px 17px; height: 100%;
+  background: var(--tile, #fff);
+  /* 2px on every tile, selected or not, so the choice does not shift the card
+     by a pixel when the border thickens. */
+  border: 2px solid var(--tile-edge, var(--border));
+  border-radius: var(--radius);
   transition: border-color .18s var(--ease), background .18s var(--ease),
               box-shadow .18s var(--ease), transform .18s var(--ease);
 }
@@ -1208,9 +1250,41 @@ body::before {
   box-shadow: var(--shadow);
   transform: translateY(-2px);
 }
+
+/* The selected option was a one-pixel colour change on a one-pixel border,
+   which is not much of an answer to a click. It now carries a tricolour edge
+   that travels round the tile while it is the active choice.
+ *
+ * Two background layers doing different jobs: the first repaints the tile's own
+ * tint clipped to the padding box, the second paints the gradient clipped to
+ * the border box, so the gradient is only ever visible in the 2px the border
+ * occupies. An absolutely positioned pseudo-element cannot do this — a
+ * negative z-index child paints ABOVE its parent's own background, so the
+ * gradient covered the whole tile rather than framing it. */
 .reg__cat input:checked + .reg__cat-body {
-  border-color: var(--saffron-deep);
-  box-shadow: inset 0 0 0 1px var(--saffron-deep), var(--shadow-soft);
+  border-color: transparent;
+  background-image:
+    linear-gradient(var(--tile), var(--tile)),
+    linear-gradient(115deg,
+      var(--saffron) 0%, #FFFFFF 18%, var(--green) 36%,
+      var(--saffron) 60%, #FFFFFF 78%, var(--green) 100%);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  background-size: auto, 300% 100%;
+  box-shadow: var(--shadow);
+  transform: translateY(-2px);
+}
+.reg__cat input:checked + .reg__cat-body { animation: cat-edge 5s linear infinite; }
+
+@keyframes cat-edge {
+  from { background-position: 0 0,   0% 50%; }
+  to   { background-position: 0 0, 300% 50%; }
+}
+
+/* The frame still marks the choice when it is not allowed to travel. */
+@media (prefers-reduced-motion: reduce) {
+  .reg__cat input:checked + .reg__cat-body { animation: none; transform: none; }
+  .reg__cat:hover .reg__cat-body { transform: none; }
 }
 .reg__cat input:focus-visible + .reg__cat-body {
   outline: 3px solid var(--saffron-deep); outline-offset: 2px;
@@ -1873,14 +1947,22 @@ body::before {
    the same reason. */
 .tribute .section__eyebrow::after,
 #categories .section__eyebrow::after,
-.section--register .section__eyebrow::after {
+.section--register .section__eyebrow::after,
+#purpose .section__eyebrow::after {
   content: ''; display: inline-block; vertical-align: middle;
   width: 22px; height: 2px; margin-left: 10px; margin-bottom: 2px;
   background: var(--saffron);
 }
 .tribute .section__eyebrow,
 #categories .section__eyebrow,
-.section--register .section__eyebrow { text-indent: .16em; }
+.section--register .section__eyebrow,
+#purpose .section__eyebrow { text-indent: .16em; }
+
+/* The five cards below are a centred grid; a left-aligned header over them sat
+   off the section's own axis. */
+#purpose .section__eyebrow,
+#purpose .section__title { text-align: center; }
+#purpose .section__eyebrow { display: block; }
 /* No JS, or reduced motion: show the rule rather than leave it invisible. */
 .no-js .section__eyebrow::before { transform: scaleX(1); }
 @media (prefers-reduced-motion: reduce) { .section__eyebrow::before { transform: scaleX(1); } }

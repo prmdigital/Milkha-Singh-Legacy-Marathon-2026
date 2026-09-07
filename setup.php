@@ -434,7 +434,7 @@ $e = static function (string $s): string {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>Setup &middot; Milkha Singh Legacy Marathon</title>
-<link rel="stylesheet" href="admin/assets/admin.css?v=20260907-16">
+<link rel="stylesheet" href="admin/assets/admin.css?v=20260907-17">
 <style>
   .setup { max-width: 720px; margin: 40px auto; padding: 0 20px 80px; }
   .setup h1 { color: var(--navy); margin: 0 0 6px; }
