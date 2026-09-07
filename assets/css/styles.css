@@ -1057,6 +1057,25 @@ body::before {
   list-style: none; margin: 24px 0 0; padding: 0;
   display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;
 }
+/* Four across works at full width; in the left half of the fees grid it would
+   give each card about 130px. Two across, and the list grows to take whatever
+   height the sidebar's artwork needs, so the two columns still finish level. */
+.fees__main .reasons {
+  grid-template-columns: repeat(2, 1fr);
+  /* Grows into the slack the sidebar's square artwork creates, but only so far:
+     one line of text in a 200px card reads as a mistake. Whatever is left over
+     is shared out between the blocks by the space-between below, which looks
+     deliberate where a single stretched element does not. */
+  flex: 0 1 auto;
+}
+.fees__main .reasons li { display: flex; align-items: center; }
+
+/* The column is taller than its content because the artwork opposite is square.
+   Distributing that difference across the gaps beats parking it in one place. */
+.fees__main { justify-content: space-between; gap: 8px; }
+.fees__main .fees__deal { margin-top: 8px; }
+.fees__main .lead { max-width: none; }
+
 .reasons li {
   position: relative;
   padding: 16px 20px 16px 52px;
@@ -1658,6 +1677,9 @@ body::before {
 @media (max-width: 620px) {
   .cards, .contact__grid, .reasons, .footer__inner,
   .press__grid { grid-template-columns: 1fr; }
+  /* The scoped two-column rule is more specific than the line above, so it has
+     to be undone by name or the cards stay side by side at 150px each. */
+  .fees__main .reasons { grid-template-columns: 1fr; }
   /* Single column: clear the spans and let each card size to its content. */
   .cards { grid-auto-rows: auto; }
   .cards .card,
