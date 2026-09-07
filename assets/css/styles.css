@@ -735,7 +735,11 @@ body::before {
    the right-hand space that a capped single column left empty. */
 .fees { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 40px; align-items: stretch; }
 .fees__aside { display: flex; flex-direction: column; gap: 16px; }
-.fees__main { min-width: 0; }
+/* The sidebar is now the taller column, because the artwork is shown whole.
+   Rather than leave a hole under the fee table, the table is given the spare
+   height and shares it out across its rows: a price list reads perfectly well
+   with generous rows, and the two columns still finish level. */
+.fees__main { min-width: 0; display: flex; flex-direction: column; }
 
 /* display:flex, not the default block: the button is inline-flex, so inside a
    normal paragraph it sits on the text baseline and leaves ~21px of
@@ -743,32 +747,41 @@ body::before {
 .fees__cta { display: flex; margin: 0; }
 .fees__cta .btn { width: 100%; }
 
-.fee-table { width: 100%; border-collapse: collapse; margin-bottom: 22px; }
-.fee-table th, .fee-table td { text-align: left; padding: 15px 0; }
+.fee-table {
+  width: 100%; border-collapse: collapse; margin-bottom: 22px;
+  flex: 1 1 auto;                          /* takes the column's spare height */
+}
+.fee-table th, .fee-table td { text-align: left; padding: 18px 0; }
+/* .68rem is under 11px — the smallest type on the page, on the row that tells
+   you what the three columns are. Raised to a size that can actually be read
+   at a glance, and darkened to match. */
 .fee-table thead th {
-  padding-bottom: 11px;
+  padding-bottom: 13px;
   border-bottom: 2px solid var(--navy);
-  font-size: .68rem; font-weight: 700; letter-spacing: .13em;
-  text-transform: uppercase; color: var(--ink-mute);
+  font-size: .82rem; font-weight: 700; letter-spacing: .11em;
+  text-transform: uppercase; color: var(--ink-dim);
 }
 .fee-table tbody tr { border-bottom: 1px solid var(--border); }
-.fee-table tbody th { font-size: 1.02rem; font-weight: 700; color: var(--navy); }
-.fee-table tbody td { font-size: .92rem; color: var(--ink-dim); }
+.fee-table tbody th { font-size: 1.12rem; font-weight: 700; color: var(--navy); }
+.fee-table tbody td { font-size: 1rem; color: var(--ink-dim); }
 .fee-table__price { text-align: right !important; white-space: nowrap; }
-.fee-table__price s { color: var(--ink-mute); font-size: .88rem; margin-right: 9px; }
-.fee-table__price b { font-size: 1.32rem; font-weight: 800; color: var(--green-deep); }
-.fee-table__price b.is-free { font-size: 1.1rem; letter-spacing: .01em; }
+.fee-table__price s { color: var(--ink-mute); font-size: .95rem; margin-right: 9px; }
+.fee-table__price b { font-size: 1.38rem; font-weight: 800; color: var(--green-deep); }
+/* Free is a price like any other on this table, and setting it smaller made it
+   read as a footnote next to the figures above it. */
+.fee-table__price b.is-free { letter-spacing: .01em; }
 
 /* Sits at the top of the sidebar so its edge lines up with the Entry Fees
-   heading opposite. Square, so it holds that alignment at any column width. */
+   heading opposite.
+ *
+ * Square, matching the artwork, so nothing is cropped: any frame shorter than
+ * this has to cut either the turban or the runner, and both are the picture.
+ * The height difference this creates is taken up by the fee table opposite,
+ * which stretches to meet it — see .fees__main below. */
 .fees__art {
   display: block; width: 100%;
-  flex: 1 1 0; min-height: 200px;
-  /* Anchored near the top of the artwork. The frame is a wide, short window on
-     a square poster, so `cover` always has to drop some of it — at 32% it was
-     dropping the top 12%, which took the crown of the turban with it. At 6% the
-     cut lands just above his head at every width the sidebar can be. */
-  object-fit: cover; object-position: 50% 6%;
+  flex: none; aspect-ratio: 1 / 1;
+  object-fit: cover;
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow);
 }
@@ -1453,9 +1466,6 @@ body::before {
 @media (max-width: 860px) {
   .about__grid, .cause__grid, .race-grid, .fees { grid-template-columns: 1fr; }
   .fees__includes { max-width: 460px; }
-  /* Stacked, there is no neighbouring column to match, so the artwork stops
-     absorbing slack and takes a fixed band instead of a 200px letterbox. */
-  .fees__art { flex: none; height: 300px; }
   .about__media { order: -1; max-width: 440px; margin-inline: auto; }
 }
 
