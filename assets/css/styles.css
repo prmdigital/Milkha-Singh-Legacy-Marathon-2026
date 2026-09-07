@@ -777,18 +777,26 @@ body::before {
   gap: 20px;
 }
 
+/* 2px on every side and a 5px coloured cap, on --shadow rather than the soft
+   one: at 1px and --shadow-soft the cards were reading as areas of the page
+   rather than as objects sitting on it. The full-bleed fee band is measured off
+   this padding, so the two move together. */
 .race-card {
   display: flex; flex-direction: column;
-  padding: 22px 22px 24px;
+  padding: 21px 21px 23px;
   background: #fff;
-  border: 1px solid var(--border);
-  border-top: 4px solid var(--saffron);
+  border: 2px solid var(--border-strong);
+  border-top: 5px solid var(--saffron);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-soft);
-  transition: border-color .22s var(--ease), box-shadow .22s var(--ease);
+  box-shadow: var(--shadow);
+  transition: border-color .22s var(--ease), box-shadow .22s var(--ease),
+              transform .22s var(--ease);
 }
-.race-card:hover { box-shadow: 0 10px 28px rgba(18,41,91,.09); transform: translateY(-2px); }
-.race-card { transition: border-color .22s var(--ease), box-shadow .22s var(--ease), transform .22s var(--ease); }
+.race-card:hover {
+  border-color: #B7C2D4;
+  box-shadow: var(--shadow-lift);
+  transform: translateY(-3px);
+}
 .race-card--mini  { border-top-color: var(--green); }
 .race-card--cause { border-top-color: var(--navy); }
 .race-card--para  { border-top-color: var(--saffron-deep); }
@@ -879,9 +887,10 @@ body::before {
 .race-card__fee {
   display: flex; align-items: center; justify-content: space-between;
   gap: 12px; flex-wrap: wrap;
-  margin: auto -22px -24px; padding: 16px 22px 17px;
+  margin: auto -21px -23px; padding: 16px 21px 17px;
   background: linear-gradient(180deg, #FFF6EA 0%, #FFEFDD 100%);
-  border-radius: 0 0 calc(var(--radius-lg) - 1px) calc(var(--radius-lg) - 1px);
+  border-top: 2px solid #EFCEA1;
+  border-radius: 0 0 calc(var(--radius-lg) - 2px) calc(var(--radius-lg) - 2px);
 }
 .race-card__ages { margin-bottom: 22px; }
 
