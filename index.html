@@ -32,7 +32,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="assets/css/styles.css?v=20260906-6" />
+<link rel="stylesheet" href="assets/css/styles.css?v=20260906-7" />
 
 <!-- Event schema: this is what makes Google show your date + venue in search results. -->
 <script type="application/ld+json">
@@ -773,14 +773,22 @@
         <span class="reg__summary-note" id="regNote"></span>
       </div>
 
-      <p class="reg__consent">
+      <div class="reg__consent">
+        <h3 class="reg__consent-title">
+          Declaration <span class="reg__req" aria-hidden="true">*</span>
+        </h3>
         <label>
           <input type="checkbox" name="declaration" value="1" required />
-          <span><span class="reg__req" aria-hidden="true">*</span> I confirm I am medically fit to take part, that I run at my own risk, and that
-          I accept the <a href="terms-conditions.html">terms &amp; conditions</a>.</span>
+          <span>
+            I confirm that I am physically and mentally fit to take part, that the details
+            I have given above are correct, and that I take part entirely at my own risk.
+            I agree that photographs and video taken at the event may be used by the
+            organisers, and I accept the
+            <a href="terms-conditions.html">terms &amp; conditions</a>.
+          </span>
         </label>
         <span class="reg__err" data-err="declaration"></span>
-      </p>
+      </div>
 
       <div class="reg__actions">
         <button class="btn btn--primary btn--lg" type="submit" id="regSubmit">
@@ -1022,7 +1030,7 @@
   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
 </button>
 
-<script src="assets/js/main.js?v=20260906-6" defer></script>
-<script src="assets/js/register.js?v=20260906-6" defer></script>
+<script src="assets/js/main.js?v=20260906-7" defer></script>
+<script src="assets/js/register.js?v=20260906-7" defer></script>
 </body>
 </html>

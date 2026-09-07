@@ -311,7 +311,7 @@
       f.emergencyPhone = 'Please enter a 10-digit number, or leave this blank.';
     }
 
-    if (!d.declaration) f.declaration = 'Please confirm the health declaration.';
+    if (!d.declaration) f.declaration = 'Please tick the declaration to continue.';
 
     return f;
   }

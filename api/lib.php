@@ -459,7 +459,7 @@ function validate_runner(array $in): array
     }
 
     if (empty($in['declaration'])) {
-        $e['declaration'] = 'Please confirm the health declaration.';
+        $e['declaration'] = 'Please tick the declaration to continue.';
     }
 
     return [$v, $e];

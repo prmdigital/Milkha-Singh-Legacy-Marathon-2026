@@ -1113,18 +1113,32 @@ body::before {
 .reg__summary-note { font-size: .84rem; color: var(--ink-dim); }
 
 /* Consent */
-.reg__consent { margin: 0 0 20px; }
+/* The declaration is the one thing on this form that is a legal undertaking
+   rather than a detail about the runner, so it is set apart as a block instead
+   of trailing after the last field as a stray line of small print. */
+.reg__consent {
+  margin: 0 0 22px; padding: 18px 20px;
+  background: var(--bg-saffron);
+  border: 1px solid #F0D9BC;
+  border-radius: var(--radius-lg);
+}
+.reg__consent-title {
+  margin: 0 0 10px;
+  font-size: .78rem; font-weight: 800; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--saffron-text);
+}
 .reg__consent label {
-  display: flex; gap: 12px; align-items: flex-start; cursor: pointer;
-  padding: 10px 0;              /* lifts the tap row to 44px+ */
-  min-height: 44px;
+  display: flex; gap: 13px; align-items: flex-start; cursor: pointer;
+  min-height: 44px;             /* the tap row stays 44px+ */
 }
 .reg__consent input {
-  width: 22px; height: 22px; margin: 0; flex: none;
+  width: 22px; height: 22px; margin: 2px 0 0; flex: none;
   accent-color: var(--saffron-deep); cursor: pointer;
 }
-.reg__consent span { font-size: var(--fs-sm); color: var(--ink-dim); line-height: 1.6; }
-.reg__consent a { color: var(--saffron-text); font-weight: 600; }
+/* .88rem was small for a paragraph people are being asked to agree to. */
+.reg__consent label span { font-size: .95rem; color: var(--ink); line-height: 1.65; }
+.reg__consent a { color: var(--saffron-text); font-weight: 700; }
+.reg__consent .reg__err { margin-top: 8px; }
 
 .reg__actions { display: flex; flex-direction: column; gap: 12px; align-items: flex-start; }
 .reg__actions .btn:disabled { opacity: .65; cursor: not-allowed; }
