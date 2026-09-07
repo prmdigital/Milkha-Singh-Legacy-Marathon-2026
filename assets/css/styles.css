@@ -934,7 +934,7 @@ body::before {
  * which stretches to meet it — see .fees__main below. */
 .fees__art {
   display: block; width: 100%;
-  flex: none; aspect-ratio: 1 / 1;
+  flex: none; aspect-ratio: 17 / 25;
   object-fit: cover;
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow);
