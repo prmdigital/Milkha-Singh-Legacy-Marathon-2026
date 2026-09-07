@@ -992,7 +992,7 @@ body::before {
 /* Grid and flex children default to min-width:auto, which is the same trap one
    level down: a wide control would stretch its column rather than shrink. */
 .reg__grid > *, .reg__field { min-width: 0; }
-.reg__field input, .reg__field select { min-width: 0; width: 100%; }
+.reg__field input, .reg__field select, .reg__field textarea { min-width: 0; width: 100%; }
 .reg__field { margin: 0; display: flex; flex-direction: column; gap: 7px; }
 .reg__field--wide { grid-column: 1 / -1; }
 
@@ -1003,7 +1003,8 @@ body::before {
 /* One fixed height for every control. Left to min-height, text inputs came out
    at 49px (they inherit the body's 1.75 line-height) while selects sat at 46. */
 .reg__field input,
-.reg__field select {
+.reg__field select,
+.reg__field textarea {
   height: 54px; padding: 0 15px;
   font: inherit; font-size: 1.02rem; line-height: 1.4; color: var(--ink);
   background: #fff;
@@ -1013,9 +1014,11 @@ body::before {
 /* Hovering says "this is where you type"; the focus ring says "this is where
    you are". Without either, a long form reads as a wall of empty boxes. */
 .reg__field input:hover,
-.reg__field select:hover { border-color: #C9D0DA; }
+.reg__field select:hover,
+.reg__field textarea:hover { border-color: #C9D0DA; }
 .reg__field input:focus,
-.reg__field select:focus {
+.reg__field select:focus,
+.reg__field textarea:focus {
   border-color: var(--saffron-deep);
   box-shadow: 0 0 0 3px rgba(232, 101, 11, .14);
   outline: none;
@@ -1374,7 +1377,11 @@ body::before {
 .sponsors__cta p { color: var(--ink-dim); margin-bottom: 18px; }
 
 /* ---------- Policy pages ---------- */
-.policy { padding: 150px 0 90px; }
+/* Both standalone pages open directly under the fixed header rather than
+   behind a hero, so they need enough top padding to clear it — 62px of section
+   padding put the eyebrow underneath the nav bar. */
+.policy,
+.section--standalone { padding: 150px 0 90px; }
 .policy .section__title { margin-bottom: 10px; }
 .policy__updated { color: var(--ink-mute); font-size: .88rem; margin-bottom: 30px; }
 
@@ -1687,4 +1694,14 @@ body::before {
   .btn--ghost:hover {
     transform: none;
   }
+}
+
+/* The sponsorship form is the only place with a textarea. It inherits the
+   input styling above; these are the two things a textarea needs that an
+   input does not. */
+.reg__field textarea {
+  resize: vertical;
+  min-height: 110px;
+  font-family: inherit;
+  line-height: 1.6;
 }

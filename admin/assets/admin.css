@@ -555,3 +555,65 @@ code {
 .checkline span { display: grid; gap: 3px; }
 .checkline b { font-size: .9rem; color: var(--navy); }
 .checkline small { font-size: .8rem; color: var(--ink-mute); line-height: 1.5; }
+
+/* ---------- Sponsorship enquiries ---------- */
+/* Each enquiry is a card rather than a table row. A table would have to choose
+   between showing the message and fitting on a screen, and the message is
+   usually the reason someone opens this page at all. */
+
+.pill--new       { background: var(--bg-warm); color: #9A4A05; }
+.pill--contacted { background: #E8EEFB; color: var(--navy); }
+.pill--confirmed { background: #E7F5E6; color: var(--green-deep); }
+.pill--declined  { background: #EEF0F4; color: #5B6472; }
+
+.sponsor { margin-bottom: 16px; }
+
+.sponsor__head {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 14px; flex-wrap: wrap;
+}
+.sponsor__head h2 { margin: 0 0 4px; }
+.sponsor__head .sub {
+  margin: 0; font-size: .84rem; color: var(--ink-mute);
+}
+
+/* auto-fit rather than a fixed count: three of the five facts are optional, so
+   the row would otherwise end in gaps on most cards. */
+.sponsor__facts {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px 20px; margin: 18px 0 0;
+}
+.sponsor__facts > div { min-width: 0; }
+.sponsor__facts dt {
+  font-size: .72rem; font-weight: 700; letter-spacing: .09em;
+  text-transform: uppercase; color: var(--ink-mute); margin-bottom: 4px;
+}
+.sponsor__facts dd {
+  margin: 0; font-size: .92rem; color: var(--ink);
+  overflow-wrap: anywhere;                 /* long addresses must not widen the grid */
+}
+.sponsor__facts dd .sub {
+  display: block; font-size: .82rem; color: var(--ink-mute);
+}
+
+.sponsor__message {
+  margin: 18px 0 0; padding: 12px 16px;
+  border-left: 3px solid var(--border);
+  background: #F7F8FA;
+  border-radius: 0 var(--radius) var(--radius) 0;
+  font-size: .92rem; line-height: 1.65; color: var(--ink-dim);
+}
+
+/* The update strip reuses .filters, so it only needs its own spacing. */
+.sponsor__update { margin: 18px 0 0; }
+
+/* Setup SQL printed on screen. The build strips .sql from the upload, so this
+   is the only copy that reaches the server. */
+.sqlblock {
+  margin: 14px 0 0; padding: 14px 16px;
+  background: #F7F8FA; border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow-x: auto;                        /* the page itself never scrolls sideways */
+  font-size: .82rem; line-height: 1.55;
+}
+.sqlblock code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }

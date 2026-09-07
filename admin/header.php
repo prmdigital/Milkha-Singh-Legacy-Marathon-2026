@@ -15,6 +15,10 @@ $me      = current_user();
     <nav class="topbar__nav">
       <a href="index.php" <?= $current === 'index.php' ? 'aria-current="page"' : '' ?>>Registrations</a>
 
+      <?php if (can('view_sponsors')): ?>
+        <a href="sponsors.php" <?= $current === 'sponsors.php' ? 'aria-current="page"' : '' ?>>Sponsors</a>
+      <?php endif; ?>
+
       <?php if (can('view_audit')): ?>
         <a href="audit.php" <?= $current === 'audit.php' ? 'aria-current="page"' : '' ?>>Activity</a>
       <?php endif; ?>

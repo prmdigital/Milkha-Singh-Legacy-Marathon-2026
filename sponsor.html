@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Become a Sponsor | Milkha Singh Legacy Marathon 2026</title>
+<meta name="description" content="Put your brand behind The Flying Sikh Milkha Singh Legacy Marathon 2026 in Chandigarh. Tell us what you have in mind and our team will be in touch." />
+<link rel="canonical" href="https://milkhasinghlegacymarathon.com/sponsor.html" />
+<meta name="robots" content="index, follow" />
+<link rel="icon" href="images/favicon.svg" type="image/svg+xml" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="assets/css/styles.css?v=20260906-4" />
+</head>
+<body>
+
+<header class="nav is-stuck">
+  <div class="wrap nav__inner">
+    <a class="nav__brand" href="index.html">
+      <img class="nav__logo" src="images/logo-lockup.png"
+           alt="The Flying Sikh Milkha Singh Legacy Marathon 2026"
+           width="600" height="200" />
+    </a>
+    <nav class="nav__links" aria-label="Main">
+      <a href="index.html">Home</a>
+      <a class="btn btn--sm btn--primary" href="index.html#register">Register Now</a>
+    </nav>
+  </div>
+</header>
+
+<main class="section section--register section--standalone">
+  <div class="wrap">
+    <p class="section__eyebrow">Sponsorship</p>
+    <h2 class="section__title">Become a Sponsor</h2>
+
+    <p class="section__sub">
+      Thousands of runners, a cause the whole region stands behind, and a legend&rsquo;s name
+      on the finish line. Tell us what you have in mind and our team will come back to you.
+    </p>
+
+    <form class="reg" id="sponsorForm" novalidate>
+
+      <fieldset class="reg__block">
+        <legend class="reg__legend">1. Your organisation</legend>
+
+        <p class="reg__required-note">Fields marked <span class="reg__req" aria-hidden="true">*</span> are required.</p>
+
+        <div class="reg__grid">
+          <p class="reg__field reg__field--wide">
+            <label for="spCompany">Company or organisation <span class="reg__req" aria-hidden="true">*</span></label>
+            <input aria-describedby="company-err" id="spCompany" name="company" type="text"
+                   autocomplete="organization" maxlength="160" required />
+            <span class="reg__err" id="company-err" data-err="company"></span>
+          </p>
+          <p class="reg__field">
+            <label for="spWebsite">Website</label>
+            <input aria-describedby="website-err" id="spWebsite" name="website" type="text"
+                   inputmode="url" placeholder="example.com" maxlength="190" />
+            <span class="reg__err" id="website-err" data-err="website"></span>
+          </p>
+          <p class="reg__field">
+            <label for="spCity">City</label>
+            <input id="spCity" name="city" type="text" autocomplete="address-level2" maxlength="90" />
+          </p>
+        </div>
+      </fieldset>
+
+      <fieldset class="reg__block">
+        <legend class="reg__legend">2. Who should we speak to?</legend>
+
+        <div class="reg__grid">
+          <p class="reg__field">
+            <label for="spName">Your name <span class="reg__req" aria-hidden="true">*</span></label>
+            <input aria-describedby="contactName-err" id="spName" name="contactName" type="text"
+                   autocomplete="name" maxlength="120" required />
+            <span class="reg__err" id="contactName-err" data-err="contactName"></span>
+          </p>
+          <p class="reg__field">
+            <label for="spDesignation">Designation</label>
+            <input id="spDesignation" name="designation" type="text"
+                   autocomplete="organization-title" maxlength="120" />
+          </p>
+          <p class="reg__field">
+            <label for="spEmail">Email <span class="reg__req" aria-hidden="true">*</span></label>
+            <input aria-describedby="email-err" id="spEmail" name="email" type="email"
+                   autocomplete="email" maxlength="190" required />
+            <span class="reg__err" id="email-err" data-err="email"></span>
+          </p>
+          <p class="reg__field">
+            <label for="spMobile">Mobile <span class="reg__req" aria-hidden="true">*</span></label>
+            <input aria-describedby="mobile-err" id="spMobile" name="mobile" type="tel"
+                   inputmode="numeric" autocomplete="tel" pattern="[6-9][0-9]{9}"
+                   placeholder="10-digit mobile number" maxlength="10" required />
+            <span class="reg__err" id="mobile-err" data-err="mobile"></span>
+          </p>
+        </div>
+      </fieldset>
+
+      <fieldset class="reg__block">
+        <legend class="reg__legend">3. What do you have in mind?</legend>
+
+        <div class="reg__grid">
+          <p class="reg__field">
+            <label for="spTier">Kind of sponsorship <span class="reg__req" aria-hidden="true">*</span></label>
+            <select aria-describedby="tier-err" id="spTier" name="tier" required>
+              <option value="">Select</option>
+              <option value="title">Title Sponsor</option>
+              <option value="presenting">Presenting Sponsor</option>
+              <option value="associate">Associate Sponsor</option>
+              <option value="category">Race Category Sponsor</option>
+              <option value="inkind">In-kind Partner (goods or services)</option>
+              <option value="unsure">Not sure yet &mdash; advise me</option>
+            </select>
+            <span class="reg__err" id="tier-err" data-err="tier"></span>
+          </p>
+          <p class="reg__field">
+            <label for="spBudget">Indicative budget</label>
+            <select id="spBudget" name="budget">
+              <option value="">Prefer not to say</option>
+              <option value="under1">Under &#8377;1 lakh</option>
+              <option value="1to5">&#8377;1&ndash;5 lakh</option>
+              <option value="5to10">&#8377;5&ndash;10 lakh</option>
+              <option value="over10">Above &#8377;10 lakh</option>
+            </select>
+          </p>
+          <p class="reg__field reg__field--wide">
+            <label for="spMessage">Anything else we should know?</label>
+            <textarea id="spMessage" name="message" rows="4" maxlength="2000"
+                      placeholder="Branding you are hoping for, products you would like to bring, questions for us&hellip;"></textarea>
+          </p>
+        </div>
+      </fieldset>
+
+      <div class="reg__actions">
+        <button class="btn btn--primary btn--lg" type="submit" id="spSubmit">
+          Send enquiry
+        </button>
+        <p class="reg__status" id="spStatus" role="status" aria-live="polite"></p>
+      </div>
+
+    </form>
+
+    <div class="reg__done" id="spDone" hidden>
+      <h3>Thank you &mdash; we have your enquiry</h3>
+      <p>Your reference is <b id="spDoneRef"></b>. A member of our team will be in touch
+      shortly, and we have emailed you a copy for your records.</p>
+      <p class="policy__back"><a class="btn btn--ghost btn--sm" href="index.html">&larr; Back to home</a></p>
+    </div>
+
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="wrap footer__bottom">
+    <p>&copy; 2026 Milkha Singh Legacy Marathon. All rights reserved.</p>
+    <p class="muted">Organised by Forever Legend Foundation</p>
+  </div>
+</footer>
+
+<script src="assets/js/sponsor.js?v=20260906-4"></script>
+</body>
+</html>

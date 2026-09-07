@@ -29,7 +29,7 @@ mkdir -p "$OUT"
 find "$OUT" -mindepth 1 -delete
 
 echo "Copying site ..."
-cp index.html privacy-policy.html refund-policy.html terms-conditions.html \
+cp index.html sponsor.html privacy-policy.html refund-policy.html terms-conditions.html \
    robots.txt sitemap.xml setup.php "$OUT"/
 cp -r assets images api admin "$OUT"/
 

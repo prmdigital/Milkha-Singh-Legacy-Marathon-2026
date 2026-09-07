@@ -119,12 +119,17 @@ function csrf_check(): void
 const ROLE_PERMISSIONS = [
     'owner' => [
         'view_registrations', 'export_csv', 'view_id_proof', 'mark_paid',
+        'view_sponsors', 'manage_sponsors',
         'manage_users', 'manage_settings', 'view_audit',
     ],
     'manager' => [
         'view_registrations', 'export_csv', 'view_id_proof', 'mark_paid',
+        'view_sponsors', 'manage_sponsors',
         'view_audit',
     ],
+    // Sponsorship enquiries carry a named contact at a named company and a
+    // budget. That is commercial information, not the race list, so it stays
+    // with the people who are actually handling it.
     'viewer' => [
         'view_registrations',
     ],
@@ -175,7 +180,7 @@ function require_can(string $permission): void
         no_store();
         header('Content-Type: text/html; charset=utf-8');
         echo '<!doctype html><meta charset="utf-8"><title>Not allowed</title>'
-           . '<link rel="stylesheet" href="assets/admin.css?v=20260906-3">'
+           . '<link rel="stylesheet" href="assets/admin.css?v=20260906-4">'
            . '<main class="wrap"><p class="empty">'
            . 'Your account does not have access to that. '
            . '<a href="index.php">Back to registrations</a>.'

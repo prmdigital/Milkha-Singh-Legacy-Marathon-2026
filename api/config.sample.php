@@ -52,6 +52,9 @@ return [
     // Registration alerts land here.
     'ADMIN_EMAIL' => 'info@milkhasinghlegacymarathon.com',
 
+    // Where sponsorship enquiries are sent. Falls back to ADMIN_EMAIL.
+    'SPONSOR_EMAIL' => 'sponsors@milkhasinghlegacymarathon.com',
+
     // ---- Admin panel (/admin) -------------------------------------------
     // Never store the password itself. Leave the hash empty, open
     // /admin/hash-tool.php once, paste what it gives you here, then DELETE

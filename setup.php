@@ -142,6 +142,29 @@ $SCHEMA = [
   KEY idx_active (is_active)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
 
+"CREATE TABLE IF NOT EXISTS sponsor_enquiries (
+  id           INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  reference    VARCHAR(32)  NOT NULL,
+  company      VARCHAR(160) NOT NULL,
+  contact_name VARCHAR(120) NOT NULL,
+  designation  VARCHAR(120) DEFAULT NULL,
+  email        VARCHAR(190) NOT NULL,
+  mobile       VARCHAR(20)  NOT NULL,
+  website      VARCHAR(190) DEFAULT NULL,
+  city         VARCHAR(90)  DEFAULT NULL,
+  tier         VARCHAR(40)  NOT NULL,
+  budget       VARCHAR(40)  DEFAULT NULL,
+  message      TEXT         DEFAULT NULL,
+  status       ENUM('new','contacted','confirmed','declined') NOT NULL DEFAULT 'new',
+  notes        TEXT         DEFAULT NULL,
+  ip_address   VARCHAR(45)  DEFAULT NULL,
+  created_at   DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  UNIQUE KEY uniq_reference (reference),
+  KEY idx_status (status),
+  KEY idx_created (created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
+
 "CREATE TABLE IF NOT EXISTS admin_audit (
   id         INT UNSIGNED NOT NULL AUTO_INCREMENT,
   action     VARCHAR(40)  NOT NULL,
@@ -411,7 +434,7 @@ $e = static function (string $s): string {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>Setup &middot; Milkha Singh Legacy Marathon</title>
-<link rel="stylesheet" href="admin/assets/admin.css?v=20260906-3">
+<link rel="stylesheet" href="admin/assets/admin.css?v=20260906-4">
 <style>
   .setup { max-width: 720px; margin: 40px auto; padding: 0 20px 80px; }
   .setup h1 { color: var(--navy); margin: 0 0 6px; }

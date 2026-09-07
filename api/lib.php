@@ -470,6 +470,105 @@ function new_registration_id(): string
     return 'MSL26-' . strtoupper(bin2hex(random_bytes(4)));
 }
 
+// ---------------------------------------------------------------------------
+// Sponsorship enquiries
+// ---------------------------------------------------------------------------
+
+/** The tiers offered on the sponsorship form. Nothing else is accepted. */
+const SPONSOR_TIERS = [
+    'title'        => 'Title Sponsor',
+    'presenting'   => 'Presenting Sponsor',
+    'associate'    => 'Associate Sponsor',
+    'category'     => 'Race Category Sponsor',
+    'inkind'       => 'In-kind Partner',
+    'unsure'       => 'Not sure yet — advise me',
+];
+
+/** Indicative bands. Optional, because plenty of enquiries arrive before one. */
+const SPONSOR_BUDGETS = [
+    ''        => 'Prefer not to say',
+    'under1'  => 'Under Rs 1 lakh',
+    '1to5'    => 'Rs 1-5 lakh',
+    '5to10'   => 'Rs 5-10 lakh',
+    'over10'  => 'Above Rs 10 lakh',
+];
+
+function new_sponsor_ref(): string
+{
+    return 'SPN26-' . strtoupper(bin2hex(random_bytes(3)));
+}
+
+/**
+ * Validates a sponsorship enquiry.
+ *
+ * Deliberately looser than validate_runner(): a runner's record has to be
+ * exact because it becomes a bib and a timing entry, whereas this is the start
+ * of a sales conversation. Only the four things needed to call the person back
+ * are required.
+ *
+ * @return array{0: array<string,mixed>, 1: array<string,string>}
+ */
+function validate_sponsor(array $in): array
+{
+    $e = [];
+    $v = [];
+
+    $v['company'] = trim((string) ($in['company'] ?? ''));
+    if (mb_strlen($v['company']) < 2 || mb_strlen($v['company']) > 160) {
+        $e['company'] = 'Please enter your company or organisation name.';
+    }
+
+    $v['contact_name'] = trim((string) ($in['contactName'] ?? ''));
+    if (mb_strlen($v['contact_name']) < 2 || mb_strlen($v['contact_name']) > 120) {
+        $e['contactName'] = 'Please enter your name.';
+    }
+
+    $v['email'] = trim((string) ($in['email'] ?? ''));
+    if (!filter_var($v['email'], FILTER_VALIDATE_EMAIL) || mb_strlen($v['email']) > 190) {
+        $e['email'] = 'Please enter a valid email address.';
+    }
+
+    // Same rule as the runner form: 10 digits starting 6-9, +91 or a leading 0
+    // stripped first.
+    $mobile = preg_replace('/[^0-9]/', '', (string) ($in['mobile'] ?? ''));
+    $mobile = preg_replace('/^(91|0)(?=\d{10}$)/', '', $mobile);
+    if (!preg_match('/^[6-9]\d{9}$/', $mobile)) {
+        $e['mobile'] = 'Please enter a valid 10-digit mobile number.';
+    }
+    $v['mobile'] = $mobile;
+
+    $v['designation'] = mb_substr(trim((string) ($in['designation'] ?? '')), 0, 120);
+    $v['city']        = mb_substr(trim((string) ($in['city'] ?? '')), 0, 90);
+
+    $website = trim((string) ($in['website'] ?? ''));
+    if ($website !== '') {
+        // People type "acme.in", not "https://acme.in". Accept it and store it
+        // in a form that is safe to turn into a link in the admin panel.
+        if (!preg_match('~^https?://~i', $website)) {
+            $website = 'https://' . $website;
+        }
+        if (!filter_var($website, FILTER_VALIDATE_URL) || mb_strlen($website) > 190) {
+            $e['website'] = 'Please enter a valid website address, or leave it blank.';
+            $website = '';
+        }
+    }
+    $v['website'] = $website;
+
+    $tier = (string) ($in['tier'] ?? '');
+    if (!isset(SPONSOR_TIERS[$tier])) {
+        $e['tier'] = 'Please choose the kind of sponsorship you have in mind.';
+        $tier = '';
+    }
+    $v['tier'] = $tier;
+
+    $budget = (string) ($in['budget'] ?? '');
+    $v['budget'] = isset(SPONSOR_BUDGETS[$budget]) ? $budget : '';
+
+    $v['message'] = mb_substr(trim((string) ($in['message'] ?? '')), 0, 2000);
+
+    return [$v, $e];
+}
+
 function client_ip(): string
 {
     return substr((string) ($_SERVER['REMOTE_ADDR'] ?? ''), 0, 45);
