@@ -534,11 +534,18 @@ body::before {
 }
 
 /* ---------- Cause ---------- */
+/* The heading sits inside the left column rather than above the grid, so the
+   picture starts level with "Run for a Drug-Free India" instead of level with
+   the first paragraph. `stretch` then runs it down to the last line of the
+   copy. */
 .cause__grid {
   display: grid; grid-template-columns: 1fr 1fr;
-  gap: clamp(30px, 5vw, 60px); align-items: center;
+  gap: clamp(30px, 5vw, 60px); align-items: stretch;
 }
 .cause__copy p { color: var(--ink-dim); }
+/* The trailing margin would put the foot of the picture 19px below the last
+   line rather than level with it. */
+.cause__copy > :last-child { margin-bottom: 0; }
 
 .pledge {
   margin: 26px 0;
@@ -554,9 +561,21 @@ body::before {
 /* The browser's default figure margin is 16px 40px. .about__media and .route
    both clear it; this one never did, so on a phone 80px of the column went to
    margin and the picture sat inset from everything around it. */
-.cause__media { margin: 0; }
+.cause__media { margin: 0; position: relative; }
+
+/* Taken out of flow so it cannot drive the row height: the row is measured on
+   the copy, and the picture is then sized to exactly that — top level with the
+   heading, bottom level with the last line, which is what was asked for.
+   Sizing by HEIGHT with width auto keeps it square, so the artwork is still
+   shown whole; the slack that leaves goes into the gap rather than into a crop.
+   Pinned right so its edge lines up with the container, not floating mid-column. */
 .cause__media img {
-  width: 100%; border-radius: var(--radius-lg);
+  position: absolute; top: 0; bottom: 0; right: 0;
+  height: 100%; width: auto; max-width: 100%;
+  /* If a narrow column forces max-width to bite, the box stops being square;
+     cover keeps the artwork undistorted rather than letting it stretch. */
+  object-fit: cover;
+  border-radius: var(--radius-lg);
   border: 1px solid var(--border); box-shadow: var(--shadow);
 }
 
@@ -1483,6 +1502,12 @@ body::before {
 
 @media (max-width: 860px) {
   .about__grid, .cause__grid, .race-grid, .fees { grid-template-columns: 1fr; }
+  /* Stacked, there is no column to match the height of, so the picture goes
+     back into the flow at full width. Left absolute it would collapse to a
+     zero-height figure and spill over the section below. */
+  .cause__media img {
+    position: static; height: auto; width: 100%; max-width: none;
+  }
   .fees__includes { max-width: 460px; }
   .about__media { order: -1; max-width: 440px; margin-inline: auto; }
 }
