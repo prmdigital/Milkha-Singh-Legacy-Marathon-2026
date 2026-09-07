@@ -67,6 +67,37 @@
       var(--saffron) 0%, var(--saffron) 33.4%,
       #FFFFFF 33.4%, #FFFFFF 66.6%,
       var(--green) 66.6%, var(--green) 100%);
+
+  /* ---- Section washes ----------------------------------------------------
+     The flat tints made every second screen read as one dead expanse. Each
+     wash is two large, soft blooms in the flag's own colours, set on opposite
+     corners so the tricolour is felt across the block rather than drawn on it.
+     Alphas are deliberately low: this is depth, not decoration, and every one
+     was re-measured against the body text afterwards. The register section
+     already did exactly this by hand; these tokens make it the system.
+
+     Percentage sizes, so the blooms scale with the section instead of sitting
+     in a fixed 700px puddle at the top of a tall one. */
+  --wash-neutral:
+    radial-gradient(ellipse 62% 60% at 10% 0%,   rgba(255,153,51,.10), transparent 64%),
+    radial-gradient(ellipse 58% 56% at 92% 100%, rgba(18,136,7,.075),  transparent 62%);
+
+  --wash-saffron:
+    radial-gradient(ellipse 66% 62% at 88% 2%,   rgba(255,153,51,.24), transparent 66%),
+    radial-gradient(ellipse 58% 58% at 6% 100%,  rgba(18,136,7,.085),  transparent 62%);
+
+  --wash-green:
+    radial-gradient(ellipse 64% 60% at 8% 2%,    rgba(18,136,7,.13),   transparent 65%),
+    radial-gradient(ellipse 58% 56% at 94% 100%, rgba(255,153,51,.13), transparent 62%);
+
+  /* A hairline seam where two washed sections meet, so the join reads as a
+     deliberate edge rather than a colour that gave up. */
+  --seam: linear-gradient(90deg,
+      transparent 0%,
+      rgba(255,153,51,.55) 20%,
+      rgba(190,200,215,.55) 50%,
+      rgba(18,136,7,.55) 80%,
+      transparent 100%);
 }
 
 /* ---------- Reset ---------- */
@@ -474,11 +505,40 @@ body::before {
 }
 
 /* ---------- Sections ---------- */
-.section { padding: clamp(42px, 4.4vw, 62px) 0; position: relative; }
+.section {
+  padding: clamp(42px, 4.4vw, 62px) 0; position: relative;
+  background-color: var(--bg);
+  background-image: var(--wash-neutral);
+}
 /* Tints are set explicitly, not by :nth-of-type — reordering or removing a
-   section used to silently break the light/tinted rhythm. */
-.section--alt { background: var(--bg-saffron); }
-.section--alt-green { background: var(--bg-green); }
+   section used to silently break the light/tinted rhythm. The solid stays as
+   background-color, so the section keeps its identity if the image is ever
+   dropped or fails to paint. */
+.section--alt {
+  background-color: var(--bg-saffron);
+  background-image: var(--wash-saffron);
+}
+.section--alt-green {
+  background-color: var(--bg-green);
+  background-image: var(--wash-green);
+}
+
+/* The seam sits on the tinted sections only: white-on-white needs no help,
+   and a rule on every single boundary would stripe the whole page. */
+.section--alt::before,
+.section--alt-green::before,
+.section--register::before {
+  content: ''; position: absolute; inset: 0 0 auto 0; height: 1px;
+  background: var(--seam);
+}
+
+/* Sections that carry their own artwork or colour opt out — a wash on top of
+   a photograph is just haze. */
+.hero, .footer { background-image: none; }
+
+/* A standalone page opens on this section, so there is nothing above it for a
+   seam to separate it from — it would read as a stray rule under the header. */
+.section--standalone::before { content: none; }
 
 .section__eyebrow {
   font-size: .76rem; font-weight: 700; letter-spacing: .2em; text-transform: uppercase;
@@ -953,10 +1013,8 @@ body::before {
 /* ---------- Register ---------- */
 .section--register {
   text-align: center;
-  background:
-    radial-gradient(700px 380px at 18% 0%,  rgba(255,153,51,.14), transparent 62%),
-    radial-gradient(700px 380px at 82% 100%, rgba(18,136,7,.10),  transparent 62%),
-    #fff;
+  background-color: var(--bg);
+  background-image: var(--wash-neutral);
   border-block: 1px solid var(--border);
 }
 .section--register .section__title { margin-inline: auto; }
@@ -1436,6 +1494,14 @@ body::before {
    padding put the eyebrow underneath the nav bar. */
 .policy,
 .section--standalone { padding: 150px 0 90px; }
+
+/* The policy pages are their own <main>, not a .section, so they miss the wash
+   the rest of the site gets. Given here so a legal page still looks like it
+   belongs to the same site. */
+.policy {
+  background-color: var(--bg);
+  background-image: var(--wash-neutral);
+}
 .policy .section__title { margin-bottom: 10px; }
 .policy__updated { color: var(--ink-mute); font-size: .88rem; margin-bottom: 30px; }
 
