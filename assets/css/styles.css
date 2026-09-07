@@ -1164,6 +1164,15 @@ body::before {
 .fees__main .fees__includes { margin-top: 20px; }
 .fees__main .fees__deal { margin-top: 18px; }
 
+/* In the registration section the strip sits directly above the form, whose own
+   4px saffron cap was landing hard against the strip's 1px edge — two borders
+   touching, which is what read as a conflict. It gets its own clearance here,
+   and centres with the rest of that column. */
+.section--register .fees__deal {
+  max-width: 860px;
+  margin: 0 auto 26px;
+}
+
 
 .reasons li {
   position: relative;
