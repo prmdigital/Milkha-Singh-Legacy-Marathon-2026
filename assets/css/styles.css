@@ -25,11 +25,13 @@
   --border:        #DBE2ED;   /* was #E7EAF0: card edges barely registered */
   --border-strong: #C7D0DF;   /* for edges that should be seen, not felt */
 
-  /* Type scale. The form had drifted to seven near-miss sizes (15.2, 14.88,
-     14.72, 13.76, 13.12, 12.48, 12.16px) with no system behind them. */
-  --fs-xs:         .78rem;   /* hints, errors, eyebrow labels */
-  --fs-sm:         .88rem;   /* field labels, chips, buttons, nav */
-  --fs-md:         .95rem;   /* inputs, card body copy */
+  /* Type scale, on an 18px root. The page had drifted to forty distinct sizes
+     with a lot of real reading matter down at 13-15px; these five are the only
+     steps anything should use. Nothing in the set is below 14px. */
+  --fs-xs:         .78rem;   /* 14px — hints, errors, eyebrow labels */
+  --fs-sm:         .87rem;   /* 15.7px — field labels, chips, buttons, nav */
+  --fs-md:         .95rem;   /* 17px — inputs, card body copy */
+  --fs-lg:         1.06rem;  /* 19px — body copy that needs to lead */
 
   --radius:        6px;
   --radius-lg:     8px;
@@ -102,13 +104,22 @@
 
 /* ---------- Reset ---------- */
 *, *::before, *::after { box-sizing: border-box; }
-html { scroll-behavior: smooth; scroll-padding-top: 96px; }
+/* The root was left at the 16px default while body was set to 17px, so the
+   site ran two different scales at once: everything written in rem — which is
+   most of the stylesheet — measured against 16, and everything inheriting from
+   body measured against 17. Raising the root fixes the mismatch AND lifts every
+   rem value in one move. A percentage, not a px value, so a reader who has set
+   a larger default in their browser still gets it. */
+html {
+  font-size: 112.5%;              /* 18px */
+  scroll-behavior: smooth; scroll-padding-top: 96px;
+}
 body {
   margin: 0;
   background: var(--bg);
   color: var(--ink);
   font-family: var(--font);
-  font-size: 17px;
+  font-size: 1rem;                /* was a hardcoded 17px, adrift from the root */
   line-height: 1.75;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
@@ -375,7 +386,7 @@ body::before {
 }
 .hero__title span { display: block; }
 .hero__flying {
-  font-size: .3em;
+  font-size: max(.86rem, .3em);   /* .3em alone bottomed out at 12.4px on a phone */
   font-weight: 800;
   letter-spacing: .32em; text-indent: .32em;
   text-transform: uppercase;
@@ -451,7 +462,7 @@ body::before {
   background: rgba(255, 255, 255, .14);
   backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, .32);
-  font-size: .74rem; font-weight: 800;
+  font-size: var(--fs-xs); font-weight: 800;
   letter-spacing: .18em; text-transform: uppercase;
   color: #fff;
 }
@@ -500,8 +511,8 @@ body::before {
 }
 .countdown__unit span {
   display: block; margin-top: 6px;
-  font-size: .66rem; font-weight: 700; letter-spacing: .14em;
-  text-transform: uppercase; color: rgba(255, 255, 255, .82);
+  font-size: var(--fs-xs); font-weight: 700; letter-spacing: .12em;
+  text-transform: uppercase; color: rgba(255, 255, 255, .86);
 }
 
 /* ---------- Sections ---------- */
@@ -541,7 +552,7 @@ body::before {
 .section--standalone::before { content: none; }
 
 .section__eyebrow {
-  font-size: .76rem; font-weight: 700; letter-spacing: .2em; text-transform: uppercase;
+  font-size: var(--fs-xs); font-weight: 700; letter-spacing: .16em; text-transform: uppercase;
   color: var(--green-deep); margin-bottom: 12px;
 }
 .section__title {
@@ -701,7 +712,7 @@ body::before {
   display: inline-block; margin-bottom: 12px;
   padding: 5px 12px; border-radius: 999px;
   background: var(--bg-saffron); border: 1px solid rgba(249,115,22,.3);
-  font-size: .66rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase;
+  font-size: var(--fs-xs); font-weight: 800; letter-spacing: .11em; text-transform: uppercase;
   color: var(--saffron-text);
 }
 
@@ -758,7 +769,7 @@ body::before {
   font-size: .98rem; font-weight: 800; letter-spacing: .01em;
   white-space: nowrap;
 }
-.race-card__dist span { font-size: .78em; margin-left: 1px; }
+.race-card__dist span { font-size: .82em; margin-left: 2px; }
 
 /* Eligibility chips */
 .race-card__tags {
@@ -890,7 +901,7 @@ body::before {
   flex: none;
   padding: 6px 13px; border-radius: 999px;
   background: #B94D06; color: #fff;
-  font-size: .7rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase;
+  font-size: var(--fs-xs); font-weight: 800; letter-spacing: .1em; text-transform: uppercase;
   white-space: nowrap;
 }
 .fees__deal-line {
@@ -905,7 +916,7 @@ body::before {
   line-height: 1.15;
 }
 .fees__deal-save em {
-  font-style: normal; font-size: .7rem; font-weight: 700;
+  font-style: normal; font-size: var(--fs-xs); font-weight: 700;
   letter-spacing: .08em; text-transform: uppercase; color: var(--saffron-text);
 }
 .fees__deal-save b { font-size: 1.5rem; font-weight: 800; color: var(--navy); }
@@ -971,7 +982,7 @@ body::before {
 }
 .info__row:last-child { border-bottom: 0; }
 .info__row dt {
-  font-size: .74rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase;
+  font-size: var(--fs-xs); font-weight: 800; letter-spacing: .13em; text-transform: uppercase;
   color: var(--green-deep); padding-top: 3px;
 }
 .info__row dd { margin: 0; font-weight: 600; font-size: 1.02rem; color: var(--navy); }
@@ -1191,7 +1202,7 @@ body::before {
   border-left: 3px solid var(--saffron-deep); background: var(--bg-saffron);
 }
 .reg__summary-label {
-  font-size: .7rem; font-weight: 800; letter-spacing: .12em;
+  font-size: var(--fs-xs); font-weight: 800; letter-spacing: .11em;
   text-transform: uppercase; color: var(--ink-mute);
 }
 .reg__summary-amount { font-size: 1.4rem; font-weight: 800; color: var(--green-deep); }
@@ -1305,7 +1316,7 @@ body::before {
 .footer__slogan { font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--saffron); font-size: .9rem; }
 
 .footer__col h4 {
-  font-size: .74rem; font-weight: 800; letter-spacing: .16em; text-transform: uppercase;
+  font-size: var(--fs-xs); font-weight: 800; letter-spacing: .14em; text-transform: uppercase;
   margin-bottom: 14px;
 }
 .footer__col a {
@@ -1473,15 +1484,16 @@ body::before {
 /* Badge sits on the top-left border, like a fieldset legend, instead of
    competing with the logo for center space below it. */
 .sponsor-tile__badge {
-  position: absolute; top: 0; left: 16px;
+  position: absolute; top: 0; left: 14px;
+  max-width: calc(100% - 28px);
   transform: translateY(-50%);
-  padding: 4px 12px;
+  padding: 4px 11px;
   background: #fff;
   border: 1px solid var(--border);
   border-radius: 999px;
-  font-size: .66rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase;
+  font-size: var(--fs-xs); font-weight: 800; letter-spacing: .06em; text-transform: uppercase;
+  line-height: 1.3;
   color: var(--green-deep);
-  white-space: nowrap;
 }
 .sponsor-tile--org {
   border: 1px solid rgba(18,136,7,.35);
@@ -1583,7 +1595,6 @@ body::before {
 }
 
 @media (max-width: 620px) {
-  body { font-size: 16px; }
   .cards, .contact__grid, .reasons, .footer__inner,
   .press__grid { grid-template-columns: 1fr; }
   /* Single column: clear the spans and let each card size to its content. */
