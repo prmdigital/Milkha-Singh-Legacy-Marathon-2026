@@ -1613,7 +1613,7 @@ body::before {
 
 /* ---------- Ambassadors ---------- */
 .ambassadors__grid {
-  display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px;
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px;
 }
 .ambassador-card {
   padding: 30px 20px; text-align: center;
@@ -1791,7 +1791,7 @@ body::before {
   .reasons         { grid-template-columns: repeat(2, 1fr); }
   .reg__cats       { grid-template-columns: repeat(2, 1fr); }
   .sponsors__grid  { grid-template-columns: repeat(3, 1fr); }
-  .ambassadors__grid { grid-template-columns: repeat(2, 1fr); }
+  .ambassadors__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 /* The full link row plus the brand needs ~1000px. Below that the brand text
@@ -1845,7 +1845,9 @@ body::before {
   .cards .card:nth-child(4),
   .cards .card:nth-child(5) { grid-column: auto; }
   .sponsors__grid  { grid-template-columns: repeat(2, 1fr); }
-  .ambassadors__grid { grid-template-columns: 1fr 1fr; }
+  /* minmax(0,1fr), not 1fr: the letter-spaced MARATHON AMBASSADORS label set a
+     minimum wider than its share and pushed the columns to 145px and 168px. */
+  .ambassadors__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .countdown { grid-template-columns: repeat(4, 1fr); gap: 8px; }
   .race-card__head { flex-direction: column; align-items: flex-start; gap: 10px; }
   .fees__deal-save {
