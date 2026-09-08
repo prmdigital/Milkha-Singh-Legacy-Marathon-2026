@@ -8,10 +8,17 @@
   var nav = document.getElementById('nav');
   var toTop = document.getElementById('toTop');
 
+  /* The button appears once the hero is behind you, not after an arbitrary one
+     screen of scrolling. On a phone the hero is about 1200px tall against an
+     812px viewport, so the old test put the button on screen while the reader
+     was still inside the hero — which is what it is there to scroll back to. */
+  var hero = document.querySelector('.hero');
+
   var onScroll = function () {
     var y = window.scrollY;
+    var past = hero ? hero.offsetTop + hero.offsetHeight - 80 : window.innerHeight;
     nav.classList.toggle('is-stuck', y > 20);
-    toTop.classList.toggle('is-visible', y > window.innerHeight);
+    toTop.classList.toggle('is-visible', y > past);
   };
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();

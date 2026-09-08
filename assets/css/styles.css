@@ -1861,7 +1861,35 @@ body::before {
   .fee-table__price b { font-size: 1.18rem; }
   .countdown__unit { padding: 12px 4px; }
   .info__row { grid-template-columns: 1fr; gap: 4px; padding: 16px 20px; }
-  .hero__cta .btn { width: 100%; }
+  /* The hero was 1536px tall on an 812px screen — nearly two screens before
+     anything else appeared. The top padding was sized for the desktop bar, and
+     every gap between the lines was set for a viewport twice this size. */
+  .hero { padding: 100px 0 36px; }
+  .hero__title { margin-bottom: 12px; }
+  .hero__tagline { margin-bottom: 10px; }
+  .hero__cause { margin-bottom: 14px; }
+  .hero__lead { margin-bottom: 18px; }
+  .hero__meta { margin-bottom: 10px; }
+  .hero__day { margin-bottom: 16px; }
+  .hero__slogan { margin-bottom: 20px; }
+  .hero__panel { padding-top: 20px; padding-bottom: 18px; }
+  .hero__panel + .countdown, .hero__inner .countdown { margin-top: 22px; }
+
+  /* The two biggest blocks were the title at 242px and the lead at 245px, of a
+     1356px hero. Both were sized off a desktop clamp; brought down a step here
+     they still read comfortably over the artwork and give back a screen's worth
+     of scrolling between them. */
+  .hero__title { font-size: clamp(1.9rem, 8.4vw, 2.3rem); line-height: 1.08; }
+  .hero__tagline { font-size: .92rem; }
+  .hero__lead { font-size: .92rem; line-height: 1.65; max-width: 34ch; margin-inline: auto; }
+  .hero__slogan { font-size: .95rem; }
+
+  /* Two stacked 66px slabs is a lot of a first screen to give two links. */
+  .hero__cta { gap: 10px; }
+  .hero__cta .btn {
+    width: 100%;
+    min-height: 48px; padding: 12px 22px; font-size: .95rem;
+  }
   .footer__bottom { justify-content: center; text-align: center; }
 }
 
