@@ -112,7 +112,8 @@
    a larger default in their browser still gets it. */
 html {
   font-size: 112.5%;              /* 18px */
-  scroll-behavior: smooth; scroll-padding-top: 96px;
+  /* Clears the fixed bar: 92px plus its 5px offset and a little air. */
+  scroll-behavior: smooth; scroll-padding-top: 112px;
 }
 body {
   margin: 0;
@@ -211,16 +212,24 @@ body::before {
   border-bottom-color: var(--border);
   box-shadow: 0 6px 24px rgba(18,41,91,.08);
 }
-.nav__inner { display: flex; align-items: center; justify-content: space-between; gap: 20px; min-height: 76px; }
+/* Bar and logo scale together, so the headroom above and below the lockup stays
+   at about 22px from the burger breakpoint all the way up. Fixed at 92/70 the
+   nav overflowed its own container at 1001px — the narrowest width that still
+   shows the full link list — leaving 20px between the logo and the links. */
+.nav__inner {
+  display: flex; align-items: center; justify-content: space-between; gap: 20px;
+  min-height: clamp(78px, 7.2vw, 92px);
+}
 
 .nav__brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
 
 /* The lockup already carries the event name, so the wordmark that used to sit
-   beside it is gone. Sized by height: the nav bar is 76px, and 54px leaves the
-   logo room to breathe without dictating the header height. Width follows the
-   3:1 artwork. */
+   beside it is gone. Sized by height: the bar is 92px and the logo 70px, which
+   leaves 11px of air above and below. There was room for it — at 1280 the gap
+   between the logo and the nav links was 214px, and it is still 166px at this
+   size. Width follows the 3:1 artwork. */
 .nav__logo {
-  height: 54px;
+  height: clamp(56px, 5.5vw, 70px);
   width: auto;
   max-width: 62vw;          /* never crowds out the menu button on a phone */
   object-fit: contain;
@@ -281,7 +290,7 @@ body::before {
   position: relative;
   min-height: 100svh;
   display: flex; align-items: center;
-  padding: 128px 0 56px;
+  padding: 144px 0 56px;   /* clears the taller fixed bar */
   overflow: hidden;
   text-align: center;
 }
@@ -1784,10 +1793,11 @@ body::before {
 
 /* The full link row plus the brand needs ~1000px. Below that the brand text
    wrapped onto four lines, so switch to the burger menu earlier. */
-@media (max-width: 1000px) {
+@media (max-width: 1150px) {
   .nav__toggle { display: block; }
   .nav__links {
-    position: fixed; inset: 81px 0 auto 0;
+    /* Below the bar, whatever height the bar currently is. */
+    position: fixed; inset: clamp(83px, 7.2vw + 5px, 97px) 0 auto 0;
     flex-direction: column; align-items: stretch; gap: 4px;
     padding: 18px 22px 26px;
     background: rgba(255,255,255,.98);
