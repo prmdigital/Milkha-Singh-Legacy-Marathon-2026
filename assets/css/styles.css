@@ -2218,3 +2218,40 @@ body::before {
   .marquee__set li { width: 150px; padding: 0 18px; }
   .marquee__set img { max-height: 52px; }
 }
+
+/* ---------- Line breaking ----------
+   Measured on a 375px screen: four headings ended in a single dangling word
+   (26-33% of the line above it) and ten paragraphs ended in an orphan, while
+   three headings carried hardcoded <br> tags that forced a break the text then
+   wrapped around anyway — the route title came out as four lines, one of them
+   56px long.
+
+   The fix is the browser's own line breaker rather than more manual breaks:
+   `balance` evens the lines of a short block, `pretty` only reworks the last
+   few lines so long copy keeps its rag. Both are progressive — where they are
+   not supported the text wraps exactly as it did before. */
+
+h1, h2, h3, h4,
+.section__title, .route__title, .card h3, .race-card__head h3,
+.fees__includes h3, .footer__col h4, .ambassador-card h4, .press-card h4 {
+  text-wrap: balance;
+}
+
+/* Bounds the measure so balance has something to balance against — an
+   unbounded heading on a wide screen simply fills the line. */
+.section__title, .route__title { max-inline-size: 26ch; }
+.tribute .section__title,
+#categories .section__title,
+#purpose .section__title,
+.section--register .section__title,
+.route__title { margin-inline: auto; }
+
+/* Body copy: `pretty` leaves the earlier lines alone and prevents the last one
+   being a single word, which is what was happening ten times over. */
+p, .lead, .section__sub, blockquote, dd, figcaption, li {
+  text-wrap: pretty;
+}
+
+/* The display lines are short enough to balance outright. */
+.hero__tagline, .hero__slogan, .register__slogan, .hero__cause, .pledge,
+.tribute__slogan { text-wrap: balance; }
