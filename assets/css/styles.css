@@ -927,7 +927,10 @@ body::before {
    of the card. `margin-top: auto` pushed it to the bottom, which on the short
    Disabled card left a gap that read as a missing element between the two. */
 .race-card__note {
-  margin: 10px 0 0; padding: 13px 16px;
+  /* The note is one tint and the fee band below it another. Flush against each
+     other — measured 0px apart — the band's top padding read as a stray empty
+     strip between them rather than as part of the band. */
+  margin: 10px 0 18px; padding: 13px 16px;
   background: var(--bg-saffron); border-radius: var(--radius-lg);
   font-size: .85rem; color: var(--ink-dim); line-height: 1.55;
 }
@@ -2145,18 +2148,34 @@ body::before {
   .offer {
     display: flex; width: 100%;
     align-items: flex-start; justify-content: flex-start;
-    gap: 10px 12px;
+    gap: 8px 12px;
     padding: 14px 16px;
     border-radius: var(--radius-lg);
     text-align: left;
   }
-  .offer__tag { order: 1; }
-  .offer__until {
-    order: 2;
-    padding-left: 0; border-left: 0;
-    align-self: center;
+  /* Tag, then the offer, then when it ends. The date was sitting between the
+     tag and the saving, so the strip announced a deadline before it had said
+     what the deal was. */
+  .offer__tag   { order: 1; }
+  .offer__text  { order: 2; flex: 1 0 100%; }
+  .offer__until { order: 3; flex: 1 0 100%; padding-left: 0; border-left: 0; }
+}
+
+/* The offer strip above the registration form. Its three parts were each a
+   different width, left-aligned in a centre-aligned box, so the tag, the copy
+   and the saving all started and ended in different places — which is what
+   made it look unstructured. One column, all flush left, one rhythm. */
+@media (max-width: 720px) {
+  .fees__deal {
+    display: grid; justify-items: start; gap: 10px;
+    text-align: left;
+    padding: 15px 17px;
   }
-  .offer__text { order: 3; flex: 1 0 100%; }
+  .fees__deal-line { flex: none; }
+  .fees__deal-save {
+    flex-direction: row; align-items: baseline; gap: 8px;
+    padding-left: 0; border-left: 0;
+  }
 }
 
 /* ---------- Sponsor strip ----------
