@@ -4,30 +4,12 @@
 (function () {
   'use strict';
 
-  /* ---------- Sticky nav + back-to-top ---------- */
   var nav = document.getElementById('nav');
   var toTop = document.getElementById('toTop');
 
-  /* The button appears once the hero is behind you, not after an arbitrary one
-     screen of scrolling. On a phone the hero is about 1200px tall against an
-     812px viewport, so the old test put the button on screen while the reader
-     was still inside the hero — which is what it is there to scroll back to. */
-  var hero = document.querySelector('.hero');
-
-  var onScroll = function () {
-    var y = window.scrollY;
-    var past = hero ? hero.offsetTop + hero.offsetHeight - 80 : window.innerHeight;
-    nav.classList.toggle('is-stuck', y > 20);
-    toTop.classList.toggle('is-visible', y > past);
-  };
-  window.addEventListener('scroll', onScroll, { passive: true });
-  onScroll();
-
-  toTop.addEventListener('click', function () {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  });
-
-  /* ---------- Mobile menu ---------- */
+  /* ---------- Menu ----------
+     Defined before the scroll handler below, which closes it when the nav
+     changes state. */
   var toggle = document.getElementById('navToggle');
   var links = document.getElementById('navLinks');
 
@@ -50,6 +32,40 @@
 
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') closeMenu();
+  });
+
+  /* Over the hero the menu is a floating card, not a sheet under a bar, so a
+     tap anywhere outside it puts it away. */
+  document.addEventListener('click', function (e) {
+    if (links.classList.contains('is-open') &&
+        !links.contains(e.target) && !toggle.contains(e.target)) closeMenu();
+  });
+
+  /* ---------- Nav state + back-to-top ----------
+     Over the hero the bar steps aside and only the menu button shows
+     (.is-hero); the full bar returns as the hero's foot reaches it.
+
+     The back-to-top button appears once the hero is behind you, not after an
+     arbitrary one screen of scrolling — it is there to scroll back to it. */
+  var hero = document.querySelector('.hero');
+
+  var onScroll = function () {
+    var y = window.scrollY;
+    var heroEnd = hero ? hero.offsetTop + hero.offsetHeight : window.innerHeight;
+    var inHero = !!hero && y < heroEnd - nav.offsetHeight;
+    if (inHero !== nav.classList.contains('is-hero')) {
+      closeMenu();   // the menu changes shape between the two states
+      nav.classList.toggle('is-hero', inHero);
+    }
+    nav.classList.toggle('is-stuck', y > 20);
+    toTop.classList.toggle('is-visible', y > heroEnd - 80);
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll);
+  onScroll();
+
+  toTop.addEventListener('click', function () {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 
   /* ---------- Countdown ----------

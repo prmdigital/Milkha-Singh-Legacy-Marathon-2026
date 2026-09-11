@@ -33,7 +33,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="assets/css/styles.css?v=20260911-1" />
+<link rel="stylesheet" href="assets/css/styles.css?v=20260911-2" />
 
 <!-- Event schema: this is what makes Google show your date + venue in search results. -->
 <script type="application/ld+json">
@@ -73,7 +73,9 @@
 <a class="skip-link" href="#main">Skip to content</a>
 
 <!-- ============ NAV ============ -->
-<header class="nav" id="nav">
+<!-- is-hero is set here, not only by main.js, so the first paint over the hero
+     is already the lone menu button rather than a flash of the full bar. -->
+<header class="nav is-hero" id="nav">
   <div class="wrap nav__inner">
     <a class="nav__brand" href="#hero">
       <img class="nav__logo" src="images/logo-lockup-2026.png"
@@ -158,21 +160,24 @@
 
     </div><!-- /hero__panel -->
 
-    <!-- Countdown -->
-    <div class="countdown" id="countdown" role="group" aria-label="Time remaining until the marathon">
-      <div class="countdown__unit"><b data-cd="days" aria-live="polite">--</b><span>Days</span></div>
-      <div class="countdown__unit"><b data-cd="hours">--</b><span>Hours</span></div>
-      <div class="countdown__unit"><b data-cd="mins">--</b><span>Minutes</span></div>
-      <div class="countdown__unit"><b data-cd="secs">--</b><span>Seconds</span></div>
+    <!-- Countdown and the video's pause control share one row: the tiles in
+         the centre column, the button in its own column at the right edge, so
+         the two can never overlap. Stacked on narrow screens. -->
+    <div class="hero__timer">
+      <div class="countdown" id="countdown" role="group" aria-label="Time remaining until the marathon">
+        <div class="countdown__unit"><b data-cd="days" aria-live="polite">--</b><span>Days</span></div>
+        <div class="countdown__unit"><b data-cd="hours">--</b><span>Hours</span></div>
+        <div class="countdown__unit"><b data-cd="mins">--</b><span>Minutes</span></div>
+        <div class="countdown__unit"><b data-cd="secs">--</b><span>Seconds</span></div>
+      </div>
+      <!-- Moving content that runs past five seconds needs a way to stop it
+           (WCAG 2.2.2). Hidden until the video is genuinely playing. -->
+      <button class="hero__pause" id="heroPause" type="button"
+              aria-label="Pause background video" hidden>
+        <svg class="hero__icon-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14M16 5v14"/></svg>
+        <svg class="hero__icon-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5l11 7-11 7z"/></svg>
+      </button>
     </div>
-    <!-- Moving content that runs past five seconds needs a way to stop it
-         (WCAG 2.2.2). In the flow under the countdown so it can never sit on
-         top of it; hidden until the video is genuinely playing. -->
-    <button class="hero__pause" id="heroPause" type="button"
-            aria-label="Pause background video" hidden>
-      <svg class="hero__icon-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14M16 5v14"/></svg>
-      <svg class="hero__icon-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5l11 7-11 7z"/></svg>
-    </button>
 
   </div>
 </section>
@@ -1086,7 +1091,7 @@
   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
 </button>
 
-<script src="assets/js/main.js?v=20260911-1" defer></script>
-<script src="assets/js/register.js?v=20260911-1" defer></script>
+<script src="assets/js/main.js?v=20260911-2" defer></script>
+<script src="assets/js/register.js?v=20260911-2" defer></script>
 </body>
 </html>
