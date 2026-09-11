@@ -286,15 +286,16 @@
 /* ---------- Hero background video ----------
    The video is an enhancement over the still, never a requirement. It is only
    fetched once the page has finished loading, and not at all for anyone who
-   has asked for less motion, turned on data saver, or is on a 2G/3G link —
-   5.7 MB is a real cost on prepaid data. Everyone else sees the still until
-   the first frame actually plays, then the video fades in over it. */
+   has asked for less motion, turned on data saver, or is on a 2G link — 6 MB
+   is a real cost on prepaid data. Everyone else sees the still until the
+   first frame actually plays, then the video fades in over it. There is no
+   on-page pause control (removed at the client's request); reduced motion is
+   the way to stop it, and it pauses itself whenever it is out of view. */
 (function () {
   'use strict';
 
   var hero  = document.querySelector('.hero');
   var video = document.getElementById('heroVideo');
-  var btn   = document.getElementById('heroPause');
   if (!hero || !video) return;
 
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -305,7 +306,7 @@
   var slow   = !!conn && (conn.saveData || /(^|-)2g$/.test(conn.effectiveType || ''));
   if (reduce.matches || slow) return;
 
-  var userPaused = false;
+  var stopped = false;   // set for good if reduced motion is turned on mid-visit
   var loaded = false;
 
   var play = function () {
@@ -324,7 +325,6 @@
   // autoplay never swaps the still for a black box.
   video.addEventListener('playing', function () {
     hero.classList.add('has-video');
-    if (btn) btn.hidden = false;
   });
 
   if (document.readyState === 'complete') begin();
@@ -333,33 +333,16 @@
   // No point decoding video nobody can see.
   if ('IntersectionObserver' in window) {
     new IntersectionObserver(function (entries) {
-      if (!loaded || userPaused) return;
+      if (!loaded || stopped) return;
       entries[0].isIntersecting ? play() : video.pause();
     }, { threshold: 0 }).observe(hero);
   }
   document.addEventListener('visibilitychange', function () {
-    if (!loaded || userPaused) return;
+    if (!loaded || stopped) return;
     document.hidden ? video.pause() : play();
   });
 
-  // The pause control. Its label always says what pressing it will do.
-  var sync = function () {
-    if (!btn) return;
-    var paused = video.paused;
-    btn.classList.toggle('is-paused', paused);
-    btn.setAttribute('aria-label', paused ? 'Play background video' : 'Pause background video');
-  };
-  video.addEventListener('play', sync);
-  video.addEventListener('pause', sync);
-
-  if (btn) {
-    btn.addEventListener('click', function () {
-      if (video.paused) { userPaused = false; play(); }
-      else { userPaused = true; video.pause(); }
-    });
-  }
-
   // Switched on mid-visit: stop, and leave it stopped.
-  var onPref = function (e) { if (e.matches) { userPaused = true; video.pause(); } };
+  var onPref = function (e) { if (e.matches) { stopped = true; video.pause(); } };
   reduce.addEventListener ? reduce.addEventListener('change', onPref) : reduce.addListener(onPref);
 })();
