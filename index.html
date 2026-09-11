@@ -33,7 +33,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="assets/css/styles.css?v=20260909-2" />
+<link rel="stylesheet" href="assets/css/styles.css?v=20260911-1" />
 
 <!-- Event schema: this is what makes Google show your date + venue in search results. -->
 <script type="application/ld+json">
@@ -102,7 +102,17 @@
 
 <!-- ============ HERO ============ -->
 <section class="hero" id="hero">
+  <!-- Three layers: the still, the video that fades in over it once it is
+       actually playing, and the shade the copy is read against. The still stays
+       underneath, so anyone who never gets the video — reduced motion, data
+       saver, a slow connection, a refused autoplay — sees the hero exactly as
+       before. No src in the markup: main.js adds it after the page has loaded,
+       so the video never competes with first paint. -->
   <div class="hero__bg" aria-hidden="true"></div>
+  <video class="hero__video" id="heroVideo" muted loop playsinline preload="none"
+         disablepictureinpicture aria-hidden="true" tabindex="-1"
+         data-src="assets/video/hero-loop.mp4?v=20260911-1"></video>
+  <div class="hero__shade" aria-hidden="true"></div>
   <canvas class="hero__dust" id="heroDust" aria-hidden="true"></canvas>
   <div class="wrap hero__inner">
     <div class="hero__panel">
@@ -155,6 +165,14 @@
       <div class="countdown__unit"><b data-cd="mins">--</b><span>Minutes</span></div>
       <div class="countdown__unit"><b data-cd="secs">--</b><span>Seconds</span></div>
     </div>
+    <!-- Moving content that runs past five seconds needs a way to stop it
+         (WCAG 2.2.2). In the flow under the countdown so it can never sit on
+         top of it; hidden until the video is genuinely playing. -->
+    <button class="hero__pause" id="heroPause" type="button"
+            aria-label="Pause background video" hidden>
+      <svg class="hero__icon-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14M16 5v14"/></svg>
+      <svg class="hero__icon-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5l11 7-11 7z"/></svg>
+    </button>
 
   </div>
 </section>
@@ -1068,7 +1086,7 @@
   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
 </button>
 
-<script src="assets/js/main.js?v=20260909-2" defer></script>
-<script src="assets/js/register.js?v=20260909-2" defer></script>
+<script src="assets/js/main.js?v=20260911-1" defer></script>
+<script src="assets/js/register.js?v=20260911-1" defer></script>
 </body>
 </html>

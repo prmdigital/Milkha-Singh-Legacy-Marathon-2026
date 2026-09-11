@@ -296,11 +296,29 @@ body::before {
 }
 .hero__bg {
   position: absolute; inset: 0; z-index: 0;
-  /* The artwork was ghosted under a white veil at 95% opacity, which made it
-     effectively invisible. It now shows at full strength, with only a dark
-     gradient for the copy to sit against — heaviest at the top and bottom
-     where the text and the countdown are, lightest across the middle so the
-     portrait and the tricolour read clearly. */
+  /* The still. It is the whole hero when there is no video, and stays
+     underneath when there is one, so the fade-in never passes through black. */
+  background: url('../../images/hero-bg.jpg') center 34% / cover no-repeat;
+}
+
+/* The video sits between the still and the shade. object-position matches the
+   still's 34%, so the framing does not jump as it fades in over it. */
+.hero__video {
+  position: absolute; inset: 0; z-index: 0;
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: center 34%;
+  opacity: 0;
+  transition: opacity .9s var(--ease);
+  pointer-events: none;
+}
+.hero.has-video .hero__video { opacity: 1; }
+
+/* The shade the copy is read against. It used to be the top layers of the
+   .hero__bg background stack, which works over a still — but a video has to go
+   BETWEEN the picture and the shade, so the shade is its own element now. */
+.hero__shade {
+  position: absolute; inset: 0; z-index: 0;
+  pointer-events: none;
   background:
     /* The shade behind the copy, stretched across the whole section. It is very
        wide and comparatively shallow, so it still falls away above and below
@@ -317,8 +335,7 @@ body::before {
       rgba(10,16,32,.42) 0%,
       rgba(10,16,32,.22) 34%,
       rgba(10,16,32,.26) 64%,
-      rgba(10,16,32,.55) 100%),
-    url('../../images/hero-bg.jpg') center 34% / cover no-repeat;
+      rgba(10,16,32,.55) 100%);
 }
 /* Dust motes drawn by main.js. Sits above the artwork, below the copy, and
    never intercepts a tap. */
@@ -328,12 +345,41 @@ body::before {
   pointer-events: none;
 }
 
-.hero__bg::after {
+.hero__shade::after {
   content: ''; position: absolute; inset: 0;
   /* Fade into the white About section below */
   background: linear-gradient(180deg, transparent 86%, #FFFFFF 100%);
 }
 .hero__inner { position: relative; z-index: 1; }
+
+/* Pause control for the background video. In the flow, centred under the
+   countdown: pinned to the hero's bottom-right corner it landed on the
+   countdown at every width — measured overlap at 375, 900 and 1280 — because
+   the countdown sits close to the hero's foot everywhere. In the flow it cannot
+   collide with anything. Frosted so it is findable without competing with the
+   copy; 44px for the touch target. */
+.hero__pause {
+  position: relative; z-index: 2;
+  margin: 18px auto 0;
+  width: 44px; height: 44px; padding: 12px;
+  display: grid; place-items: center;
+  border: 1px solid rgba(255, 255, 255, .45); border-radius: 50%;
+  background: rgba(5, 9, 20, .45);
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  color: #fff; cursor: pointer;
+  transition: background .18s var(--ease), border-color .18s var(--ease);
+}
+.hero__pause[hidden] { display: none; }
+.hero__pause:hover { background: rgba(5, 9, 20, .68); border-color: #fff; }
+.hero__pause:focus-visible { outline: 3px solid var(--saffron); outline-offset: 3px; }
+.hero__pause svg {
+  grid-area: 1 / 1; width: 18px; height: 18px;
+  fill: none; stroke: currentColor; stroke-width: 2.4;
+  stroke-linecap: round; stroke-linejoin: round;
+}
+.hero__pause .hero__icon-play { display: none; fill: currentColor; stroke: none; }
+.hero__pause.is-paused .hero__icon-pause { display: none; }
+.hero__pause.is-paused .hero__icon-play  { display: block; }
 
 /* A pool of shade rather than a card.
  *
@@ -351,7 +397,7 @@ body::before {
   max-width: 1000px;
   margin-inline: auto;
   padding: 36px clamp(18px, 4vw, 60px) 30px;
-  /* No background of its own: the shade lives on .hero__bg so it can span the
+  /* No background of its own: the shade lives on .hero__shade so it can span the
      whole section rather than stopping at the width of the text column. */
 }
 

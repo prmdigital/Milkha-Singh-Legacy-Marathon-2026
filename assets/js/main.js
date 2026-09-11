@@ -266,3 +266,84 @@
   var onPref = function (e) { if (e.matches) { stop(); ctx.clearRect(0, 0, w, h); } else { start(); } };
   reduce.addEventListener ? reduce.addEventListener('change', onPref) : reduce.addListener(onPref);
 })();
+
+/* ---------- Hero background video ----------
+   The video is an enhancement over the still, never a requirement. It is only
+   fetched once the page has finished loading, and not at all for anyone who
+   has asked for less motion, turned on data saver, or is on a 2G/3G link —
+   5.7 MB is a real cost on prepaid data. Everyone else sees the still until
+   the first frame actually plays, then the video fades in over it. */
+(function () {
+  'use strict';
+
+  var hero  = document.querySelector('.hero');
+  var video = document.getElementById('heroVideo');
+  var btn   = document.getElementById('heroPause');
+  if (!hero || !video) return;
+
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  var conn   = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+  // Only data saver and 2G skip the video. Chrome's "3g" is an estimate from
+  // round-trip time, and busy Indian 4G reads as 3g often enough that skipping
+  // it would hide the video from a large share of real phones.
+  var slow   = !!conn && (conn.saveData || /(^|-)2g$/.test(conn.effectiveType || ''));
+  if (reduce.matches || slow) return;
+
+  var userPaused = false;
+  var loaded = false;
+
+  var play = function () {
+    var p = video.play();
+    if (p && p.catch) p.catch(function () { /* autoplay refused: the still stays */ });
+  };
+
+  var begin = function () {
+    loaded = true;
+    video.src = video.getAttribute('data-src');
+    video.muted = true;               // the property too: iOS checks it, not the attribute
+    play();
+  };
+
+  // Reveal only once frames are really moving, so a refused or stalled
+  // autoplay never swaps the still for a black box.
+  video.addEventListener('playing', function () {
+    hero.classList.add('has-video');
+    if (btn) btn.hidden = false;
+  });
+
+  if (document.readyState === 'complete') begin();
+  else window.addEventListener('load', begin, { once: true });
+
+  // No point decoding video nobody can see.
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(function (entries) {
+      if (!loaded || userPaused) return;
+      entries[0].isIntersecting ? play() : video.pause();
+    }, { threshold: 0 }).observe(hero);
+  }
+  document.addEventListener('visibilitychange', function () {
+    if (!loaded || userPaused) return;
+    document.hidden ? video.pause() : play();
+  });
+
+  // The pause control. Its label always says what pressing it will do.
+  var sync = function () {
+    if (!btn) return;
+    var paused = video.paused;
+    btn.classList.toggle('is-paused', paused);
+    btn.setAttribute('aria-label', paused ? 'Play background video' : 'Pause background video');
+  };
+  video.addEventListener('play', sync);
+  video.addEventListener('pause', sync);
+
+  if (btn) {
+    btn.addEventListener('click', function () {
+      if (video.paused) { userPaused = false; play(); }
+      else { userPaused = true; video.pause(); }
+    });
+  }
+
+  // Switched on mid-visit: stop, and leave it stopped.
+  var onPref = function (e) { if (e.matches) { userPaused = true; video.pause(); } };
+  reduce.addEventListener ? reduce.addEventListener('change', onPref) : reduce.addListener(onPref);
+})();
