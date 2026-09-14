@@ -1213,6 +1213,19 @@ body::before {
   border: 1px solid var(--border); background: #fff;
 }
 
+/* The event lockup in the map's empty top-right corner. Placed in percentages
+   of the map, measured on the artwork (1672×941): that corner is clear from
+   x 1180 to the right edge and from the top down to the 8.7 km marker at
+   y 254, so a 420px-wide logo at 1215, 45 stays off the course at every size
+   the map is drawn. .route .route__logo outranks .route img, whose full width,
+   border and white fill are for the map, not the logo. */
+.route__map { position: relative; }
+.route .route__logo {
+  position: absolute; left: 72.7%; top: 4.8%; width: 25.1%; height: auto;
+  border: 0; border-radius: 0; background: none;
+  pointer-events: none;
+}
+
 /* ---------- Event Info ---------- */
 .info { display: grid; grid-template-columns: 1.4fr .6fr; gap: 30px; align-items: start; }
 
