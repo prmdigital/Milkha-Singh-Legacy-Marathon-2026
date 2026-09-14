@@ -131,7 +131,7 @@ $SCHEMA = [
   full_name     VARCHAR(120) NOT NULL,
   email         VARCHAR(190) DEFAULT NULL,
   password_hash VARCHAR(255) NOT NULL,
-  role          ENUM('owner','manager','viewer') NOT NULL DEFAULT 'viewer',
+  role          ENUM('owner','administrator','manager','editor','viewer') NOT NULL DEFAULT 'editor',
   is_active     TINYINT(1)   NOT NULL DEFAULT 1,
   must_change   TINYINT(1)   NOT NULL DEFAULT 0,
   created_by    INT UNSIGNED DEFAULT NULL,

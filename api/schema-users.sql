@@ -10,12 +10,11 @@ CREATE TABLE IF NOT EXISTS admin_users (
   -- Only ever a hash. Nothing in this system stores or can recover a password.
   password_hash VARCHAR(255) NOT NULL,
 
-  -- owner   : everything, including managing these users
-  -- manager : the whole registration desk — export, ID proofs, mark as paid
-  -- viewer  : read the list and the records, nothing else. No export and no ID
-  --           proofs, because those are the two ways bulk personal data leaves
-  --           the building.
-  role          ENUM('owner','manager','viewer') NOT NULL DEFAULT 'viewer',
+  -- owner (shown as Admin) and administrator : everything, including adding
+  --                                           users and assigning roles
+  -- manager, editor : every feature except managing users
+  -- viewer          : legacy, no longer offered
+  role          ENUM('owner','administrator','manager','editor','viewer') NOT NULL DEFAULT 'editor',
 
   -- Deactivated rather than deleted: an audit entry that points at a user who
   -- no longer exists tells you nothing when you most need it to.

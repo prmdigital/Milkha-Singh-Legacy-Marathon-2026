@@ -116,36 +116,45 @@ function csrf_check(): void
  * viewer deliberately has neither export nor ID proofs: those are the two ways
  * personal data leaves the building in bulk.
  */
+/* Every role gets the same working features, at the client's request. The one
+   difference is managing admin users: adding them and assigning roles is for
+   the Admin (the setup/owner account) and Administrators only. */
+const BASE_PERMISSIONS = [
+    'view_registrations', 'export_csv', 'view_id_proof', 'mark_paid',
+    'view_sponsors', 'manage_sponsors', 'manage_settings', 'view_audit',
+];
+
 const ROLE_PERMISSIONS = [
-    'owner' => [
-        'view_registrations', 'export_csv', 'view_id_proof', 'mark_paid',
-        'view_sponsors', 'manage_sponsors',
-        'manage_users', 'manage_settings', 'view_audit',
-    ],
-    'manager' => [
-        'view_registrations', 'export_csv', 'view_id_proof', 'mark_paid',
-        'view_sponsors', 'manage_sponsors',
-        'view_audit',
-    ],
-    // Sponsorship enquiries carry a named contact at a named company and a
-    // budget. That is commercial information, not the race list, so it stays
-    // with the people who are actually handling it.
-    'viewer' => [
-        'view_registrations',
-    ],
+    'owner'         => [...BASE_PERMISSIONS, 'manage_users'],
+    'administrator' => [...BASE_PERMISSIONS, 'manage_users'],
+    'manager'       => BASE_PERMISSIONS,
+    'editor'        => BASE_PERMISSIONS,
+    // Legacy role from before Manager/Editor; no longer offered.
+    'viewer'        => BASE_PERMISSIONS,
 ];
 
 const ROLE_LABELS = [
-    'owner'   => 'Owner',
-    'manager' => 'Manager',
-    'viewer'  => 'Viewer',
+    'owner'         => 'Admin',
+    'administrator' => 'Administrator',
+    'manager'       => 'Manager',
+    'editor'        => 'Editor',
+    'viewer'        => 'Viewer',
 ];
 
+/** The roles offered when adding or editing a user, in picker order. */
+const ASSIGNABLE_ROLES = ['administrator', 'manager', 'editor'];
+
 const ROLE_DESCRIPTIONS = [
-    'owner'   => 'Everything, including adding and removing admin users.',
-    'manager' => 'Registrations, ID proofs, CSV export and recording payments.',
-    'viewer'  => 'Read only. Cannot export or open ID proofs.',
+    'administrator' => 'Everything, including adding users and assigning roles.',
+    'manager'       => 'Everything except adding users and assigning roles.',
+    'editor'        => 'Everything except adding users and assigning roles.',
 ];
+
+/** Admin and Administrator are the only roles that may manage users. */
+function role_manages_users(string $role): bool
+{
+    return in_array('manage_users', ROLE_PERMISSIONS[$role] ?? [], true);
+}
 
 function current_user(): array
 {
@@ -219,6 +228,7 @@ function ensure_admin_users_table(): bool
 {
     try {
         db()->query('SELECT 1 FROM admin_users LIMIT 1');
+        ensure_role_values();
         return true;
     } catch (Throwable $e) {
         // Missing: fall through and create it.
@@ -231,7 +241,7 @@ function ensure_admin_users_table(): bool
           full_name     VARCHAR(120) NOT NULL,
           email         VARCHAR(190) DEFAULT NULL,
           password_hash VARCHAR(255) NOT NULL,
-          role          ENUM('owner','manager','viewer') NOT NULL DEFAULT 'viewer',
+          role          ENUM('owner','administrator','manager','editor','viewer') NOT NULL DEFAULT 'editor',
           is_active     TINYINT(1)   NOT NULL DEFAULT 1,
           must_change   TINYINT(1)   NOT NULL DEFAULT 0,
           created_by    INT UNSIGNED DEFAULT NULL,
@@ -258,6 +268,27 @@ function ensure_admin_users_table(): bool
         return true;
     } catch (Throwable $e) {
         return false;   // no CREATE permission: the page shows the SQL instead
+    }
+}
+
+/**
+ * Widens the role column on a table created before Administrator and Editor
+ * existed, so saving one of those roles is not rejected by MySQL. Checks the
+ * column first, so the ALTER runs once, not on every page load.
+ */
+function ensure_role_values(): void
+{
+    try {
+        $col  = db()->query("SHOW COLUMNS FROM admin_users LIKE 'role'")->fetch();
+        $type = (string) ($col['Type'] ?? '');
+        if ($type !== '' && (!str_contains($type, "'administrator'") || !str_contains($type, "'editor'"))) {
+            db()->exec(
+                "ALTER TABLE admin_users MODIFY COLUMN role
+                   ENUM('owner','administrator','manager','editor','viewer') NOT NULL DEFAULT 'editor'"
+            );
+        }
+    } catch (Throwable $e) {
+        error_log('[marathon-admin] widen role column: ' . $e->getMessage());
     }
 }
 

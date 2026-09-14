@@ -22,10 +22,13 @@ $flash   = '';
 $errors  = [];
 $editing = null;
 
-/** Deactivating or demoting the last owner would lock everyone out. */
+/**
+ * Active accounts that can manage users (Admin or Administrator). Deactivating
+ * or demoting the last of them would leave nobody able to add users.
+ */
 function active_owner_count(?int $excludingId = null): int
 {
-    $sql = "SELECT COUNT(*) FROM admin_users WHERE role = 'owner' AND is_active = 1";
+    $sql = "SELECT COUNT(*) FROM admin_users WHERE role IN ('owner','administrator') AND is_active = 1";
     $params = [];
     if ($excludingId !== null) {
         $sql .= ' AND id <> ?';
@@ -39,6 +42,20 @@ function active_owner_count(?int $excludingId = null): int
 function valid_username(string $u): bool
 {
     return (bool) preg_match('/^[a-z0-9._-]{3,40}$/i', $u);
+}
+
+/** The role of an existing account, or '' when there is no such account. */
+function role_of(int $id): string
+{
+    $st = db()->prepare('SELECT role FROM admin_users WHERE id = ?');
+    $st->execute([$id]);
+    return (string) ($st->fetchColumn() ?: '');
+}
+
+/** An Admin account can only be changed by an Admin, not by an Administrator. */
+function may_modify(int $id): bool
+{
+    return role_of($id) !== 'owner' || current_role() === 'owner';
 }
 
 // ---------------------------------------------------------------------------
@@ -56,7 +73,7 @@ if ($tableReady && ($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
         $username = strtolower(trim((string) ($_POST['username'] ?? '')));
         $fullName = trim((string) ($_POST['full_name'] ?? ''));
         $email    = trim((string) ($_POST['email'] ?? ''));
-        $role     = (string) ($_POST['role'] ?? 'viewer');
+        $role     = (string) ($_POST['role'] ?? 'editor');
         $password = (string) ($_POST['password'] ?? '');
 
         if (!valid_username($username)) {
@@ -68,14 +85,14 @@ if ($tableReady && ($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
         if ($email !== '' && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $errors[] = 'That email address does not look right.';
         }
-        if (!isset(ROLE_PERMISSIONS[$role])) {
-            $errors[] = 'Choose a role.';
+        if (!in_array($role, ASSIGNABLE_ROLES, true)) {
+            $errors[] = 'Choose a role: Administrator, Manager or Editor.';
         }
-        // The config-file login stops working the moment any account exists,
-        // so a first account that is not an owner would leave nobody able to
-        // manage users.
-        if (!has_db_users() && $role !== 'owner') {
-            $errors[] = 'The first account must be an Owner, because the setup login stops working once it exists. Add your own Owner account first.';
+        // The setup login stops working the moment any account exists, so a
+        // first account that cannot manage users would lock everyone out of
+        // this page.
+        elseif (!has_db_users() && !role_manages_users($role)) {
+            $errors[] = 'The first account must be an Administrator, because the setup login stops working once it exists. Add your own Administrator account first.';
         }
         if (strlen($password) < 12) {
             $errors[] = 'The password must be at least 12 characters.';
@@ -108,12 +125,14 @@ if ($tableReady && ($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
     // ---- Change role ------------------------------------------------------
     if ($action === 'set_role' && $id > 0) {
         $role = (string) ($_POST['role'] ?? '');
-        if (!isset(ROLE_PERMISSIONS[$role])) {
+        if (!in_array($role, ASSIGNABLE_ROLES, true)) {
             $errors[] = 'Unknown role.';
-        } elseif ($id === $me['id'] && $role !== 'owner') {
-            $errors[] = 'You cannot take away your own owner access.';
-        } elseif ($role !== 'owner' && active_owner_count($id) === 0) {
-            $errors[] = 'That is the last owner. Make someone else an owner first.';
+        } elseif (!may_modify($id)) {
+            $errors[] = 'Only the Admin account can change another Admin.';
+        } elseif ($id === $me['id'] && !role_manages_users($role)) {
+            $errors[] = 'You cannot take away your own access to manage users.';
+        } elseif (!role_manages_users($role) && active_owner_count($id) === 0) {
+            $errors[] = 'That is the last Administrator. Make someone else an Administrator first.';
         } else {
             db()->prepare('UPDATE admin_users SET role = ? WHERE id = ?')->execute([$role, $id]);
             audit('user_role_changed', 'id ' . $id . ' -> ' . $role);
@@ -126,8 +145,10 @@ if ($tableReady && ($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
         $active = (int) ($_POST['active'] ?? 0) === 1;
         if ($id === $me['id'] && !$active) {
             $errors[] = 'You cannot deactivate your own account.';
-        } elseif (!$active && active_owner_count($id) === 0) {
-            $errors[] = 'That is the last active owner. Promote someone else first.';
+        } elseif (!may_modify($id)) {
+            $errors[] = 'Only the Admin account can change another Admin.';
+        } elseif (!$active && role_manages_users(role_of($id)) && active_owner_count($id) === 0) {
+            $errors[] = 'That is the last active Administrator. Make someone else an Administrator first.';
         } else {
             db()->prepare('UPDATE admin_users SET is_active = ? WHERE id = ?')
                 ->execute([$active ? 1 : 0, $id]);
@@ -141,6 +162,8 @@ if ($tableReady && ($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
         $password = (string) ($_POST['password'] ?? '');
         if (strlen($password) < 12) {
             $errors[] = 'The password must be at least 12 characters.';
+        } elseif (!may_modify($id)) {
+            $errors[] = 'Only the Admin account can change another Admin.';
         } else {
             db()->prepare('UPDATE admin_users SET password_hash = ?, must_change = 1 WHERE id = ?')
                 ->execute([password_hash($password, PASSWORD_DEFAULT), $id]);
@@ -230,8 +253,9 @@ $csrf = csrf_token();
   <?php if ($bootstrapOnly): ?>
     <p class="alert alert--warn">
       You are signed in with the setup login from the configuration file.
-      Add <b>your own Owner account</b> first. As soon as any account exists, that
-      setup login stops working, so the first account must be an Owner.
+      Add <b>your own Administrator account</b> first. As soon as any account exists,
+      that setup login stops working, so Manager and Editor unlock after the first
+      Administrator is added.
     </p>
   <?php endif; ?>
 
@@ -257,10 +281,12 @@ $csrf = csrf_token();
         <label>
           <span>Role</span>
           <select name="role" required>
-            <?php foreach (ROLE_LABELS as $key => $label): ?>
-              <?php if ($bootstrapOnly && $key !== 'owner') { continue; } ?>
-              <option value="<?= h($key) ?>" <?= $key === ($bootstrapOnly ? 'owner' : 'viewer') ? 'selected' : '' ?>>
-                <?= h($label) ?>
+            <?php foreach (ASSIGNABLE_ROLES as $key): ?>
+              <?php $locked = $bootstrapOnly && !role_manages_users($key); ?>
+              <option value="<?= h($key) ?>"
+                      <?= $key === ($bootstrapOnly ? 'administrator' : 'editor') ? 'selected' : '' ?>
+                      <?= $locked ? 'disabled' : '' ?>>
+                <?= h(ROLE_LABELS[$key]) ?><?= $locked ? ' (add an Administrator first)' : '' ?>
               </option>
             <?php endforeach; ?>
           </select>
@@ -308,11 +334,15 @@ $csrf = csrf_token();
               <input type="hidden" name="csrf" value="<?= h($csrf) ?>">
               <input type="hidden" name="action" value="set_role">
               <input type="hidden" name="id" value="<?= (int) $u['id'] ?>">
+              <?php if (!in_array($u['role'], ASSIGNABLE_ROLES, true)): ?>
+                <b><?= h(role_label((string) $u['role'])) ?></b>
+              <?php else: ?>
               <select name="role" onchange="this.form.submit()" <?= (int) $u['id'] === $me['id'] ? 'disabled' : '' ?>>
-                <?php foreach (ROLE_LABELS as $key => $label): ?>
-                  <option value="<?= h($key) ?>" <?= $u['role'] === $key ? 'selected' : '' ?>><?= h($label) ?></option>
+                <?php foreach (ASSIGNABLE_ROLES as $key): ?>
+                  <option value="<?= h($key) ?>" <?= $u['role'] === $key ? 'selected' : '' ?>><?= h(ROLE_LABELS[$key]) ?></option>
                 <?php endforeach; ?>
               </select>
+              <?php endif; ?>
             </form>
           </td>
           <td>
