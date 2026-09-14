@@ -71,7 +71,7 @@
     amountEl.textContent = p.base === 0 ? 'Free' : rupees(p.payable);
     noteEl.textContent = p.base === 0
       ? 'No payment needed for the 1 KM category.'
-      : (p.early ? 'Discounted price, till 7 October 2026.' : 'Standard entry price.')
+      : (p.early ? 'Early bird price, till 7 October 2026.' : 'Standard entry price.')
         + ' Our team will contact you to collect it.';
     submitBtn.textContent = SUBMIT_LABEL;
   }

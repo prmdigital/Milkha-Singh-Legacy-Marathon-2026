@@ -844,7 +844,8 @@ body::before {
   text-wrap: balance;
 }
 /* "₹300 discount" never splits: on a narrow screen the line breaks after
-   "Get up to" instead of stranding the amount or the word on a line alone. */
+   "Early bird: Get up to" instead of stranding the amount or the word on a
+   line alone. */
 .offer__nowrap { white-space: nowrap; }
 .offer__text b {
   display: inline-block; margin-left: 6px; padding: 2px 12px;
