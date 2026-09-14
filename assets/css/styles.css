@@ -841,7 +841,11 @@ body::before {
    label used to take. Deep brown on white measures 7.8:1. */
 .offer__text {
   color: #fff; font-size: clamp(.95rem, 1.6vw, 1.08rem); font-weight: 700; letter-spacing: .01em;
+  text-wrap: balance;
 }
+/* "save up to ₹300" never splits: on a narrow screen the line breaks after
+   "Register early," instead of stranding the amount on a line of its own. */
+.offer__nowrap { white-space: nowrap; }
 .offer__text b {
   display: inline-block; margin-left: 6px; padding: 2px 12px;
   border-radius: 999px; background: #fff; color: #8F3703;
@@ -1088,30 +1092,48 @@ body::before {
 /* The early-entry banner. It used to be a quiet strip in the sidebar, three
    columns away from the prices it was describing; it now sits directly under
    the fee table so the saving is read in the same glance as the numbers. */
+/* The early-bird strip above the form: icon | what and when | how much. The
+   copy used to sit centred in the middle of a wide box with nothing either
+   side, inheriting the register section's text-align: center. A grid gives
+   each part a fixed place, and the text reads from a left edge. */
 .fees__deal {
-  display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
-  margin: 0; padding: 16px 20px;
-  border-radius: var(--radius-lg);
+  display: grid; grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center; column-gap: 16px;
+  margin: 0; padding: 16px 22px 16px 16px;
+  border-radius: 14px;
   background: linear-gradient(100deg, #FFF1DC 0%, #FFE6C0 52%, #FFF4E6 100%);
   border: 1px solid #F0C489;
   box-shadow: var(--shadow-soft);
+  text-align: left;
 }
-.fees__deal-line {
-  flex: 1 1 280px; min-width: 0;
-  font-size: var(--fs-sm); color: var(--ink); line-height: 1.6;
+.fees__deal-icon {
+  width: 46px; height: 46px; border-radius: 50%;
+  display: grid; place-items: center;
+  background: #B94D06; color: #fff;
+  box-shadow: 0 4px 12px rgba(146, 57, 4, .25);
 }
-.fees__deal-line b { color: var(--navy); font-weight: 800; }
+.fees__deal-icon svg {
+  width: 22px; height: 22px;
+  fill: none; stroke: currentColor; stroke-width: 2;
+  stroke-linecap: round; stroke-linejoin: round;
+}
+.fees__deal-line { display: grid; gap: 2px; min-width: 0; line-height: 1.45; }
+.fees__deal-line b {
+  font-size: var(--fs-lg); font-weight: 800; color: var(--navy);
+  text-wrap: balance;
+}
+.fees__deal-line span { font-size: var(--fs-sm); color: var(--ink); text-wrap: pretty; }
 
 .fees__deal-save {
-  flex: none; display: flex; flex-direction: column; align-items: flex-end;
-  gap: 2px; padding-left: 18px; border-left: 1px solid #EFC69A;
-  line-height: 1.15;
+  display: flex; flex-direction: column; align-items: flex-end;
+  gap: 2px; padding-left: 20px; border-left: 1px solid #EFC69A;
+  line-height: 1.15; white-space: nowrap;
 }
 .fees__deal-save em {
   font-style: normal; font-size: var(--fs-xs); font-weight: 700;
   letter-spacing: .08em; text-transform: uppercase; color: var(--saffron-text);
 }
-.fees__deal-save b { font-size: 1.5rem; font-weight: 800; color: var(--navy); }
+.fees__deal-save b { font-size: 1.6rem; font-weight: 800; color: var(--navy); }
 
 /* Now a sidebar card rather than a strip under the table. */
 .fees__includes {
@@ -1925,10 +1947,6 @@ body::before {
      phone. */
   .countdown { grid-template-columns: repeat(4, minmax(0, 78px)); gap: 8px; }
   .race-card__head { flex-direction: column; align-items: flex-start; gap: 10px; }
-  .fees__deal-save {
-    flex-direction: row; align-items: baseline; gap: 8px;
-    padding-left: 0; border-left: 0;
-  }
   .reg { padding: 22px 18px 20px; }
   .reg__grid { grid-template-columns: 1fr; }
   .reg__actions .btn { width: 100%; }
@@ -2242,35 +2260,34 @@ body::before {
    the middle of them — which is what looked unprofessional. Under 640px it
    becomes a left-aligned strip with a modest radius: same colour, same weight,
    but a shape that survives three lines of content. */
-@media (max-width: 640px) {
+/* Below 760px the pill would wrap mid-row, leaving the date's divider at the
+   start of a second line inside a fully rounded shape. Instead it becomes a
+   centred card — the saving, then when it ends — under the centred heading. */
+@media (max-width: 760px) {
   .offer {
-    display: flex; width: 100%;
-    align-items: flex-start; justify-content: flex-start;
-    gap: 8px 12px;
-    padding: 14px 16px;
-    border-radius: var(--radius-lg);
-    text-align: left;
+    flex-direction: column; align-items: center; gap: 6px;
+    padding: 14px 20px;
+    border-radius: 14px;
+    text-align: center;
   }
-  /* The saving, then when it ends, each on its own line: the strip says what
-     the deal is before it announces a deadline. */
-  .offer__text  { flex: 1 0 100%; }
-  .offer__until { flex: 1 0 100%; padding-left: 0; border-left: 0; }
+  .offer__until { padding-left: 0; border-left: 0; }
 }
 
-/* The offer strip above the registration form. Its three parts were each a
-   different width, left-aligned in a centre-aligned box, so the tag, the copy
-   and the saving all started and ended in different places — which is what
-   made it look unstructured. One column, all flush left, one rhythm. */
+/* The early-bird strip on narrow screens: the icon stays beside the copy, and
+   the saving drops to its own full-width row under a rule, label on the left
+   and amount on the right, so nothing is squeezed into a third column. */
 @media (max-width: 720px) {
   .fees__deal {
-    display: grid; justify-items: start; gap: 10px;
-    text-align: left;
-    padding: 15px 17px;
+    grid-template-columns: auto minmax(0, 1fr);
+    row-gap: 12px; column-gap: 14px;
+    padding: 16px;
   }
-  .fees__deal-line { flex: none; }
+  .fees__deal-icon { width: 40px; height: 40px; align-self: start; }
+  .fees__deal-icon svg { width: 20px; height: 20px; }
   .fees__deal-save {
-    flex-direction: row; align-items: baseline; gap: 8px;
-    padding-left: 0; border-left: 0;
+    grid-column: 1 / -1;
+    flex-direction: row; align-items: baseline; justify-content: space-between;
+    padding: 10px 0 0; border-left: 0; border-top: 1px solid #EFC69A;
   }
 }
 
