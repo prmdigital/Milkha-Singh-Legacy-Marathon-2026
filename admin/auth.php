@@ -116,17 +116,23 @@ function csrf_check(): void
  * viewer deliberately has neither export nor ID proofs: those are the two ways
  * personal data leaves the building in bulk.
  */
-/* Every role gets the same working features, at the client's request. The one
-   difference is managing admin users: adding them and assigning roles is for
-   the Admin (the setup/owner account) and Administrators only. */
+/* Managers and Editors work the registration desk. Sponsors, the Activity log,
+   payment Settings and managing users belong to the Admin (the setup/owner
+   account) and Administrators only, at the client's request. Each of those
+   pages calls require_can() itself, so a typed URL is refused as well as the
+   nav link being hidden. */
 const BASE_PERMISSIONS = [
     'view_registrations', 'export_csv', 'view_id_proof', 'mark_paid',
-    'view_sponsors', 'manage_sponsors', 'manage_settings', 'view_audit',
+];
+
+const ADMIN_PERMISSIONS = [
+    ...BASE_PERMISSIONS,
+    'view_sponsors', 'manage_sponsors', 'manage_settings', 'view_audit', 'manage_users',
 ];
 
 const ROLE_PERMISSIONS = [
-    'owner'         => [...BASE_PERMISSIONS, 'manage_users'],
-    'administrator' => [...BASE_PERMISSIONS, 'manage_users'],
+    'owner'         => ADMIN_PERMISSIONS,
+    'administrator' => ADMIN_PERMISSIONS,
     'manager'       => BASE_PERMISSIONS,
     'editor'        => BASE_PERMISSIONS,
     // Legacy role from before Manager/Editor; no longer offered.
@@ -145,9 +151,9 @@ const ROLE_LABELS = [
 const ASSIGNABLE_ROLES = ['administrator', 'manager', 'editor'];
 
 const ROLE_DESCRIPTIONS = [
-    'administrator' => 'Everything, including adding users and assigning roles.',
-    'manager'       => 'Everything except adding users and assigning roles.',
-    'editor'        => 'Everything except adding users and assigning roles.',
+    'administrator' => 'Everything: registrations, sponsors, activity log, payment settings, and adding users.',
+    'manager'       => 'Registrations only: view, export, ID proofs and recording payments.',
+    'editor'        => 'Registrations only: view, export, ID proofs and recording payments.',
 ];
 
 /** Admin and Administrator are the only roles that may manage users. */
