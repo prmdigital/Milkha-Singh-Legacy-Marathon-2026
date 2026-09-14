@@ -843,8 +843,8 @@ body::before {
   color: #fff; font-size: clamp(.95rem, 1.6vw, 1.08rem); font-weight: 700; letter-spacing: .01em;
   text-wrap: balance;
 }
-/* "up to ₹300" never splits: on a narrow screen the line breaks after
-   "Early bird discount" instead of stranding the amount on a line of its own. */
+/* "₹300 discount" never splits: on a narrow screen the line breaks after
+   "Get up to" instead of stranding the amount or the word on a line alone. */
 .offer__nowrap { white-space: nowrap; }
 .offer__text b {
   display: inline-block; margin-left: 6px; padding: 2px 12px;
