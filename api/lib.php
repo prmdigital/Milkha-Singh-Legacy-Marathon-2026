@@ -333,7 +333,7 @@ function age_on_race_day(string $dob): ?int
    is not, and a single multiplier cannot express all three. Stating the amounts
    outright also removes any rounding argument about what someone owes. */
 const EARLY_BIRD_PERCENT = 20;
-const EARLY_BIRD_UNTIL   = '2026-11-07 23:59:59';   // IST, inclusive
+const EARLY_BIRD_UNTIL   = '2026-10-07 23:59:59';   // IST, inclusive; must match EARLY_UNTIL in assets/js/register.js
 
 /** Evaluated server-side so a changed device clock cannot buy the old price. */
 function early_bird_active(): bool

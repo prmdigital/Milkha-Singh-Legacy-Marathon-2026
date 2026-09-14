@@ -24,7 +24,7 @@
     cause: { label: 'Run for Cause',     base: 65000,  early: 52000  },
     para:  { label: 'Disabled Category', base: 0,      early: 0      }
   };
-  var EARLY_UNTIL   = '2026-11-07T23:59:59+05:30';
+  var EARLY_UNTIL   = '2026-10-07T23:59:59+05:30';   // must match EARLY_BIRD_UNTIL in api/lib.php
 
   var summary   = document.getElementById('regSummary');
   var amountEl  = document.getElementById('regAmount');
@@ -71,7 +71,7 @@
     amountEl.textContent = p.base === 0 ? 'Free' : rupees(p.payable);
     noteEl.textContent = p.base === 0
       ? 'No payment needed for the 1 KM category.'
-      : (p.early ? 'Early entry price, until 7 November 2026.' : 'Standard entry price.')
+      : (p.early ? 'Early entry price, until 7 October 2026.' : 'Standard entry price.')
         + ' Our team will contact you to collect it.';
     submitBtn.textContent = SUBMIT_LABEL;
   }

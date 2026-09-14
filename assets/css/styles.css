@@ -817,9 +817,9 @@ body::before {
    callout would not. The gradient runs between two saffrons that both carry
    white above 4.5:1 — a lighter one would look brighter and fail. */
 .offer {
-  display: inline-flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  display: inline-flex; align-items: center; gap: 14px; flex-wrap: wrap;
   justify-content: center;
-  margin: 0 auto 30px; padding: 11px 22px 11px 12px;
+  margin: 0 auto 30px; padding: 10px 24px;
   border-radius: 999px;
   background: linear-gradient(100deg, #B94D06 0%, #A03F04 55%, #8F3703 100%);
   box-shadow: 0 2px 6px rgba(146, 57, 4, .30),
@@ -836,20 +836,17 @@ body::before {
    inline-flex needs the block above it to do the centring. */
 #categories .offer { display: flex; width: fit-content; }
 
-.offer__tag {
-  flex: none;
-  padding: 5px 13px; border-radius: 999px;
-  background: #fff; color: #8F3703;
-  font-size: var(--fs-xs); font-weight: 800;
-  letter-spacing: .1em; text-transform: uppercase;
-  white-space: nowrap;
-}
+/* The saving is the message, so it is the largest line in the band and the
+   amount carries the band's one white pill — the emphasis the "Diwali Offer"
+   label used to take. Deep brown on white measures 7.8:1. */
 .offer__text {
-  color: #fff; font-size: var(--fs-sm); font-weight: 600; letter-spacing: .01em;
+  color: #fff; font-size: clamp(.95rem, 1.6vw, 1.08rem); font-weight: 700; letter-spacing: .01em;
 }
 .offer__text b {
-  font-size: 1.22em; font-weight: 800;
-  margin-left: 2px;
+  display: inline-block; margin-left: 6px; padding: 2px 12px;
+  border-radius: 999px; background: #fff; color: #8F3703;
+  font-size: 1.12em; font-weight: 800; line-height: 1.35;
+  white-space: nowrap;
 }
 
 /* ---------- Race categories (confirmed) ---------- */
@@ -1098,15 +1095,6 @@ body::before {
   background: linear-gradient(100deg, #FFF1DC 0%, #FFE6C0 52%, #FFF4E6 100%);
   border: 1px solid #F0C489;
   box-shadow: var(--shadow-soft);
-}
-/* #B94D06 rather than --saffron-deep: this label is 11px uppercase, which AA
-   treats as small text, and white on --saffron-deep only reaches 3.33:1. */
-.fees__deal-tag {
-  flex: none;
-  padding: 6px 13px; border-radius: 999px;
-  background: #B94D06; color: #fff;
-  font-size: var(--fs-xs); font-weight: 800; letter-spacing: .1em; text-transform: uppercase;
-  white-space: nowrap;
 }
 .fees__deal-line {
   flex: 1 1 280px; min-width: 0;
@@ -2263,12 +2251,10 @@ body::before {
     border-radius: var(--radius-lg);
     text-align: left;
   }
-  /* Tag, then the offer, then when it ends. The date was sitting between the
-     tag and the saving, so the strip announced a deadline before it had said
-     what the deal was. */
-  .offer__tag   { order: 1; }
-  .offer__text  { order: 2; flex: 1 0 100%; }
-  .offer__until { order: 3; flex: 1 0 100%; padding-left: 0; border-left: 0; }
+  /* The saving, then when it ends, each on its own line: the strip says what
+     the deal is before it announces a deadline. */
+  .offer__text  { flex: 1 0 100%; }
+  .offer__until { flex: 1 0 100%; padding-left: 0; border-left: 0; }
 }
 
 /* The offer strip above the registration form. Its three parts were each a
