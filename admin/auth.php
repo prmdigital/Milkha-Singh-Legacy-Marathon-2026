@@ -204,6 +204,64 @@ function has_db_users(): bool
 }
 
 /**
+ * Makes sure the admin_users table exists, creating it if it does not.
+ *
+ * The table arrived after the first release, so a site set up before then has
+ * no such table — and the Users page, the one place staff accounts are made,
+ * crashed with a 500 on its first query. Only an owner reaches this (the
+ * Users page checks manage_users first), and every statement is idempotent:
+ * CREATE ... IF NOT EXISTS, and the ALTERs fail harmlessly when the column is
+ * already there.
+ *
+ * @return bool true when the table is usable
+ */
+function ensure_admin_users_table(): bool
+{
+    try {
+        db()->query('SELECT 1 FROM admin_users LIMIT 1');
+        return true;
+    } catch (Throwable $e) {
+        // Missing: fall through and create it.
+    }
+
+    $ddl = [
+        "CREATE TABLE IF NOT EXISTS admin_users (
+          id            INT UNSIGNED NOT NULL AUTO_INCREMENT,
+          username      VARCHAR(40)  NOT NULL,
+          full_name     VARCHAR(120) NOT NULL,
+          email         VARCHAR(190) DEFAULT NULL,
+          password_hash VARCHAR(255) NOT NULL,
+          role          ENUM('owner','manager','viewer') NOT NULL DEFAULT 'viewer',
+          is_active     TINYINT(1)   NOT NULL DEFAULT 1,
+          must_change   TINYINT(1)   NOT NULL DEFAULT 0,
+          created_by    INT UNSIGNED DEFAULT NULL,
+          created_at    DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          last_login_at DATETIME     DEFAULT NULL,
+          PRIMARY KEY (id),
+          UNIQUE KEY uniq_username (username),
+          KEY idx_active (is_active)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
+        "ALTER TABLE admin_audit ADD COLUMN actor VARCHAR(40) DEFAULT NULL AFTER action",
+        "ALTER TABLE admin_login_attempts ADD COLUMN username VARCHAR(40) DEFAULT NULL AFTER ip_address",
+    ];
+
+    foreach ($ddl as $sql) {
+        try {
+            db()->exec($sql);
+        } catch (Throwable $e) {
+            error_log('[marathon-admin] ensure admin_users: ' . $e->getMessage());
+        }
+    }
+
+    try {
+        db()->query('SELECT 1 FROM admin_users LIMIT 1');
+        return true;
+    } catch (Throwable $e) {
+        return false;   // no CREATE permission: the page shows the SQL instead
+    }
+}
+
+/**
  * Checks a username and password.
  *
  * Falls back to the single credential in marathon-config.php while no admin

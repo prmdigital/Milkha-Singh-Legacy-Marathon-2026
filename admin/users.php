@@ -13,6 +13,10 @@ require_once __DIR__ . '/auth.php';
 require_admin();
 require_can('manage_users');
 
+// Creates the table on a site set up before it existed; that missing table is
+// what made this page return a 500.
+$tableReady = ensure_admin_users_table();
+
 $me      = current_user();
 $flash   = '';
 $errors  = [];
@@ -41,7 +45,7 @@ function valid_username(string $u): bool
 // Actions
 // ---------------------------------------------------------------------------
 
-if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
+if ($tableReady && ($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
     csrf_check();
 
     $action = (string) ($_POST['action'] ?? '');
@@ -66,6 +70,12 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
         }
         if (!isset(ROLE_PERMISSIONS[$role])) {
             $errors[] = 'Choose a role.';
+        }
+        // The config-file login stops working the moment any account exists,
+        // so a first account that is not an owner would leave nobody able to
+        // manage users.
+        if (!has_db_users() && $role !== 'owner') {
+            $errors[] = 'The first account must be an Owner, because the setup login stops working once it exists. Add your own Owner account first.';
         }
         if (strlen($password) < 12) {
             $errors[] = 'The password must be at least 12 characters.';
@@ -150,9 +160,9 @@ if (isset($_GET['done'])) {
     $flash = (string) $_GET['done'];
 }
 
-$users = db()->query(
-    'SELECT * FROM admin_users ORDER BY is_active DESC, role ASC, username ASC'
-)->fetchAll();
+$users = $tableReady
+    ? db()->query('SELECT * FROM admin_users ORDER BY is_active DESC, role ASC, username ASC')->fetchAll()
+    : [];
 
 $bootstrapOnly = !has_db_users();
 $csrf = csrf_token();
@@ -188,10 +198,40 @@ $csrf = csrf_token();
     </div>
   <?php endif; ?>
 
+  <?php if (!$tableReady): ?>
+
+    <div class="panel">
+      <h2>One step left</h2>
+      <p>
+        The <code>admin_users</code> table does not exist yet, and the database would not
+        let this page create it. Open phpMyAdmin, select the marathon database, go to the
+        <strong>SQL</strong> tab, run this, then reload this page.
+      </p>
+      <pre class="sqlblock"><code>CREATE TABLE IF NOT EXISTS admin_users (
+  id            INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  username      VARCHAR(40)  NOT NULL,
+  full_name     VARCHAR(120) NOT NULL,
+  email         VARCHAR(190) DEFAULT NULL,
+  password_hash VARCHAR(255) NOT NULL,
+  role          ENUM('owner','manager','viewer') NOT NULL DEFAULT 'viewer',
+  is_active     TINYINT(1)   NOT NULL DEFAULT 1,
+  must_change   TINYINT(1)   NOT NULL DEFAULT 0,
+  created_by    INT UNSIGNED DEFAULT NULL,
+  created_at    DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  last_login_at DATETIME     DEFAULT NULL,
+  PRIMARY KEY (id),
+  UNIQUE KEY uniq_username (username),
+  KEY idx_active (is_active)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;</code></pre>
+    </div>
+
+  <?php else: ?>
+
   <?php if ($bootstrapOnly): ?>
     <p class="alert alert--warn">
-      You are signed in with the setup credential from the configuration file.
-      Add a real owner account below; from then on that file's login stops working.
+      You are signed in with the setup login from the configuration file.
+      Add <b>your own Owner account</b> first. As soon as any account exists, that
+      setup login stops working, so the first account must be an Owner.
     </p>
   <?php endif; ?>
 
@@ -218,7 +258,8 @@ $csrf = csrf_token();
           <span>Role</span>
           <select name="role" required>
             <?php foreach (ROLE_LABELS as $key => $label): ?>
-              <option value="<?= h($key) ?>" <?= $key === 'viewer' ? 'selected' : '' ?>>
+              <?php if ($bootstrapOnly && $key !== 'owner') { continue; } ?>
+              <option value="<?= h($key) ?>" <?= $key === ($bootstrapOnly ? 'owner' : 'viewer') ? 'selected' : '' ?>>
                 <?= h($label) ?>
               </option>
             <?php endforeach; ?>
@@ -315,6 +356,8 @@ $csrf = csrf_token();
   </div>
 
   <?php endif; ?>
+
+  <?php endif; /* $tableReady */ ?>
 </main>
 
 </body>
