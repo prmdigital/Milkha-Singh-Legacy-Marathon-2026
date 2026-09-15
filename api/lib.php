@@ -280,6 +280,42 @@ const RACE_TIMES = [
 /** Accepted photo IDs, verified in person at bib collection. */
 const ID_PROOF_TYPES = ['Aadhaar', 'PAN', 'Passport', 'Driving Licence', 'Voter ID'];
 
+/** States and union territories offered on the form. Must match index.html. */
+const STATES = [
+    'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh', 'Goa',
+    'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jharkhand', 'Karnataka', 'Kerala',
+    'Madhya Pradesh', 'Maharashtra', 'Manipur', 'Meghalaya', 'Mizoram', 'Nagaland',
+    'Odisha', 'Punjab', 'Rajasthan', 'Sikkim', 'Tamil Nadu', 'Telangana', 'Tripura',
+    'Uttar Pradesh', 'Uttarakhand', 'West Bengal',
+    'Andaman and Nicobar Islands', 'Chandigarh', 'Dadra and Nagar Haveli and Daman and Diu',
+    'Delhi', 'Jammu and Kashmir', 'Ladakh', 'Lakshadweep', 'Puducherry',
+    'Outside India',
+];
+
+/**
+ * Adds the state column to a registrations table created before the form
+ * asked for it. Returns whether the column is there, so the INSERTs can leave
+ * it out rather than fail: a database that refuses the ALTER must still take
+ * registrations.
+ */
+function ensure_state_column(): bool
+{
+    static $has = null;
+    if ($has !== null) {
+        return $has;
+    }
+    try {
+        if (!db()->query("SHOW COLUMNS FROM registrations LIKE 'state'")->fetch()) {
+            db()->exec('ALTER TABLE registrations ADD COLUMN state VARCHAR(60) DEFAULT NULL AFTER city');
+        }
+        $has = true;
+    } catch (Throwable $e) {
+        error_log('[marathon-api] state column unavailable: ' . $e->getMessage());
+        $has = false;
+    }
+    return $has;
+}
+
 /**
  * Whether online payment is live.
  *
@@ -423,6 +459,11 @@ function validate_runner(array $in): array
     $v['city'] = trim((string) ($in['city'] ?? ''));
     if ($v['city'] === '' || mb_strlen($v['city']) > 90) {
         $e['city'] = 'Please enter your city.';
+    }
+
+    $v['state'] = (string) ($in['state'] ?? '');
+    if (!in_array($v['state'], STATES, true)) {
+        $e['state'] = 'Please select your state.';
     }
 
     $v['tshirt_size'] = (string) ($in['tshirtSize'] ?? '');

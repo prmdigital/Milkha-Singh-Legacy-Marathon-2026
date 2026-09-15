@@ -60,18 +60,22 @@ $status = $price['payable'] > 0 ? 'awaiting' : 'free';
 
 $registrationId = new_registration_id();
 
+$withState = ensure_state_column();
+
 try {
     $stmt = db()->prepare(
         'INSERT INTO registrations
-            (registration_id, category, full_name, email, mobile, age, dob, gender, city,
+            (registration_id, category, full_name, email, mobile, age, dob, gender, city,'
+          . ($withState ? ' state,' : '') . '
              tshirt_size, id_proof_type, id_proof_file, emergency_phone,
              amount_paise, early_bird, status, ip_address)
          VALUES
-            (:rid, :cat, :name, :email, :mobile, :age, :dob, :gender, :city,
+            (:rid, :cat, :name, :email, :mobile, :age, :dob, :gender, :city,'
+          . ($withState ? ' :state,' : '') . '
              :tshirt, :idtype, :idfile, :ephone,
              :amount, :early, :status, :ip)'
     );
-    $stmt->execute([
+    $stmt->execute(($withState ? [':state' => $runner['state']] : []) + [
         ':rid'    => $registrationId,
         ':cat'    => $runner['category'],
         ':name'   => $runner['full_name'],

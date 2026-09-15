@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS registrations (
   dob                 DATE         DEFAULT NULL,
   gender              VARCHAR(16)  NOT NULL,
   city                VARCHAR(90)  NOT NULL,
+  state               VARCHAR(60)  DEFAULT NULL,
   tshirt_size         VARCHAR(8)   NOT NULL,
 
   -- Which photo ID the runner will bring, plus the filename of the scan they

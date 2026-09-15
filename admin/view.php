@@ -61,7 +61,7 @@ if (!$r) {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title><?= isset($notFound) ? 'Not found' : h($r['full_name']) ?> &middot; Marathon Admin</title>
-<link rel="stylesheet" href="assets/admin.css?v=20260914-6">
+<link rel="stylesheet" href="assets/admin.css?v=20260915-1">
 </head>
 <body>
 
@@ -101,6 +101,8 @@ if (!$r) {
         <dt>Age on race day</dt><dd><?= h($r['age']) ?></dd>
         <dt>Gender</dt><dd><?= h($r['gender']) ?></dd>
         <dt>City</dt><dd><?= h($r['city']) ?></dd>
+        <dt>State</dt>
+        <dd><?= ($r['state'] ?? '') !== '' && $r['state'] !== null ? h($r['state']) : '<span class="muted">Not recorded</span>' ?></dd>
         <dt>T-shirt size</dt><dd><?= h($r['tshirt_size']) ?></dd>
       </dl>
     </section>

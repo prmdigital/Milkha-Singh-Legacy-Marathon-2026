@@ -52,11 +52,10 @@
     return '₹' + (paise / 100).toLocaleString('en-IN');
   }
 
-  /* Fill the fee chip on each category tile. */
-
+  /* The race is a dropdown in the details grid, after Mobile. */
   function selectedCategory() {
-    var picked = form.querySelector('input[name="category"]:checked');
-    return picked ? picked.value : '';
+    var el = form.elements.category;
+    return el && CATEGORIES[el.value] ? el.value : '';
   }
 
   function refreshSummary() {
@@ -80,7 +79,7 @@
     if (e.target.name === 'category') refreshSummary();
   });
   /* A reset (or a browser restoring form state on back-navigation) clears the
-     radio without firing change, which would leave a stale fee on screen. */
+     dropdown without firing change, which would leave a stale fee on screen. */
   form.addEventListener('reset', function () { setTimeout(refreshSummary, 0); });
   window.addEventListener('pageshow', refreshSummary);
   refreshSummary();
@@ -278,6 +277,7 @@
     }
 
     if (!d.gender) f.gender = 'Please select a gender.';
+    if (!d.state) f.state = 'Please select your state.';
     if (!d.city) f.city = 'Please enter your city.';
     if (!d.tshirtSize) f.tshirtSize = 'Please choose a T-shirt size.';
     if (!d.idProofType) f.idProofType = 'Please select an ID proof type.';
@@ -306,7 +306,7 @@
 
   function payload() {
     var d = {};
-    ['fullName', 'email', 'mobile', 'dob', 'gender', 'city', 'tshirtSize',
+    ['fullName', 'email', 'mobile', 'dob', 'gender', 'state', 'city', 'tshirtSize',
      'idProofType', 'emergencyPhone'].forEach(function (n) {
       var el = form.elements[n];
       d[n] = el ? el.value.trim() : '';

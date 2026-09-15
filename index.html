@@ -34,7 +34,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="assets/css/styles.css?v=20260914-6" />
+<link rel="stylesheet" href="assets/css/styles.css?v=20260915-1" />
 
 <!-- Event schema: this is what makes Google show your date + venue in search results. -->
 <script type="application/ld+json">
@@ -691,42 +691,7 @@
     <form class="reg" id="regForm" novalidate>
 
       <fieldset class="reg__block">
-        <legend class="reg__legend">1. Choose your race <span class="reg__req" aria-hidden="true">*</span></legend>
-        <div class="reg__cats" role="radiogroup" aria-label="Race category">
-          <label class="reg__cat">
-            <input type="radio" name="category" value="half" required />
-            <span class="reg__cat-body">
-              <b>Half Marathon</b>
-              <em>21 KM</em>
-            </span>
-          </label>
-          <label class="reg__cat">
-            <input type="radio" name="category" value="mini" />
-            <span class="reg__cat-body">
-              <b>Mini Marathon</b>
-              <em>10 KM</em>
-            </span>
-          </label>
-          <label class="reg__cat">
-            <input type="radio" name="category" value="cause" />
-            <span class="reg__cat-body">
-              <b>Run for Cause</b>
-              <em>5 KM</em>
-            </span>
-          </label>
-          <label class="reg__cat">
-            <input type="radio" name="category" value="para" />
-            <span class="reg__cat-body">
-              <b>Disabled Category</b>
-              <em>1 KM</em>
-            </span>
-          </label>
-        </div>
-        <p class="reg__err" data-err="category"></p>
-      </fieldset>
-
-      <fieldset class="reg__block">
-        <legend class="reg__legend">2. Your details</legend>
+        <legend class="reg__legend">Your details</legend>
         <p class="reg__required-note">Fields marked <span class="reg__req" aria-hidden="true">*</span> are required.</p>
         <div class="reg__grid">
           <p class="reg__field reg__field--wide">
@@ -745,6 +710,17 @@
                    inputmode="numeric" autocomplete="tel" pattern="[6-9][0-9]{9}"
                    placeholder="10-digit mobile number" maxlength="10" required />
             <span class="reg__err" id="mobile-err" data-err="mobile"></span>
+          </p>
+          <p class="reg__field">
+            <label for="regCategory">Race category <span class="reg__req" aria-hidden="true">*</span></label>
+            <select aria-describedby="category-err" id="regCategory" name="category" required>
+              <option value="">Select your race</option>
+              <option value="half">Half Marathon (21 KM)</option>
+              <option value="mini">Mini Marathon (10 KM)</option>
+              <option value="cause">Run for Cause (5 KM)</option>
+              <option value="para">Disabled Category (1 KM)</option>
+            </select>
+            <span class="reg__err" id="category-err" data-err="category"></span>
           </p>
           <p class="reg__field">
             <label for="regDob">Date of birth <span class="reg__req" aria-hidden="true">*</span></label>
@@ -767,6 +743,32 @@
               <option>Other</option>
             </select>
             <span class="reg__err" id="gender-err" data-err="gender"></span>
+          </p>
+          <p class="reg__field">
+            <label for="regState">State <span class="reg__req" aria-hidden="true">*</span></label>
+            <select aria-describedby="state-err" id="regState" name="state" autocomplete="address-level1" required>
+              <option value="">Select your state</option>
+              <optgroup label="States">
+                <option>Andhra Pradesh</option><option>Arunachal Pradesh</option><option>Assam</option>
+                <option>Bihar</option><option>Chhattisgarh</option><option>Goa</option>
+                <option>Gujarat</option><option>Haryana</option><option>Himachal Pradesh</option>
+                <option>Jharkhand</option><option>Karnataka</option><option>Kerala</option>
+                <option>Madhya Pradesh</option><option>Maharashtra</option><option>Manipur</option>
+                <option>Meghalaya</option><option>Mizoram</option><option>Nagaland</option>
+                <option>Odisha</option><option>Punjab</option><option>Rajasthan</option>
+                <option>Sikkim</option><option>Tamil Nadu</option><option>Telangana</option>
+                <option>Tripura</option><option>Uttar Pradesh</option><option>Uttarakhand</option>
+                <option>West Bengal</option>
+              </optgroup>
+              <optgroup label="Union territories">
+                <option>Andaman and Nicobar Islands</option><option>Chandigarh</option>
+                <option>Dadra and Nagar Haveli and Daman and Diu</option><option>Delhi</option>
+                <option>Jammu and Kashmir</option><option>Ladakh</option>
+                <option>Lakshadweep</option><option>Puducherry</option>
+              </optgroup>
+              <option>Outside India</option>
+            </select>
+            <span class="reg__err" id="state-err" data-err="state"></span>
           </p>
           <p class="reg__field">
             <label for="regCity">City <span class="reg__req" aria-hidden="true">*</span></label>
@@ -1076,7 +1078,7 @@
   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
 </button>
 
-<script src="assets/js/main.js?v=20260914-6" defer></script>
-<script src="assets/js/register.js?v=20260914-6" defer></script>
+<script src="assets/js/main.js?v=20260915-1" defer></script>
+<script src="assets/js/register.js?v=20260915-1" defer></script>
 </body>
 </html>

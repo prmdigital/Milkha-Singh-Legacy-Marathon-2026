@@ -94,6 +94,7 @@ $SCHEMA = [
   dob                 DATE         DEFAULT NULL,
   gender              VARCHAR(16)  NOT NULL,
   city                VARCHAR(90)  NOT NULL,
+  state               VARCHAR(60)  DEFAULT NULL,
   tshirt_size         VARCHAR(8)   NOT NULL,
   id_proof_type       VARCHAR(20)  NOT NULL,
   id_proof_file       VARCHAR(120) DEFAULT NULL,
@@ -182,6 +183,7 @@ $SCHEMA = [
    ENUM('pending','awaiting','paid','free','failed') NOT NULL DEFAULT 'pending'",
 
 "ALTER TABLE registrations ADD COLUMN dob DATE DEFAULT NULL AFTER age",
+"ALTER TABLE registrations ADD COLUMN state VARCHAR(60) DEFAULT NULL AFTER city",
 
 "ALTER TABLE admin_audit ADD COLUMN actor VARCHAR(40) DEFAULT NULL AFTER action",
 "ALTER TABLE admin_login_attempts ADD COLUMN username VARCHAR(40) DEFAULT NULL AFTER ip_address",
@@ -434,7 +436,7 @@ $e = static function (string $s): string {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>Setup &middot; Milkha Singh Legacy Marathon</title>
-<link rel="stylesheet" href="admin/assets/admin.css?v=20260914-6">
+<link rel="stylesheet" href="admin/assets/admin.css?v=20260915-1">
 <style>
   .setup { max-width: 720px; margin: 40px auto; padding: 0 20px 80px; }
   .setup h1 { color: var(--navy); margin: 0 0 6px; }
