@@ -13,6 +13,7 @@
 
 declare(strict_types=1);
 require_once __DIR__ . '/auth.php';
+require_once __DIR__ . '/../api/mailer.php';
 
 require_admin();
 require_can('manage_settings');
@@ -112,7 +113,92 @@ function write_config(string $path, array $values): ?string
 
 // ---------------------------------------------------------------------------
 
-if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
+$section = (string) ($_POST['section'] ?? 'payments');
+
+// ---- Email settings --------------------------------------------------------
+if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' && $section === 'email') {
+    csrf_check();
+
+    if ($path === null) {
+        $errors[] = 'No configuration file was found, so there is nothing to update.';
+    } else {
+        $current = require $path;
+
+        $runner  = trim((string) ($_POST['admin_email'] ?? ''));
+        $sponsor = trim((string) ($_POST['sponsor_email'] ?? ''));
+        $user    = trim((string) ($_POST['smtp_user'] ?? ''));
+        $pass    = (string) ($_POST['smtp_pass'] ?? '');
+        $host    = trim((string) ($_POST['smtp_host'] ?? ''));
+        $port    = (int) ($_POST['smtp_port'] ?? 465);
+
+        if ($pass === '') { $pass = (string) ($current['SMTP_PASS'] ?? ''); }   // blank keeps it
+        if ($host === '') { $host = 'smtp.hostinger.com'; }
+
+        foreach (['Runner registrations' => $runner, 'Sponsor enquiries' => $sponsor, 'Sending mailbox' => $user] as $label => $addr) {
+            if (!filter_var($addr, FILTER_VALIDATE_EMAIL)) {
+                $errors[] = $label . ': enter a valid email address.';
+            }
+        }
+        if (!in_array($port, [465, 587], true)) {
+            $errors[] = 'Port must be 465 (SSL) or 587 (STARTTLS).';
+        }
+        if (!preg_match('/^[A-Za-z0-9.\-]+$/', $host)) {
+            $errors[] = 'That SMTP server name does not look right.';
+        }
+
+        if (!$errors) {
+            $new = $current;
+            $new['ADMIN_EMAIL']   = $runner;
+            $new['SPONSOR_EMAIL'] = $sponsor;
+            $new['SMTP_HOST']     = $host;
+            $new['SMTP_PORT']     = $port;
+            $new['SMTP_USER']     = $user;
+            $new['SMTP_PASS']     = $pass;
+            $new['SMTP_FROM']     = $user;   // Hostinger only relays mail from the signed-in mailbox
+            $new['SMTP_FROM_NAME'] = (string) ($current['SMTP_FROM_NAME'] ?? 'Milkha Singh Legacy Marathon');
+
+            $err = write_config($path, $new);
+            if ($err !== null) {
+                $errors[] = $err;
+            } else {
+                audit('settings_updated', 'email');
+                header('Location: settings.php?done=email');
+                exit;
+            }
+        }
+    }
+}
+
+// ---- Test email --------------------------------------------------------------
+if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' && $section === 'test_email') {
+    csrf_check();
+
+    $to = trim((string) ($_POST['test_to'] ?? ''));
+    if (!filter_var($to, FILTER_VALIDATE_EMAIL)) {
+        $errors[] = 'Enter a valid address to send the test to.';
+    } elseif (!mail_configured()) {
+        $errors[] = 'Save the sending mailbox and its password first.';
+    } else {
+        $m  = smtp_mailer();
+        $ok = $m->send(
+            (string) cfg('SMTP_FROM', cfg('SMTP_USER')),
+            (string) cfg('SMTP_FROM_NAME', 'Milkha Singh Legacy Marathon'),
+            $to, '', 'Test email - Milkha Singh Legacy Marathon',
+            '<p style="font-family:Arial,sans-serif">This is a test from the admin Settings page. '
+            . 'If you can read this, registration and sponsorship emails will be delivered.</p>'
+        );
+        if ($ok) {
+            audit('test_email_sent', $to);
+            header('Location: settings.php?done=test&to=' . urlencode($to));
+            exit;
+        }
+        $errors[] = 'The test email was not sent. The mail server said: ' . $m->lastError()
+                  . ' — check the mailbox address and password in Hostinger › Emails.';
+    }
+}
+
+// ---- Payment settings --------------------------------------------------------
+if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' && $section === 'payments') {
     csrf_check();
 
     if ($path === null) {
@@ -159,7 +245,13 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
 }
 
 $cfgNow  = $path !== null ? (require $path) : [];
-$flash   = isset($_GET['done']) ? 'Settings saved.' : '';
+$done    = (string) ($_GET['done'] ?? '');
+$flash   = match ($done) {
+    ''      => '',
+    'email' => 'Email settings saved. Send a test email below to confirm they work.',
+    'test'  => 'Test email sent to ' . (string) ($_GET['to'] ?? '') . '. Check that inbox, including spam.',
+    default => 'Settings saved.',
+};
 $isLive  = str_starts_with((string) ($cfgNow['RAZORPAY_KEY_ID'] ?? ''), 'rzp_live_');
 
 /** Never echo a secret back. Only whether one is set. */
@@ -175,6 +267,11 @@ function secret_state($v): string
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>Settings &middot; Marathon Admin</title>
+<style>
+  .pwform fieldset { border: 0; padding: 0; margin: 0 0 6px; }
+  .pwform .pair { display: grid; grid-template-columns: 1fr 120px; gap: 12px; }
+  @media (max-width: 560px) { .pwform .pair { grid-template-columns: 1fr; } }
+</style>
 <link rel="stylesheet" href="assets/admin.css?v=20260914-6">
 </head>
 <body>
@@ -182,7 +279,7 @@ function secret_state($v): string
 <?php require __DIR__ . '/header.php'; ?>
 
 <main class="wrap wrap--narrow">
-  <h1 class="pagetitle">Payment settings</h1>
+  <h1 class="pagetitle">Settings</h1>
   <p class="pagesub">
     Stored in the configuration file above <code>public_html</code>, never in the
     database and never sent to a browser.
@@ -238,6 +335,7 @@ function secret_state($v): string
     <h2>Update</h2>
     <form method="post" autocomplete="off" class="pwform">
       <input type="hidden" name="csrf" value="<?= h(csrf_token()) ?>">
+      <input type="hidden" name="section" value="payments">
 
       <label>
         <span>Key id</span>
@@ -274,6 +372,89 @@ function secret_state($v): string
       </label>
 
       <button type="submit" class="btn btn--primary">Save settings</button>
+    </form>
+  </section>
+
+  <h1 class="pagetitle" style="margin-top:34px">Email</h1>
+  <p class="pagesub">
+    Who receives the website's emails, and the mailbox they are sent from.
+  </p>
+
+  <section class="panel">
+    <h2>Current state</h2>
+    <dl class="dl">
+      <dt>Runner registrations</dt><dd><?= h(runner_desk_email()) ?></dd>
+      <dt>Sponsor enquiries</dt><dd><?= h(sponsor_desk_email()) ?></dd>
+      <dt>Sent from</dt>
+      <dd>
+        <?php if (mail_configured()): ?>
+          <?= h((string) cfg('SMTP_USER')) ?> <span class="muted">password set</span>
+        <?php else: ?>
+          <span class="pill pill--pending">Not set</span>
+          <span class="muted">No emails are sent until a mailbox and password are saved.</span>
+        <?php endif; ?>
+      </dd>
+    </dl>
+  </section>
+
+  <section class="panel">
+    <h2>Update</h2>
+    <form method="post" autocomplete="off" class="pwform">
+      <input type="hidden" name="csrf" value="<?= h(csrf_token()) ?>">
+      <input type="hidden" name="section" value="email">
+
+      <label>
+        <span>Runner registrations go to</span>
+        <input name="admin_email" type="email" required value="<?= h(runner_desk_email()) ?>">
+        <small>Gets an alert for every new runner. Runners who reply to their confirmation reach this inbox.</small>
+      </label>
+
+      <label>
+        <span>Sponsor enquiries go to</span>
+        <input name="sponsor_email" type="email" required value="<?= h(sponsor_desk_email()) ?>">
+        <small>Gets every "Become a Sponsor" enquiry. Sponsors who reply to their acknowledgement reach this inbox.</small>
+      </label>
+
+      <fieldset>
+        <label>
+          <span>Sending mailbox</span>
+          <input name="smtp_user" type="email" required
+                 value="<?= h((string) cfg('SMTP_USER', '') !== '' ? (string) cfg('SMTP_USER') : DEFAULT_RUNNER_EMAIL) ?>">
+          <small>A mailbox that exists in Hostinger › Emails. Every email is sent from it.</small>
+        </label>
+
+        <label>
+          <span>Mailbox password</span>
+          <input name="smtp_pass" type="password"
+                 placeholder="<?= mail_configured() ? 'Leave blank to keep the current one' : 'The password of the mailbox above' ?>">
+        </label>
+
+        <div class="pair">
+          <label>
+            <span>SMTP server</span>
+            <input name="smtp_host" value="<?= h((string) cfg('SMTP_HOST', 'smtp.hostinger.com')) ?>">
+          </label>
+          <label>
+            <span>Port</span>
+            <input name="smtp_port" type="number" value="<?= (int) cfg('SMTP_PORT', 465) ?>">
+          </label>
+        </div>
+      </fieldset>
+
+      <button type="submit" class="btn btn--primary">Save email settings</button>
+    </form>
+  </section>
+
+  <section class="panel">
+    <h2>Send a test email</h2>
+    <form method="post" class="pwform">
+      <input type="hidden" name="csrf" value="<?= h(csrf_token()) ?>">
+      <input type="hidden" name="section" value="test_email">
+      <label>
+        <span>Send to</span>
+        <input name="test_to" type="email" required value="<?= h(runner_desk_email()) ?>">
+      </label>
+      <button type="submit" class="btn">Send test email</button>
     </form>
   </section>
 

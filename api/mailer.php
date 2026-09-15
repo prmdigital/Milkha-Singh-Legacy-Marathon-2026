@@ -42,7 +42,8 @@ class SmtpMailer
         string $toName,
         string $subject,
         string $htmlBody,
-        string $textBody = ''
+        string $textBody = '',
+        string $replyTo = ''
     ): bool {
         try {
             if (!$this->connect()) {
@@ -54,7 +55,7 @@ class SmtpMailer
             $this->cmd('DATA', 354);
 
             $this->write($this->buildMessage(
-                $fromEmail, $fromName, $toEmail, $toName, $subject, $htmlBody, $textBody
+                $fromEmail, $fromName, $toEmail, $toName, $subject, $htmlBody, $textBody, $replyTo
             ));
             $this->cmd('.', 250);
             $this->cmd('QUIT', 221);
@@ -110,7 +111,7 @@ class SmtpMailer
     private function buildMessage(
         string $fromEmail, string $fromName,
         string $toEmail, string $toName,
-        string $subject, string $html, string $text
+        string $subject, string $html, string $text, string $replyTo = ''
     ): string {
         if ($text === '') {
             $text = trim(html_entity_decode(strip_tags(
@@ -130,6 +131,12 @@ class SmtpMailer
             'MIME-Version: 1.0',
             'Content-Type: multipart/alternative; boundary="' . $boundary . '"',
         ];
+        // Mail is sent from the one authenticated mailbox, but replies go to the
+        // desk that owns the conversation. Only a plain address is accepted, so a
+        // value cannot smuggle in extra header lines.
+        if ($replyTo !== '' && filter_var($replyTo, FILTER_VALIDATE_EMAIL)) {
+            array_splice($h, 2, 0, ['Reply-To: <' . $replyTo . '>']);
+        }
 
         $body = "--$boundary\r\n"
               . "Content-Type: text/plain; charset=UTF-8\r\n"
@@ -176,23 +183,58 @@ class SmtpMailer
     }
 }
 
+/** Default desks. The Settings page can override either in the config file. */
+const DEFAULT_RUNNER_EMAIL  = 'info@milkhasinghlegacymarathon.com';
+const DEFAULT_SPONSOR_EMAIL = 'sponsors@milkhasinghlegacymarathon.com';
+
+/** Where runner registration alerts go, and where runners' replies land. */
+function runner_desk_email(): string
+{
+    $v = trim((string) cfg('ADMIN_EMAIL', ''));
+    return $v !== '' ? $v : DEFAULT_RUNNER_EMAIL;
+}
+
+/** Where sponsorship enquiries go, and where sponsors' replies land. */
+function sponsor_desk_email(): string
+{
+    $v = trim((string) cfg('SPONSOR_EMAIL', ''));
+    return $v !== '' ? $v : DEFAULT_SPONSOR_EMAIL;
+}
+
+/** A mailer built from the configured SMTP account. */
+function smtp_mailer(): SmtpMailer
+{
+    return new SmtpMailer(
+        (string) cfg('SMTP_HOST', 'smtp.hostinger.com'),
+        (int) cfg('SMTP_PORT', 465),
+        (string) cfg('SMTP_USER', ''),
+        (string) cfg('SMTP_PASS', '')
+    );
+}
+
+/** True when a mailbox login is configured at all. */
+function mail_configured(): bool
+{
+    return (string) cfg('SMTP_USER', '') !== '' && (string) cfg('SMTP_PASS', '') !== '';
+}
+
 /**
  * Sends a message using the configured SMTP account.
  * Never throws: a failed email must not fail a paid registration.
  */
-function send_mail(string $toEmail, string $toName, string $subject, string $html): bool
+function send_mail(string $toEmail, string $toName, string $subject, string $html, string $replyTo = ''): bool
 {
-    $m = new SmtpMailer(
-        (string) cfg('SMTP_HOST'),
-        (int) cfg('SMTP_PORT', 465),
-        (string) cfg('SMTP_USER'),
-        (string) cfg('SMTP_PASS')
-    );
+    if (!mail_configured()) {
+        error_log('[marathon-api] mail to ' . $toEmail . ' skipped: no mailbox set in Settings');
+        return false;
+    }
+
+    $m = smtp_mailer();
 
     $sent = $m->send(
         (string) cfg('SMTP_FROM', cfg('SMTP_USER')),
         (string) cfg('SMTP_FROM_NAME', 'Milkha Singh Legacy Marathon'),
-        $toEmail, $toName, $subject, $html
+        $toEmail, $toName, $subject, $html, '', $replyTo
     );
 
     if (!$sent) {
@@ -233,7 +275,8 @@ function send_confirmation(array $reg, string $paymentId = ''): void
         $reg['email'],
         $reg['full_name'],
         'Registration confirmed - ' . $reg['registration_id'] . ' - Milkha Singh Legacy Marathon 2026',
-        $html
+        $html,
+        runner_desk_email()
     );
 
     if ($sent) {
@@ -245,10 +288,10 @@ function send_confirmation(array $reg, string $paymentId = ''): void
         }
     }
 
-    // Let the organisers know a new entry landed.
-    $admin = (string) cfg('ADMIN_EMAIL', '');
+    // Let the runner desk know a new entry landed. Replying goes to the runner.
+    $admin = runner_desk_email();
     if ($admin !== '') {
-        send_mail($admin, 'Organiser',
+        send_mail($admin, 'Registration desk',
             'New entry: ' . $cat['label'] . ' - ' . $reg['full_name'],
             '<p style="font-family:Arial,sans-serif">'
             . '<strong>' . htmlspecialchars($reg['full_name'], ENT_QUOTES, 'UTF-8') . '</strong> '
@@ -257,6 +300,7 @@ function send_confirmation(array $reg, string $paymentId = ''): void
             . 'Email: ' . htmlspecialchars($reg['email'], ENT_QUOTES, 'UTF-8') . '<br>'
             . 'Mobile: ' . htmlspecialchars($reg['mobile'], ENT_QUOTES, 'UTF-8') . '<br>'
             . 'Paid: &#8377;' . rupees((int) $reg['amount_paise'])
-            . '</p>');
+            . '</p>',
+            (string) $reg['email']);
     }
 }

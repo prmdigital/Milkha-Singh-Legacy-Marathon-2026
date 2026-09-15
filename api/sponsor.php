@@ -71,15 +71,13 @@ respond_then(['reference' => $reference], static function () use ($sponsor, $ref
          . '<p>Your reference is <strong>' . $reference . '</strong>.</p>'
          . '<p>Warm regards,<br />Forever Legend Foundation</p>';
 
+    // Replies go to the sponsorship desk, not the general inbox.
     send_mail($sponsor['email'], $sponsor['contact_name'],
-              'Your sponsorship enquiry — ' . $reference, $ack);
+              'Your sponsorship enquiry — ' . $reference, $ack, sponsor_desk_email());
 
-    // 2. Notification to whoever handles sponsorship. Silently skipped when no
-    //    address is configured, rather than failing the enquiry.
-    $to = (string) cfg('SPONSOR_EMAIL', cfg('ADMIN_EMAIL', ''));
-    if ($to === '') {
-        return;
-    }
+    // 2. Notification to the sponsorship desk (sponsors@ unless Settings says
+    //    otherwise). Replying to it goes straight to the enquirer.
+    $to = sponsor_desk_email();
 
     $rows = [
         'Reference'   => $reference,
@@ -106,5 +104,6 @@ respond_then(['reference' => $reference], static function () use ($sponsor, $ref
     $html .= '</table>';
 
     send_mail($to, 'Sponsorship desk',
-              'Sponsorship enquiry: ' . $sponsor['company'] . ' (' . $reference . ')', $html);
+              'Sponsorship enquiry: ' . $sponsor['company'] . ' (' . $reference . ')', $html,
+              $sponsor['email']);
 });
