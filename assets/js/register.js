@@ -169,6 +169,9 @@
   var ageOut   = document.getElementById('regAgeOut');
 
   function refreshAge() {
+    /* Runs after every keystroke and after a reset, so the deletion check in
+       the date handler always compares against what is really in the field. */
+    if (dobInput) lastDob = dobInput.value;
     if (!dobInput || !ageOut) return;
     var age = ageOnRaceDay(dobToIso(dobInput.value));
     ageOut.textContent = age === null ? '—' : age + (age === 1 ? ' year' : ' years');
@@ -176,11 +179,22 @@
   }
 
   if (dobInput) {
-    dobInput.addEventListener('input', function () {
+    var lastDob = dobInput.value;
+    dobInput.addEventListener('input', function (e) {
+      /* A shorter value means the runner is deleting. inputType says so too, but
+         not every browser or keyboard sends it, so the length is the check that
+         always holds. */
+      var shorter = dobInput.value.length < lastDob.length;
       var digits = dobInput.value.replace(/[^0-9]/g, '').slice(0, 8);
       var out = digits.slice(0, 2);
       if (digits.length > 2) out += '-' + digits.slice(2, 4);
       if (digits.length > 4) out += '-' + digits.slice(4, 8);
+      /* The dash appears as soon as the day or the month is complete, so the
+         shape of the date is visible while typing — "21" becomes "21-". Not
+         while deleting, or backspacing over a dash would put it straight back
+         and leave the runner unable to correct the day. */
+      var deleting = shorter || (e && e.inputType && e.inputType.indexOf('delete') === 0);
+      if (!deleting && (digits.length === 2 || digits.length === 4)) out += '-';
       /* Only write back when it actually differs, or the caret jumps to the end
          every time someone edits a digit in the middle. */
       if (out !== dobInput.value) dobInput.value = out;
