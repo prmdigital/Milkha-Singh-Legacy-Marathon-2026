@@ -17,6 +17,10 @@ require_can('view_sponsors');
 $pdo   = db();
 $flash = '';
 
+// Creates the table on a site set up before it existed. The "One step left"
+// panel below now only appears if the database refuses to create it.
+ensure_sponsor_table();
+
 const SPONSOR_STATUSES = [
     'new'       => 'New',
     'contacted' => 'Contacted',

@@ -511,6 +511,63 @@ function new_registration_id(): string
     return 'MSL26-' . strtoupper(bin2hex(random_bytes(4)));
 }
 
+/**
+ * Creates the sponsor_enquiries table when it is missing.
+ *
+ * It arrived after the first release, so a site set up before then has no such
+ * table: every "Become a Sponsor" submission failed to save, and the admin
+ * Sponsors page could only print SQL for someone to run by hand. Idempotent,
+ * and checked once per request.
+ *
+ * @return bool true when the table is usable
+ */
+function ensure_sponsor_table(): bool
+{
+    static $ready = null;
+    if ($ready !== null) {
+        return $ready;
+    }
+
+    try {
+        db()->query('SELECT 1 FROM sponsor_enquiries LIMIT 1');
+        return $ready = true;
+    } catch (Throwable $e) {
+        // Missing: create it below.
+    }
+
+    try {
+        db()->exec(
+            "CREATE TABLE IF NOT EXISTS sponsor_enquiries (
+              id           INT UNSIGNED NOT NULL AUTO_INCREMENT,
+              reference    VARCHAR(32)  NOT NULL,
+              company      VARCHAR(160) NOT NULL,
+              contact_name VARCHAR(120) NOT NULL,
+              designation  VARCHAR(120) DEFAULT NULL,
+              email        VARCHAR(190) NOT NULL,
+              mobile       VARCHAR(20)  NOT NULL,
+              website      VARCHAR(190) DEFAULT NULL,
+              city         VARCHAR(90)  DEFAULT NULL,
+              tier         VARCHAR(40)  NOT NULL,
+              budget       VARCHAR(40)  DEFAULT NULL,
+              message      TEXT         DEFAULT NULL,
+              status       ENUM('new','contacted','confirmed','declined') NOT NULL DEFAULT 'new',
+              notes        TEXT         DEFAULT NULL,
+              ip_address   VARCHAR(45)  DEFAULT NULL,
+              created_at   DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+              PRIMARY KEY (id),
+              UNIQUE KEY uniq_reference (reference),
+              KEY idx_status (status),
+              KEY idx_created (created_at)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
+        );
+        db()->query('SELECT 1 FROM sponsor_enquiries LIMIT 1');
+        return $ready = true;
+    } catch (Throwable $e) {
+        error_log('[marathon-api] could not create sponsor_enquiries: ' . $e->getMessage());
+        return $ready = false;
+    }
+}
+
 // ---------------------------------------------------------------------------
 // Sponsorship enquiries
 // ---------------------------------------------------------------------------

@@ -29,6 +29,10 @@ if ($errors) {
 
 $reference = new_sponsor_ref();
 
+// Without the table every enquiry failed to save. Create it before inserting,
+// so an enquiry is kept even if nobody has opened the admin Sponsors page yet.
+ensure_sponsor_table();
+
 try {
     $stmt = db()->prepare(
         'INSERT INTO sponsor_enquiries
