@@ -219,7 +219,16 @@ function fail(int $status, string $message, string $internal = ''): void
 // Database
 // ---------------------------------------------------------------------------
 
-function db(): PDO
+/**
+ * The database connection, or a failure the caller can catch.
+ *
+ * db() below answers a connection failure with an error response and exits,
+ * which is right for the API and admin panel. The public content script
+ * (api/site.php) is loaded by every page as JavaScript, where that response
+ * would be a script error, so it connects through this instead and falls back
+ * to the page's built-in content.
+ */
+function db_connect(): PDO
 {
     static $pdo = null;
     if ($pdo instanceof PDO) {
@@ -241,17 +250,49 @@ function db(): PDO
 
     $isSqlite = str_starts_with($dsn, 'sqlite:');
 
+    $pdo = new PDO($dsn, $isSqlite ? null : cfg('DB_USER'), $isSqlite ? null : cfg('DB_PASS'), [
+        PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+        PDO::ATTR_EMULATE_PREPARES   => false,
+    ]);
+
+    return $pdo;
+}
+
+function db(): PDO
+{
     try {
-        $pdo = new PDO($dsn, $isSqlite ? null : cfg('DB_USER'), $isSqlite ? null : cfg('DB_PASS'), [
-            PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-            PDO::ATTR_EMULATE_PREPARES   => false,
-        ]);
+        return db_connect();
     } catch (Throwable $e) {
         fail(500, 'Could not reach the registration database.', 'DB: ' . $e->getMessage());
     }
+}
 
-    return $pdo;
+// ---------------------------------------------------------------------------
+// Event settings editable from the admin panel
+// ---------------------------------------------------------------------------
+
+/**
+ * A value saved on the admin panel's "Event, fees & media" page.
+ *
+ * Read once per request. When nothing is saved, or the table does not exist
+ * yet, callers get their default: the values that were hard-coded before this
+ * page existed.
+ */
+function site_setting(string $key, $default = null)
+{
+    static $all = null;
+    if ($all === null) {
+        $all = [];
+        try {
+            foreach (db_connect()->query('SELECT skey, value FROM site_settings') as $r) {
+                $all[(string) $r['skey']] = (string) $r['value'];
+            }
+        } catch (Throwable $e) {
+            // No settings table yet: every setting uses its default.
+        }
+    }
+    return array_key_exists($key, $all) ? $all[$key] : $default;
 }
 
 // ---------------------------------------------------------------------------
@@ -330,6 +371,23 @@ function payments_enabled(): bool
 
 /** Race day. Age is judged on this date, not on the day someone registers. */
 const RACE_DAY = '2026-12-20';
+const RACE_START_DEFAULT = RACE_DAY . ' 06:00';   // IST; the countdown runs to this
+
+/**
+ * Race start as "Y-m-d H:i" IST. Pass the saved value to validate one without
+ * touching the database (the public content script does); leave it out to
+ * read the saved setting.
+ */
+function race_start(?string $saved = null): string
+{
+    $v = $saved ?? (string) site_setting('race_start', '');
+    return preg_match('/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/', $v) ? $v : RACE_START_DEFAULT;
+}
+
+function race_day(?string $saved = null): string
+{
+    return substr(race_start($saved), 0, 10);
+}
 
 /**
  * Age on race day, worked out from a yyyy-mm-dd date of birth.
@@ -355,7 +413,7 @@ function age_on_race_day(string $dob): ?int
     }
 
     $born = new DateTimeImmutable(sprintf('%04d-%02d-%02d', $y, $mo, $d));
-    $race = new DateTimeImmutable(RACE_DAY);
+    $race = new DateTimeImmutable(race_day());
 
     if ($born > $race) {
         return null;
@@ -369,12 +427,53 @@ function age_on_race_day(string $dob): ?int
    is not, and a single multiplier cannot express all three. Stating the amounts
    outright also removes any rounding argument about what someone owes. */
 const EARLY_BIRD_PERCENT = 20;
-const EARLY_BIRD_UNTIL   = '2026-10-07 23:59:59';   // IST, inclusive; must match EARLY_UNTIL in assets/js/register.js
+const EARLY_BIRD_UNTIL   = '2026-10-07 23:59:59';   // IST, inclusive; the default when none is saved in the admin panel
+
+/**
+ * Early bird end as "Y-m-d H:i:s" IST, inclusive of that whole minute. The
+ * browser receives the same value through api/site.php, so the price shown and
+ * the price charged change at the same moment.
+ */
+function early_bird_until(?string $saved = null): string
+{
+    $v = $saved ?? (string) site_setting('early_until', '');
+    return preg_match('/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/', $v) ? $v . ':59' : EARLY_BIRD_UNTIL;
+}
 
 /** Evaluated server-side so a changed device clock cannot buy the old price. */
 function early_bird_active(): bool
 {
-    return new DateTimeImmutable('now') <= new DateTimeImmutable(EARLY_BIRD_UNTIL);
+    return new DateTimeImmutable('now') <= new DateTimeImmutable(early_bird_until());
+}
+
+/**
+ * CATEGORIES with fees saved in the admin panel applied. A saved pair is used
+ * only when it makes sense (at least ₹1, early price not above the standard
+ * one), and a free category stays free, so a typo cannot make a race free or
+ * charge more than advertised.
+ *
+ * @param array|null $saved decoded "prices" setting, e.g. ['half' => ['base' => 1500, 'early' => 1200]]
+ */
+function category_fees(?array $saved = null): array
+{
+    if ($saved === null) {
+        $decoded = json_decode((string) site_setting('prices', ''), true);
+        $saved   = is_array($decoded) ? $decoded : [];
+    }
+
+    $cats = CATEGORIES;
+    foreach ($cats as $key => $c) {
+        if ($c['base_paise'] <= 0 || !isset($saved[$key]['base'], $saved[$key]['early'])) {
+            continue;
+        }
+        $base  = (int) $saved[$key]['base'] * 100;
+        $early = (int) $saved[$key]['early'] * 100;
+        if ($base >= 100 && $early >= 100 && $early <= $base) {
+            $cats[$key]['base_paise']  = $base;
+            $cats[$key]['early_paise'] = $early;
+        }
+    }
+    return $cats;
 }
 
 function category_exists(string $key): bool
@@ -387,7 +486,7 @@ function category_exists(string $key): bool
  */
 function price_for(string $key): array
 {
-    $c     = CATEGORIES[$key];
+    $c     = category_fees()[$key];
     $base  = $c['base_paise'];
     $early = $base > 0 && early_bird_active();
 

@@ -1,0 +1,145 @@
+/* ==========================================================================
+   Website editor overlay. Loaded on top of the public site's own styles, so
+   every rule is prefixed with cms- and sets its own font, sizes and colours
+   rather than inheriting the page's.
+   ========================================================================== */
+
+.cms-ui, .cms-ui * { box-sizing: border-box; }
+.cms-ui {
+  font: 500 14px/1.4 system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  color: #1F2937; letter-spacing: 0; text-transform: none;
+}
+
+/* Room for the bar, so it never covers the footer. */
+body.cms-editing { padding-bottom: 72px; }
+
+/* ---------- What can be clicked ---------- */
+
+.cms-editing [data-e] { cursor: pointer; }
+.cms-editing [data-e]:hover {
+  outline: 2px dashed #E8650B !important;
+  outline-offset: 3px;
+}
+/* Already changed from the original. */
+.cms-editing .cms-edited { outline: 1px dotted rgba(18, 136, 7, .7); outline-offset: 3px; }
+
+.cms-editing .cms-active,
+.cms-editing .cms-active:hover {
+  outline: 3px solid #128807 !important;
+  outline-offset: 4px;
+  cursor: text;
+}
+/* The reveal-on-scroll animation must not leave the element being edited
+   half-transparent. */
+.cms-editing .cms-active { opacity: 1 !important; transform: none !important; }
+
+/* ---------- Bottom bar ---------- */
+
+.cms-bar {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 2147483000;
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  min-height: 60px; padding: 10px 16px;
+  background: #12295B; color: #fff;
+  box-shadow: 0 -6px 24px rgba(0, 0, 0, .25);
+}
+.cms-bar__left { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.cms-bar__left b { font-weight: 800; }
+.cms-bar__hint { color: #C9D3E8; font-weight: 400; }
+.cms-bar__status { flex: 1 1 200px; margin: 0; font-weight: 600; min-height: 1.4em; }
+.cms-bar__status.is-ok { color: #9BE58F; }
+.cms-bar__status.is-err { color: #FFB4A6; }
+.cms-bar__right { display: flex; gap: 8px; flex-wrap: wrap; margin-left: auto; }
+
+.cms-select {
+  min-height: 36px; padding: 6px 10px;
+  border: 1px solid rgba(255, 255, 255, .35); border-radius: 6px;
+  background: #fff; color: #12295B; font: inherit;
+}
+
+/* ---------- Buttons and inputs ---------- */
+
+.cms-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 36px; padding: 7px 14px;
+  border: 1px solid transparent; border-radius: 6px;
+  font: 600 14px/1.2 system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  text-decoration: none; white-space: nowrap; cursor: pointer;
+}
+.cms-btn:focus-visible { outline: 3px solid #FF9933; outline-offset: 2px; }
+.cms-btn:disabled { opacity: .6; cursor: progress; }
+.cms-btn--primary { background: #B94D06; color: #fff; }
+.cms-btn--primary:hover { background: #963D04; }
+.cms-btn--ghost { background: transparent; color: inherit; border-color: currentColor; }
+.cms-bar .cms-btn--ghost { color: #fff; border-color: rgba(255, 255, 255, .45); }
+.cms-bar .cms-btn--ghost:hover { background: rgba(255, 255, 255, .1); }
+.cms-btn--link { background: none; color: #A8410A; text-decoration: underline; padding-inline: 6px; }
+
+.cms-input {
+  width: 100%; min-height: 40px; padding: 8px 10px;
+  border: 1px solid #C7D0DF; border-radius: 6px;
+  font: 400 15px/1.4 system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; color: #1F2937;
+  background: #fff;
+}
+.cms-input:focus { outline: 2px solid #E8650B; outline-offset: 1px; border-color: #E8650B; }
+textarea.cms-input { resize: vertical; }
+
+/* ---------- Floating text toolbar ---------- */
+
+.cms-tools {
+  position: absolute; z-index: 2147483001;
+  display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+  max-width: min(760px, calc(100vw - 16px));
+  padding: 8px; border-radius: 10px;
+  background: #fff; border: 1px solid #C7D0DF;
+  box-shadow: 0 12px 32px rgba(18, 41, 91, .22);
+}
+.cms-tool {
+  min-width: 36px; min-height: 36px; padding: 6px 10px;
+  border: 1px solid #DBE2ED; border-radius: 6px;
+  background: #F6F7FA; color: #12295B;
+  font: 700 14px/1 system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; cursor: pointer;
+}
+.cms-tool:hover { background: #FFF3E4; border-color: #E8650B; }
+.cms-tools__sep { width: 1px; align-self: stretch; background: #DBE2ED; }
+.cms-tools .cms-input { flex: 1 1 220px; min-height: 36px; width: auto; }
+.cms-tools__spacer { flex: 1 1 0; }
+
+/* ---------- Dialogs ---------- */
+
+.cms-modal {
+  position: fixed; inset: 0; z-index: 2147483002;
+  display: grid; place-items: center; padding: 16px;
+  background: rgba(8, 15, 35, .6);
+}
+.cms-modal__box {
+  width: min(560px, 100%); max-height: calc(100vh - 32px); overflow: auto;
+  padding: 20px; border-radius: 12px;
+  background: #fff; border-top: 4px solid #FF9933;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, .35);
+}
+.cms-modal__box h2 {
+  margin: 0 0 14px; font: 800 18px/1.3 system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  color: #12295B; letter-spacing: 0; text-transform: none;
+}
+.cms-modal__intro { margin: 0 0 12px; color: #57616F; }
+.cms-modal__preview {
+  display: block; max-width: 100%; max-height: 240px; margin: 0 auto 14px;
+  object-fit: contain; border-radius: 6px; background: #F6F7FA;
+}
+.cms-field { display: grid; gap: 6px; margin: 0 0 14px; }
+.cms-field > span { font-weight: 700; color: #12295B; }
+.cms-field small { color: #6B7280; font-weight: 400; }
+.cms-modal__err { margin: 0 0 10px; color: #B42318; font-weight: 600; min-height: 1em; }
+.cms-modal__err:empty { display: none; }
+.cms-modal__actions { display: flex; justify-content: flex-end; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+/* An empty status line should not hold a row open. */
+.cms-bar__status:empty { display: none; }
+
+@media (max-width: 720px) {
+  .cms-bar { gap: 8px; padding: 8px 10px; }
+  .cms-bar__hint { display: none; }
+  .cms-bar__right { margin-left: 0; gap: 6px; }
+  .cms-bar .cms-btn { min-height: 34px; padding: 5px 10px; font-size: 13px; }
+  body.cms-editing { padding-bottom: 130px; }
+}

@@ -24,7 +24,30 @@
     cause: { label: 'Run for Cause',     base: 65000,  early: 52000  },
     para:  { label: 'Disabled Category', base: 0,      early: 0      }
   };
-  var EARLY_UNTIL   = '2026-10-07T23:59:59+05:30';   // must match EARLY_BIRD_UNTIL in api/lib.php
+  var EARLY_UNTIL   = '2026-10-07T23:59:59+05:30';
+
+  /* Fees, the early bird end and race day can be changed in the admin panel
+     (Website → Event, fees & media). api/site.php hands the saved values over
+     as SITE_CONFIG; the defaults above are only used if that script failed. */
+  var CFG = window.SITE_CONFIG || {};
+  if (CFG.prices) {
+    Object.keys(CATEGORIES).forEach(function (k) {
+      var p = CFG.prices[k];
+      if (p && typeof p.base === 'number' && typeof p.early === 'number') {
+        CATEGORIES[k].base = p.base;
+        CATEGORIES[k].early = p.early;
+      }
+    });
+  }
+  if (CFG.earlyUntil) EARLY_UNTIL = CFG.earlyUntil;
+
+  /* "7 October 2026", read in IST whatever the visitor's own time zone. */
+  function earlyUntilLabel() {
+    var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(EARLY_UNTIL);
+    var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July',
+                  'August', 'September', 'October', 'November', 'December'];
+    return m ? (+m[3]) + ' ' + months[+m[2] - 1] + ' ' + m[1] : '';
+  }
 
   var summary   = document.getElementById('regSummary');
   var amountEl  = document.getElementById('regAmount');
@@ -70,7 +93,7 @@
     amountEl.textContent = p.base === 0 ? 'Free' : rupees(p.payable);
     noteEl.textContent = p.base === 0
       ? 'No payment needed for the 1 KM category.'
-      : (p.early ? 'Early bird price, till 7 October 2026.' : 'Standard entry price.')
+      : (p.early ? 'Early bird price, till ' + earlyUntilLabel() + '.' : 'Standard entry price.')
         + ' Our team will contact you to collect it.';
     submitBtn.textContent = SUBMIT_LABEL;
   }
@@ -130,7 +153,10 @@
   /* Race day. Age is quoted "on race day", not today: someone whose birthday
      falls between now and December would otherwise be told the wrong age, and
      could be turned away at bib collection for a category they do qualify for. */
-  var RACE_DAY = new Date(2026, 11, 20);
+  var RACE_DAY = (function () {
+    var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec((window.SITE_CONFIG || {}).raceDay || '');
+    return m ? new Date(+m[1], +m[2] - 1, +m[3]) : new Date(2026, 11, 20);
+  })();
 
   /* The field is typed as DD-MM-YYYY because that is how people write a date of
      birth here; everything downstream — validation, the API, the database —

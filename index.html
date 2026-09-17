@@ -5,8 +5,8 @@
 <script>document.documentElement.classList.remove('no-js');</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<title>The Flying Sikh Milkha Singh Legacy Marathon 2026 | Run for a Drug-Free India</title>
-<meta name="description" content="The Flying Sikh Milkha Singh Legacy Marathon 2026 in Chandigarh on 20 December 2026. Run in the footsteps of a legend and pledge your support for a drug-free India." />
+<title data-e="meta.title">The Flying Sikh Milkha Singh Legacy Marathon 2026 | Run for a Drug-Free India</title>
+<meta name="description" content="The Flying Sikh Milkha Singh Legacy Marathon 2026 in Chandigarh on 20 December 2026. Run in the footsteps of a legend and pledge your support for a drug-free India." data-e="meta.description" />
 <link rel="canonical" href="https://milkhasinghlegacymarathon.com/" />
 <meta name="robots" content="index, follow" />
 <meta name="google-site-verification" content="74FxEn74v0RXj6IdugDcx6wceZcv3Qr7b_JJGF8b-eE" />
@@ -34,7 +34,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="assets/css/styles.css?v=20260916-1" />
+<link rel="stylesheet" href="assets/css/styles.css?v=20260917-1" />
+<!-- Content saved in the admin website editor, and the event settings the page
+     scripts read (race start, early bird end, fees). Must stay in <head>. -->
+<script src="api/site.php?page=index"></script>
 
 <!-- Event schema: this is what makes Google show your date + venue in search results. -->
 <script type="application/ld+json">
@@ -71,7 +74,7 @@
 </head>
 <body>
 
-<a class="skip-link" href="#main">Skip to content</a>
+<a class="skip-link" href="#main" data-e="page.a1">Skip to content</a>
 
 <!-- ============ NAV ============ -->
 <!-- is-hero is set here, not only by main.js, so the first paint over the hero
@@ -81,18 +84,18 @@
     <a class="nav__brand" href="#hero">
       <img class="nav__logo" src="images/logo-lockup-2026.png"
            alt="The Flying Sikh Milkha Singh Legacy Marathon 2026"
-           width="900" height="301" />
+           width="900" height="301" data-e="nav.img1" />
     </a>
 
     <nav class="nav__links" id="navLinks" aria-label="Main">
-      <a href="#about">About</a>
-      <a href="#tribute">Legacy</a>
-      <a href="#cause">The Cause</a>
-      <a href="#event-info">Event Info</a>
-      <a href="#categories">Categories</a>
-      <a href="#categories">Fees</a>
-      <a href="#contact">Contact</a>
-      <a class="btn btn--sm btn--primary" href="#register">Register Now</a>
+      <a href="#about" data-e="navLinks.a1">About</a>
+      <a href="#tribute" data-e="navLinks.a2">Legacy</a>
+      <a href="#cause" data-e="navLinks.a3">The Cause</a>
+      <a href="#event-info" data-e="navLinks.a4">Event Info</a>
+      <a href="#categories" data-e="navLinks.a5">Categories</a>
+      <a href="#categories" data-e="navLinks.a6">Fees</a>
+      <a href="#contact" data-e="navLinks.a7">Contact</a>
+      <a class="btn btn--sm btn--primary" href="#register" data-e="navLinks.a8">Register Now</a>
     </nav>
 
     <button class="nav__toggle" id="navToggle" aria-label="Open menu" aria-expanded="false" aria-controls="navLinks">
@@ -120,19 +123,19 @@
   <div class="wrap hero__inner">
     <div class="hero__panel">
 
-    <p class="hero__eyebrow">Forever Legend Foundation Presents</p>
+    <p class="hero__eyebrow" data-e="hero.p1">Forever Legend Foundation Presents</p>
 
-    <h1 class="hero__title">
+    <h1 class="hero__title" data-e="hero.h11">
       <span class="hero__flying">The Flying Sikh</span>
       <span>Milkha Singh</span>
       <span class="hero__title--accent">Legacy Marathon</span>
       <span class="hero__year">2026</span>
     </h1>
 
-    <p class="hero__tagline">Run in the Footsteps of a Legend</p>
-    <p class="hero__cause">Run for Drug Free India</p>
+    <p class="hero__tagline" data-e="hero.p2">Run in the Footsteps of a Legend</p>
+    <p class="hero__cause" data-e="hero.p3">Run for Drug Free India</p>
 
-    <p class="hero__lead">
+    <p class="hero__lead" data-e="hero.p4">
       Join thousands of runners in Chandigarh for a powerful tribute to India's legendary
       athlete, Milkha Singh. Run to celebrate his courage, carry forward his spirit and
       pledge your support for a healthier, drug-free India.
@@ -141,20 +144,20 @@
     <div class="hero__meta">
       <div class="hero__meta-item">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2v3M17 2v3M3 9h18M5 5h14a2 2 0 012 2v12a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2z"/></svg>
-        <time datetime="2026-12-20"><span class="hero__weekday">Sunday,</span> 20 December 2026</time>
+        <time datetime="2026-12-20" data-e="hero.time1"><span class="hero__weekday">Sunday,</span> 20 December 2026</time>
       </div>
       <span class="hero__meta-sep" aria-hidden="true"></span>
-      <div class="hero__meta-item">
+      <div class="hero__meta-item" data-e="hero.div1">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
         Chandigarh
       </div>
     </div>
 
-    <p class="hero__slogan">One Run. One Pledge. One Nation.</p>
+    <p class="hero__slogan" data-e="hero.p5">One Run. One Pledge. One Nation.</p>
 
     <div class="hero__cta">
-      <a class="btn btn--primary" href="#register">Register Now</a>
-      <a class="btn btn--ghost" href="#categories">Race Categories</a>
+      <a class="btn btn--primary" href="#register" data-e="hero.a1">Register Now</a>
+      <a class="btn btn--ghost" href="#categories" data-e="hero.a2">Race Categories</a>
     </div>
 
     </div><!-- /hero__panel -->
@@ -175,7 +178,7 @@
      copy that list over the other seven — they must stay identical or the loop
      will visibly jump. The number of copies is fixed at 8 in the CSS. -->
 <section class="marquee" aria-label="Sponsors and partners">
-  <div class="marquee__track">
+  <div class="marquee__track" data-e-list="marquee">
     <ul class="marquee__set">
         <li><img src="images/sponsor-forever-legend.jpg" alt="Forever Legend Foundation" width="723" height="777" loading="lazy" decoding="async" /></li>
         <li><img src="images/sponsor-touch-group-events.png?v=2" alt="Touch Group Events" width="1834" height="1051" loading="lazy" decoding="async" /></li>
@@ -224,20 +227,20 @@
   <div class="wrap">
     <div class="about__grid">
       <div class="about__copy">
-        <p class="section__eyebrow">About the Marathon</p>
-        <h2 class="section__title">More Than a Marathon. <span class="accent">A Legacy in Motion.</span></h2>
+        <p class="section__eyebrow" data-e="about.p1">About the Marathon</p>
+        <h2 class="section__title" data-e="about.h21">More Than a Marathon. <span class="accent">A Legacy in Motion.</span></h2>
 
-        <p>
+        <p data-e="about.p2">
           The Milkha Singh Legacy Marathon 2026 honours the determination, courage and
           extraordinary journey of the man India remembers as <strong>The Flying Sikh</strong>.
         </p>
-        <p>
+        <p data-e="about.p3">
           This event brings athletes, families, students, communities and supporters together
           to celebrate a legacy that continues to inspire generations. Every kilometre
           represents discipline, resilience and the belief that no challenge is greater than
           the human spirit.
         </p>
-        <p>
+        <p data-e="about.p4">
           Participants will not only run in memory of a legend; they will run for a healthier
           generation and a drug-free India.
         </p>
@@ -246,8 +249,8 @@
       <figure class="about__media">
         <img src="images/milkha-portrait.jpg"
              alt="Artistic tribute portrait of Milkha Singh, The Flying Sikh, wearing a red turban against a tricolor brushstroke background"
-             width="640" height="800" loading="lazy" decoding="async" />
-        <figcaption>The Flying Sikh: artistic tribute portrait.</figcaption>
+             width="640" height="800" loading="lazy" decoding="async" data-e="about.img1" />
+        <figcaption data-e="about.figcaption1">The Flying Sikh: artistic tribute portrait.</figcaption>
       </figure>
     </div>
   </div>
@@ -256,47 +259,47 @@
 <!-- ============ TRIBUTE ============ -->
 <section class="section section--alt" id="tribute">
   <div class="wrap tribute">
-    <p class="section__eyebrow">Tribute</p>
-    <h2 class="section__title">The Spirit That <span class="accent">Never Stopped Running</span></h2>
+    <p class="section__eyebrow" data-e="tribute.p1">Tribute</p>
+    <h2 class="section__title" data-e="tribute.h21">The Spirit That <span class="accent">Never Stopped Running</span></h2>
 
     <div class="tribute__copy">
-      <p>
+      <p data-e="tribute.p2">
         Milkha Singh's life was shaped by struggle, discipline and an unstoppable desire to
         move forward. His journey became a symbol of what determination can achieve.
       </p>
-      <p>
+      <p data-e="tribute.p3">
         The Milkha Singh Legacy Marathon carries that spirit into the future. It invites every
         participant to push beyond personal limits, rise above challenges and inspire others
         through action.
       </p>
     </div>
 
-    <p class="tribute__slogan">Run. Remember. Be Inspired.</p>
+    <p class="tribute__slogan" data-e="tribute.p4">Run. Remember. Be Inspired.</p>
   </div>
 </section>
 
 <!-- ============ CAUSE ============ -->
 <section class="section" id="cause">
   <div class="wrap">
-    <p class="section__eyebrow">The Cause</p>
+    <p class="section__eyebrow" data-e="cause.p1">The Cause</p>
 
     <div class="cause__grid">
       <div class="cause__copy">
         <!-- Non-breaking hyphen: balancing the two lines was splitting the compound
          as "Drug-" / "Free India". -->
-    <h2 class="section__title">Run for a <span class="accent">Drug&#8209;Free India</span></h2>
-        <p>
+    <h2 class="section__title" data-e="cause.h21">Run for a <span class="accent">Drug&#8209;Free India</span></h2>
+        <p data-e="cause.p2">
           Drug addiction can take away health, opportunity and hope from individuals, families
           and communities. This marathon encourages young people to choose fitness, discipline
           and purpose over addiction.
         </p>
-        <p>Every runner becomes part of a shared pledge:</p>
+        <p data-e="cause.p3">Every runner becomes part of a shared pledge:</p>
 
-        <blockquote class="pledge">
+        <blockquote class="pledge" data-e="cause.blockquote1">
           Say no to drugs. Say yes to health, ambition and life.
         </blockquote>
 
-        <p>
+        <p data-e="cause.p4">
           Together, we can inspire a generation that runs towards its dreams, not away from its
           challenges.
         </p>
@@ -305,7 +308,7 @@
       <figure class="cause__media">
         <img src="images/cause-legacy.jpg"
              alt="Milkha Singh in a red turban against the tricolour, with a runner in mid-stride across a stadium and the Chandigarh skyline at sunrise below him"
-             width="900" height="900" loading="lazy" decoding="async" />
+             width="900" height="900" loading="lazy" decoding="async" data-e="cause.img1" />
       </figure>
     </div>
   </div>
@@ -314,48 +317,48 @@
 <!-- ============ PURPOSE CARDS ============ -->
 <section class="section section--alt-green" id="purpose">
   <div class="wrap">
-    <p class="section__eyebrow">Why We Run</p>
-    <h2 class="section__title">Five Reasons. <span class="accent">One Purpose.</span></h2>
+    <p class="section__eyebrow" data-e="purpose.p1">Why We Run</p>
+    <h2 class="section__title" data-e="purpose.h21">Five Reasons. <span class="accent">One Purpose.</span></h2>
 
     <div class="cards">
       <article class="card">
         <div class="card__icon" aria-hidden="true">
           <svg viewBox="0 0 24 24"><path d="M12 2l2.9 6.3 6.8.8-5 4.7 1.3 6.8L12 17.3 5.9 20.6 7.3 13.8l-5-4.7 6.8-.8z"/></svg>
         </div>
-        <h3>Celebrate the Legacy</h3>
-        <p>Honour the life, courage and achievements of The Flying Sikh.</p>
+        <h3 data-e="purpose.h31">Celebrate the Legacy</h3>
+        <p data-e="purpose.p2">Honour the life, courage and achievements of The Flying Sikh.</p>
       </article>
 
       <article class="card">
         <div class="card__icon" aria-hidden="true">
           <svg viewBox="0 0 24 24"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5L18 18M18 6l-2.5 2.5M8.5 15.5L6 18"/><circle cx="12" cy="12" r="3"/></svg>
         </div>
-        <h3>Inspire Generations</h3>
-        <p>Encourage young people to dream bigger and work harder.</p>
+        <h3 data-e="purpose.h32">Inspire Generations</h3>
+        <p data-e="purpose.p3">Encourage young people to dream bigger and work harder.</p>
       </article>
 
       <article class="card">
         <div class="card__icon" aria-hidden="true">
           <svg viewBox="0 0 24 24"><path d="M20.8 5.6a5.5 5.5 0 00-7.8 0L12 6.6l-1-1a5.5 5.5 0 00-7.8 7.8l1 1L12 22l7.8-7.6 1-1a5.5 5.5 0 000-7.8z"/></svg>
         </div>
-        <h3>Build a Healthier Nation</h3>
-        <p>Promote running, fitness and active living across communities.</p>
+        <h3 data-e="purpose.h33">Build a Healthier Nation</h3>
+        <p data-e="purpose.p4">Promote running, fitness and active living across communities.</p>
       </article>
 
       <article class="card">
         <div class="card__icon" aria-hidden="true">
           <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
         </div>
-        <h3>Support a Drug-Free Future</h3>
-        <p>Raise awareness and encourage positive choices among India's youth.</p>
+        <h3 data-e="purpose.h34">Support a Drug-Free Future</h3>
+        <p data-e="purpose.p5">Raise awareness and encourage positive choices among India's youth.</p>
       </article>
 
       <article class="card card--vijay">
         <div class="card__icon" aria-hidden="true">
           <svg viewBox="0 0 24 24"><path d="M12 2l2.2 4.7 5.1.7-3.7 3.7.9 5.1L12 13.7 7.5 16.2l.9-5.1L4.7 7.4l5.1-.7z"/><path d="M9 15.5L7 22l5-3 5 3-2-6.5"/></svg>
         </div>
-        <h3>Commemorate Vijay Diwas</h3>
-        <p>Honour our brave heroes and inspire youth to join the defence services.</p>
+        <h3 data-e="purpose.h35">Commemorate Vijay Diwas</h3>
+        <p data-e="purpose.p6">Honour our brave heroes and inspire youth to join the defence services.</p>
       </article>
     </div>
   </div>
@@ -364,40 +367,40 @@
 <!-- ============ EVENT INFO ============ -->
 <section class="section" id="event-info">
   <div class="wrap">
-    <p class="section__eyebrow">Event Information</p>
-    <h2 class="section__title">Mark Your <span class="accent">Calendar</span></h2>
+    <p class="section__eyebrow" data-e="event-info.p1">Event Information</p>
+    <h2 class="section__title" data-e="event-info.h21">Mark Your <span class="accent">Calendar</span></h2>
 
     <div class="info">
       <dl class="info__list">
         <div class="info__row">
-          <dt>Date</dt>
-          <dd>Sunday, 20 December 2026</dd>
+          <dt data-e="event-info.dt1">Date</dt>
+          <dd data-e="event-info.dd1">Sunday, 20 December 2026</dd>
         </div>
         <div class="info__row">
-          <dt>Venue</dt>
-          <dd>Ground opposite Chandigarh Club, Sector 1, Chandigarh 160001</dd>
+          <dt data-e="event-info.dt2">Venue</dt>
+          <dd data-e="event-info.dd2">Ground opposite Chandigarh Club, Sector 1, Chandigarh 160001</dd>
         </div>
         <div class="info__row">
-          <dt>Event</dt>
-          <dd>The Flying Sikh Milkha Singh Legacy Marathon 2026</dd>
+          <dt data-e="event-info.dt3">Event</dt>
+          <dd data-e="event-info.dd3">The Flying Sikh Milkha Singh Legacy Marathon 2026</dd>
         </div>
         <div class="info__row">
-          <dt>Cause</dt>
-          <dd>Run for a Drug-Free India</dd>
+          <dt data-e="event-info.dt4">Cause</dt>
+          <dd data-e="event-info.dd4">Run for a Drug-Free India</dd>
         </div>
         <div class="info__row">
-          <dt>Organiser</dt>
-          <dd>Forever Legend Foundation</dd>
+          <dt data-e="event-info.dt5">Organiser</dt>
+          <dd data-e="event-info.dd5">Forever Legend Foundation</dd>
         </div>
       </dl>
 
       <aside class="info__note">
-        <h3>Reporting Point</h3>
-        <p>
+        <h3 data-e="event-info.h31">Reporting Point</h3>
+        <p data-e="event-info.p2">
           Ground opposite Chandigarh Club, Sector 1, Chandigarh 160001. Race categories and
           flag-off times are listed below; the official route map will follow.
         </p>
-        <a class="btn btn--ghost btn--sm" href="#register">Register now</a>
+        <a class="btn btn--ghost btn--sm" href="#register" data-e="event-info.a1">Register now</a>
       </aside>
     </div>
   </div>
@@ -406,12 +409,12 @@
 <!-- ============ RACE CATEGORIES ============ -->
 <section class="section section--alt" id="categories">
   <div class="wrap">
-    <h2 class="section__title">Race Categories &amp; <span class="accent">Route</span></h2>
-    <p class="section__sub">
+    <h2 class="section__title" data-e="categories.h21">Race Categories &amp; <span class="accent">Route</span></h2>
+    <p class="section__sub" data-e="categories.p1">
       Choose your challenge and run for a cause. All races start from Sector 1 Chandigarh.
     </p>
 
-    <p class="offer">
+    <p class="offer" data-e="categories.p2">
       <span class="offer__text">Early bird: Get up to <span class="offer__nowrap"><b>&#8377;300</b> discount</span></span>
       <span class="offer__until">Till 7 October 2026</span>
     </p>
@@ -420,39 +423,39 @@
 
       <article class="race-card">
         <header class="race-card__head">
-          <h3>Half Marathon</h3>
-          <span class="race-card__dist">21<span>KM</span></span>
+          <h3 data-e="header.h31">Half Marathon</h3>
+          <span class="race-card__dist" data-e="header.span1">21<span>KM</span></span>
         </header>
 
         <ul class="race-card__tags">
-          <li>Category wise (M/W)</li>
-          <li>Above 18 years</li>
-          <li class="is-live">Timer Run</li>
+          <li data-e="categories.li1">Category wise (M/W)</li>
+          <li data-e="categories.li2">Above 18 years</li>
+          <li class="is-live" data-e="categories.li3">Timer Run</li>
         </ul>
 
         <ul class="race-card__times">
-          <li>
+          <li data-e="categories.li4">
             <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
             Assembly Time: 5:00 AM
           </li>
-          <li>
+          <li data-e="categories.li5">
             <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
             Flag-off: 5:30 AM
           </li>
         </ul>
 
         <div class="race-card__ages">
-          <h4>Age Categories:</h4>
+          <h4 data-e="categories.h41">Age Categories:</h4>
           <ul>
-            <li>18 to 30</li>
-            <li>Above 30 to 40</li>
-            <li>Above 40 to 51</li>
-            <li>Above 51 to 60</li>
-            <li>Above 60+</li>
+            <li data-e="categories.li6">18 to 30</li>
+            <li data-e="categories.li7">Above 30 to 40</li>
+            <li data-e="categories.li8">Above 40 to 51</li>
+            <li data-e="categories.li9">Above 51 to 60</li>
+            <li data-e="categories.li10">Above 60+</li>
           </ul>
         </div>
 
-        <p class="race-card__fee">
+        <p class="race-card__fee" data-e="categories.p3">
           <span class="race-card__fee-label">Entry fee</span>
           <span class="race-card__fee-amt"><s>&#8377;1,500</s><b>&#8377;1,200</b></span>
         </p>
@@ -460,39 +463,39 @@
 
       <article class="race-card race-card--mini">
         <header class="race-card__head">
-          <h3>Mini Marathon</h3>
-          <span class="race-card__dist">10<span>KM</span></span>
+          <h3 data-e="header.h32">Mini Marathon</h3>
+          <span class="race-card__dist" data-e="header.span2">10<span>KM</span></span>
         </header>
 
         <ul class="race-card__tags">
-          <li>Category wise (M/W)</li>
-          <li>Above 18 years</li>
-          <li class="is-live">Timer Run</li>
+          <li data-e="categories.li11">Category wise (M/W)</li>
+          <li data-e="categories.li12">Above 18 years</li>
+          <li class="is-live" data-e="categories.li13">Timer Run</li>
         </ul>
 
         <ul class="race-card__times">
-          <li>
+          <li data-e="categories.li14">
             <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
             Assembly Time: 5:50 AM
           </li>
-          <li>
+          <li data-e="categories.li15">
             <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
             Flag-off: 6:20 AM
           </li>
         </ul>
 
         <div class="race-card__ages">
-          <h4>Age Categories:</h4>
+          <h4 data-e="categories.h42">Age Categories:</h4>
           <ul>
-            <li>18 to 30</li>
-            <li>Above 30 to 40</li>
-            <li>Above 40 to 51</li>
-            <li>Above 51 to 60</li>
-            <li>Above 60+</li>
+            <li data-e="categories.li16">18 to 30</li>
+            <li data-e="categories.li17">Above 30 to 40</li>
+            <li data-e="categories.li18">Above 40 to 51</li>
+            <li data-e="categories.li19">Above 51 to 60</li>
+            <li data-e="categories.li20">Above 60+</li>
           </ul>
         </div>
 
-        <p class="race-card__fee">
+        <p class="race-card__fee" data-e="categories.p4">
           <span class="race-card__fee-label">Entry fee</span>
           <span class="race-card__fee-amt"><s>&#8377;1,200</s><b>&#8377;1,000</b></span>
         </p>
@@ -500,34 +503,34 @@
 
       <article class="race-card race-card--cause">
         <header class="race-card__head">
-          <h3>Run for Cause</h3>
-          <span class="race-card__dist">5<span>KM</span></span>
+          <h3 data-e="header.h33">Run for Cause</h3>
+          <span class="race-card__dist" data-e="header.span3">5<span>KM</span></span>
         </header>
 
         <ul class="race-card__tags">
-          <li>Open for all</li>
-          <li>Above 12 years</li>
+          <li data-e="categories.li21">Open for all</li>
+          <li data-e="categories.li22">Above 12 years</li>
         </ul>
 
         <ul class="race-card__times">
-          <li>
+          <li data-e="categories.li23">
             <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
             Assembly Time: 7:00 AM
           </li>
-          <li>
+          <li data-e="categories.li24">
             <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
             Flag-off: 7:15 AM
           </li>
         </ul>
 
         <div class="race-card__ages">
-          <h4>Age Categories:</h4>
+          <h4 data-e="categories.h43">Age Categories:</h4>
           <ul>
-            <li>Above 12 and open for all age groups</li>
+            <li data-e="categories.li25">Above 12 and open for all age groups</li>
           </ul>
         </div>
 
-        <p class="race-card__fee">
+        <p class="race-card__fee" data-e="categories.p5">
           <span class="race-card__fee-label">Entry fee</span>
           <span class="race-card__fee-amt"><s>&#8377;650</s><b>&#8377;520</b></span>
         </p>
@@ -535,38 +538,38 @@
 
       <article class="race-card race-card--para">
         <header class="race-card__head">
-          <h3>Disabled Category</h3>
-          <span class="race-card__dist">1<span>KM</span></span>
+          <h3 data-e="header.h34">Disabled Category</h3>
+          <span class="race-card__dist" data-e="header.span4">1<span>KM</span></span>
         </header>
 
         <ul class="race-card__tags">
-          <li>Open for all age groups (M/W)</li>
+          <li data-e="categories.li26">Open for all age groups (M/W)</li>
         </ul>
 
         <ul class="race-card__times">
-          <li>
+          <li data-e="categories.li27">
             <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
             Assembly Time: 6:30 AM
           </li>
-          <li>
+          <li data-e="categories.li28">
             <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
             Flag-off: 6:40 AM
           </li>
         </ul>
 
         <div class="race-card__ages">
-          <h4>Age Categories:</h4>
+          <h4 data-e="categories.h44">Age Categories:</h4>
           <ul>
-            <li>Open for all age groups (M/W)</li>
+            <li data-e="categories.li29">Open for all age groups (M/W)</li>
           </ul>
         </div>
 
-        <p class="race-card__note">
+        <p class="race-card__note" data-e="categories.p6">
           <strong>Special Note:</strong> separate categories for differently-abled participants
           with dedicated support.
         </p>
 
-        <p class="race-card__fee">
+        <p class="race-card__fee" data-e="categories.p7">
           <span class="race-card__fee-label">Entry fee</span>
           <span class="race-card__fee-amt"><b class="is-free">Free</b></span>
         </p>
@@ -575,20 +578,20 @@
     </div>
 
     <div class="route__head">
-      <span class="route__eyebrow">The Course</span>
-      <h3 class="route__title">Route Plan for <span class="accent">The Flying Sikh</span> Milkha Singh Legacy Marathon</h3>
-      <p class="route__note">Every race starts and finishes beside Chandigarh Club, Sector 1.</p>
+      <span class="route__eyebrow" data-e="categories.span1">The Course</span>
+      <h3 class="route__title" data-e="categories.h31">Route Plan for <span class="accent">The Flying Sikh</span> Milkha Singh Legacy Marathon</h3>
+      <p class="route__note" data-e="categories.p8">Every race starts and finishes beside Chandigarh Club, Sector 1.</p>
     </div>
 
     <figure class="route">
       <div class="route__map">
         <img src="images/route-map.jpg"
              alt="Route map. Start and finish beside Chandigarh Club, out past Rock Garden and the Lake through HC Chowk, on by the Golf Club and the Bridge, then round to DT Mall and IT City. Red arrows show the outward leg and green the return. Hydration points, ambulances, toilets and traffic signals are marked, with distance markers from 1 km to 10.5 km."
-             width="1672" height="941" loading="lazy" decoding="async" />
+             width="1672" height="941" loading="lazy" decoding="async" data-e="categories.img1" />
         <img class="route__logo" src="images/logo-lockup-2026.png" alt=""
-             width="900" height="301" loading="lazy" decoding="async" />
+             width="900" height="301" loading="lazy" decoding="async" data-e="categories.img2" />
       </div>
-      <figcaption>
+      <figcaption data-e="categories.figcaption1">
         Red arrows show the outward leg, green the return. Hydration points,
         ambulances and toilets are marked throughout.
       </figcaption>
@@ -599,12 +602,12 @@
         <svg viewBox="0 0 24 24"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 01-10 0zM7 6H4a1 1 0 00-1 1c0 2.2 1.8 4 4 4M17 6h3a1 1 0 011 1c0 2.2-1.8 4-4 4"/></svg>
       </div>
       <div class="prize__copy">
-        <h3>Prize Money</h3>
-        <p>
+        <h3 data-e="awards.h31">Prize Money</h3>
+        <p data-e="awards.p1">
           Winners in every race category will be recognised on stage.
         </p>
       </div>
-      <span class="card__badge">To be announced</span>
+      <span class="card__badge" data-e="awards.span1">To be announced</span>
     </div>
   </div>
 </section>
@@ -612,36 +615,36 @@
 <!-- ============ ENTRY FEES ============ -->
 <section class="section" id="participation">
   <div class="wrap">
-    <p class="section__eyebrow">Participation</p>
+    <p class="section__eyebrow" data-e="participation.p1">Participation</p>
 
     <div class="fees">
       <div class="fees__main participation">
-        <h2 class="section__title">A Run for <span class="accent">Every Generation</span></h2>
-        <p class="lead">
+        <h2 class="section__title" data-e="participation.h21">A Run for <span class="accent">Every Generation</span></h2>
+        <p class="lead" data-e="participation.p2">
           Whether you are a professional athlete, a regular runner, a student, a family member
           or someone taking your first step towards fitness, this marathon gives you a reason
           to run.
         </p>
 
         <ul class="reasons">
-          <li>Run for courage.</li>
-          <li>Run for health.</li>
-          <li>Run for the legacy.</li>
-          <li>Run for the next generation.</li>
+          <li data-e="participation.li1">Run for courage.</li>
+          <li data-e="participation.li2">Run for health.</li>
+          <li data-e="participation.li3">Run for the legacy.</li>
+          <li data-e="participation.li4">Run for the next generation.</li>
         </ul>
 
         <div class="fees__includes">
-        <h3>Every entry includes</h3>
+        <h3 data-e="participation.h31">Every entry includes</h3>
           <ul>
-            <li>
+            <li data-e="participation.li5">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 3.5 4 6l2 3.5 2-1V20h8V8.5l2 1L20 6l-4.5-2.5a3.5 3.5 0 0 1-7 0Z"/></svg>
               Race T-shirt
             </li>
-            <li>
+            <li data-e="participation.li6">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v11H4z"/><path d="M8 8h8M8 11h5"/><path d="M9 19v-4l3 1.6L15 15v4l-3-1.5Z"/></svg>
               Finisher certificate
             </li>
-            <li>
+            <li data-e="participation.li7">
               <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="15" r="5.5"/><path d="M9.2 9.8 7 3h10l-2.2 6.8"/></svg>
               Finisher medal
             </li>
@@ -654,10 +657,10 @@
         <img class="fees__art"
              src="images/milkha-legacy-portrait-tall.jpg"
              alt="Milkha Singh in a red turban looking out over the Chandigarh skyline, a runner in mid-stride across the stadium below him and the tricolour swept across the sky."
-             width="700" height="1029" loading="lazy" decoding="async" />
+             width="700" height="1029" loading="lazy" decoding="async" data-e="participation.img1" />
 
 
-        <p class="fees__cta">
+        <p class="fees__cta" data-e="participation.p3">
           <a class="btn btn--primary btn--lg" href="#register">Register Now</a>
         </p>
       </aside>
@@ -669,20 +672,20 @@
 <!-- ============ REGISTER ============ -->
 <section class="section section--register" id="register">
   <div class="wrap">
-    <p class="section__eyebrow">Registration</p>
-    <h2 class="section__title">Be Part of the Legacy.</h2>
+    <p class="section__eyebrow" data-e="register.p1">Registration</p>
+    <h2 class="section__title" data-e="register.h21">Be Part of the Legacy.</h2>
 
-    <p class="register__slogan">One Run. One Pledge. One Nation.</p>
+    <p class="register__slogan" data-e="register.p2">One Run. One Pledge. One Nation.</p>
 
     <aside class="fees__deal" aria-label="Early bird offer">
       <span class="fees__deal-icon" aria-hidden="true">
         <svg viewBox="0 0 24 24"><path d="M20.6 13.4l-7.2 7.2a2 2 0 01-2.8 0L3 13V3h10l7.6 7.6a2 2 0 010 2.8z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg>
       </span>
-      <span class="fees__deal-line">
+      <span class="fees__deal-line" data-e="register.span1">
         <b>Early bird discount</b>
         <span>Till 7 October 2026.</span>
       </span>
-      <span class="fees__deal-save">
+      <span class="fees__deal-save" data-e="register.span2">
         <em>Save up to</em>
         <b>&#8377;300</b>
       </span>
@@ -691,28 +694,28 @@
     <form class="reg" id="regForm" novalidate>
 
       <fieldset class="reg__block">
-        <legend class="reg__legend">Your details</legend>
-        <p class="reg__required-note">Fields marked <span class="reg__req" aria-hidden="true">*</span> are required.</p>
+        <legend class="reg__legend" data-e="regForm.legend1">Your details</legend>
+        <p class="reg__required-note" data-e="regForm.p1">Fields marked <span class="reg__req" aria-hidden="true">*</span> are required.</p>
         <div class="reg__grid">
           <p class="reg__field reg__field--wide">
-            <label for="regName">Full name <span class="reg__req" aria-hidden="true">*</span></label>
+            <label for="regName" data-e="regForm.label1">Full name <span class="reg__req" aria-hidden="true">*</span></label>
             <input aria-describedby="fullName-err" id="regName" name="fullName" type="text" autocomplete="name" required />
             <span class="reg__err" id="fullName-err" data-err="fullName"></span>
           </p>
           <p class="reg__field">
-            <label for="regEmail">Email <span class="reg__req" aria-hidden="true">*</span></label>
+            <label for="regEmail" data-e="regForm.label2">Email <span class="reg__req" aria-hidden="true">*</span></label>
             <input aria-describedby="email-err" id="regEmail" name="email" type="email" autocomplete="email" required />
             <span class="reg__err" id="email-err" data-err="email"></span>
           </p>
           <p class="reg__field">
-            <label for="regMobile">Mobile <span class="reg__req" aria-hidden="true">*</span></label>
+            <label for="regMobile" data-e="regForm.label3">Mobile <span class="reg__req" aria-hidden="true">*</span></label>
             <input aria-describedby="mobile-err" id="regMobile" name="mobile" type="tel"
                    inputmode="numeric" autocomplete="tel" pattern="[6-9][0-9]{9}"
                    placeholder="10-digit mobile number" maxlength="10" required />
             <span class="reg__err" id="mobile-err" data-err="mobile"></span>
           </p>
           <p class="reg__field">
-            <label for="regCategory">Race category <span class="reg__req" aria-hidden="true">*</span></label>
+            <label for="regCategory" data-e="regForm.label4">Race category <span class="reg__req" aria-hidden="true">*</span></label>
             <select aria-describedby="category-err" id="regCategory" name="category" required>
               <option value="">Select your race</option>
               <option value="half">Half Marathon (21 KM)</option>
@@ -723,19 +726,19 @@
             <span class="reg__err" id="category-err" data-err="category"></span>
           </p>
           <p class="reg__field">
-            <label for="regDob">Date of birth <span class="reg__req" aria-hidden="true">*</span></label>
+            <label for="regDob" data-e="regForm.label5">Date of birth <span class="reg__req" aria-hidden="true">*</span></label>
             <input aria-describedby="dob-err" id="regDob" name="dob" type="text"
                    inputmode="numeric" autocomplete="bday" placeholder="DD-MM-YYYY"
                    pattern="[0-9]{2}-[0-9]{2}-[0-9]{4}" maxlength="10" required />
             <span class="reg__err" id="dob-err" data-err="dob"></span>
           </p>
           <p class="reg__field">
-            <label for="regAgeOut">Age on race day</label>
+            <label for="regAgeOut" data-e="regForm.label6">Age on race day</label>
             <output class="reg__age" id="regAgeOut" for="regDob" aria-live="polite">&mdash;</output>
             <span class="reg__err" data-err="age"></span>
           </p>
           <p class="reg__field">
-            <label for="regGender">Gender <span class="reg__req" aria-hidden="true">*</span></label>
+            <label for="regGender" data-e="regForm.label7">Gender <span class="reg__req" aria-hidden="true">*</span></label>
             <select aria-describedby="gender-err" id="regGender" name="gender" required>
               <option value="">Select</option>
               <option>Male</option>
@@ -745,7 +748,7 @@
             <span class="reg__err" id="gender-err" data-err="gender"></span>
           </p>
           <p class="reg__field">
-            <label for="regState">State <span class="reg__req" aria-hidden="true">*</span></label>
+            <label for="regState" data-e="regForm.label8">State <span class="reg__req" aria-hidden="true">*</span></label>
             <select aria-describedby="state-err" id="regState" name="state" autocomplete="address-level1" required>
               <option value="">Select your state</option>
               <optgroup label="States">
@@ -771,12 +774,12 @@
             <span class="reg__err" id="state-err" data-err="state"></span>
           </p>
           <p class="reg__field">
-            <label for="regCity">City <span class="reg__req" aria-hidden="true">*</span></label>
+            <label for="regCity" data-e="regForm.label9">City <span class="reg__req" aria-hidden="true">*</span></label>
             <input aria-describedby="city-err" id="regCity" name="city" type="text" autocomplete="address-level2" required />
             <span class="reg__err" id="city-err" data-err="city"></span>
           </p>
           <p class="reg__field">
-            <label for="regTshirt">T-shirt size <span class="reg__req" aria-hidden="true">*</span></label>
+            <label for="regTshirt" data-e="regForm.label10">T-shirt size <span class="reg__req" aria-hidden="true">*</span></label>
             <select aria-describedby="tshirtSize-err" id="regTshirt" name="tshirtSize" required>
               <option value="">Select</option>
               <option>XS</option><option>S</option><option>M</option>
@@ -785,7 +788,7 @@
             <span class="reg__err" id="tshirtSize-err" data-err="tshirtSize"></span>
           </p>
           <p class="reg__field">
-            <label for="regIdType">Photo ID proof <span class="reg__req" aria-hidden="true">*</span></label>
+            <label for="regIdType" data-e="regForm.label11">Photo ID proof <span class="reg__req" aria-hidden="true">*</span></label>
             <select aria-describedby="idProofType-err" id="regIdType" name="idProofType" required>
               <option value="">Select</option>
               <option>Aadhaar</option>
@@ -797,14 +800,14 @@
             <span class="reg__err" id="idProofType-err" data-err="idProofType"></span>
           </p>
           <p class="reg__field">
-            <label for="regIdFile">Upload ID proof <span class="reg__req" aria-hidden="true">*</span></label>
+            <label for="regIdFile" data-e="regForm.label12">Upload ID proof <span class="reg__req" aria-hidden="true">*</span></label>
             <input aria-describedby="idProofFile-hint idProofFile-err" id="regIdFile" name="idProofFile" type="file"
                    accept="image/jpeg,image/png,image/webp,application/pdf" required />
-            <span class="reg__hint" id="idProofFile-hint">JPG, PNG or PDF, max 5&nbsp;MB.</span>
+            <span class="reg__hint" id="idProofFile-hint" data-e="regForm.span1">JPG, PNG or PDF, max 5&nbsp;MB.</span>
             <span class="reg__err" id="idProofFile-err" data-err="idProofFile"></span>
           </p>
           <p class="reg__field">
-            <label for="regEmPhone">Emergency contact number <span>(optional)</span></label>
+            <label for="regEmPhone" data-e="regForm.label13">Emergency contact number <span>(optional)</span></label>
             <input aria-describedby="emergencyPhone-err" id="regEmPhone" name="emergencyPhone" type="tel" inputmode="numeric" maxlength="15" />
             <span class="reg__err" id="emergencyPhone-err" data-err="emergencyPhone"></span>
           </p>
@@ -818,12 +821,12 @@
       </div>
 
       <div class="reg__consent">
-        <h3 class="reg__consent-title">
+        <h3 class="reg__consent-title" data-e="regForm.h31">
           Declaration <span class="reg__req" aria-hidden="true">*</span>
         </h3>
         <label>
           <input type="checkbox" name="declaration" value="1" required />
-          <span>
+          <span data-e="regForm.span2">
             I confirm that I am physically and mentally fit to take part, that the details
             I have given above are correct, and that I take part entirely at my own risk.
             I agree that photographs and video taken at the event may be used by the
@@ -843,11 +846,11 @@
     </form>
 
     <div class="reg__done" id="regDone" hidden>
-      <h3>You&rsquo;re registered</h3>
+      <h3 data-e="regDone.h31">You&rsquo;re registered</h3>
       <p>Your registration number is <b id="regDoneId"></b>. A confirmation has been sent to
       your email. Please keep this number for race-day collection.</p>
       <p class="reg__done-due" id="regDoneDue" hidden></p>
-      <p class="reg__done-again">Registering someone else? The form above is ready for the next runner.</p>
+      <p class="reg__done-again" data-e="regDone.p1">Registering someone else? The form above is ready for the next runner.</p>
     </div>
 
   </div>
@@ -856,8 +859,8 @@
 <!-- ============ AMBASSADORS ============ -->
 <section class="section" id="ambassadors">
   <div class="wrap">
-    <p class="section__eyebrow">Guests &amp; Ambassadors</p>
-    <h2 class="section__title">Honoured Guests &amp; <span class="accent">Ambassadors</span></h2>
+    <p class="section__eyebrow" data-e="ambassadors.p1">Guests &amp; Ambassadors</p>
+    <h2 class="section__title" data-e="ambassadors.h21">Honoured Guests &amp; <span class="accent">Ambassadors</span></h2>
 
     <!-- TODO: replace each with the confirmed person (photo, name, honours,
          discipline). The role under each name is the category, so the four
@@ -867,29 +870,29 @@
         <div class="ambassador-card__avatar" aria-hidden="true">
           <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg>
         </div>
-        <h4>To Be Announced</h4>
-        <p>Chief Guest</p>
+        <h4 data-e="ambassadors.h41">To Be Announced</h4>
+        <p data-e="ambassadors.p2">Chief Guest</p>
       </article>
       <article class="ambassador-card">
         <div class="ambassador-card__avatar" aria-hidden="true">
           <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg>
         </div>
-        <h4>To Be Announced</h4>
-        <p>Special Guest</p>
+        <h4 data-e="ambassadors.h42">To Be Announced</h4>
+        <p data-e="ambassadors.p3">Special Guest</p>
       </article>
       <article class="ambassador-card">
         <div class="ambassador-card__avatar" aria-hidden="true">
           <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg>
         </div>
-        <h4>To Be Announced</h4>
-        <p>Special Invitees</p>
+        <h4 data-e="ambassadors.h43">To Be Announced</h4>
+        <p data-e="ambassadors.p4">Special Invitees</p>
       </article>
       <article class="ambassador-card">
         <div class="ambassador-card__avatar" aria-hidden="true">
           <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg>
         </div>
-        <h4>To Be Announced</h4>
-        <p>Marathon Ambassadors</p>
+        <h4 data-e="ambassadors.h44">To Be Announced</h4>
+        <p data-e="ambassadors.p5">Marathon Ambassadors</p>
       </article>
     </div>
   </div>
@@ -898,9 +901,9 @@
 <!-- ============ SPONSORS ============ -->
 <section class="section section--alt-green" id="sponsors">
   <div class="wrap">
-    <p class="section__eyebrow">Sponsors &amp; Partners</p>
-    <h2 class="section__title">Powering the <span class="accent">Movement</span></h2>
-    <p class="section__sub">
+    <p class="section__eyebrow" data-e="sponsors.p1">Sponsors &amp; Partners</p>
+    <h2 class="section__title" data-e="sponsors.h21">Powering the <span class="accent">Movement</span></h2>
+    <p class="section__sub" data-e="sponsors.p2">
       Join hands with us to promote fitness, patriotism and a drug-free India. Together, we
       can make a difference.
     </p>
@@ -914,27 +917,27 @@
            at the 64px height used for wide wordmarks reads half the size of its
            neighbours. The Liv Up logo that sat here is still in
            images/sponsor-liv-up.png. -->
-      <div class="sponsor-tile"><span>Sponsor<br />Logo</span></div>
-      <div class="sponsor-tile"><span>Sponsor<br />Logo</span></div>
-      <div class="sponsor-tile"><span>Sponsor<br />Logo</span></div>
-      <div class="sponsor-tile"><span>Sponsor<br />Logo</span></div>
+      <div class="sponsor-tile"><span data-e="sponsors.span1">Sponsor<br />Logo</span></div>
+      <div class="sponsor-tile"><span data-e="sponsors.span2">Sponsor<br />Logo</span></div>
+      <div class="sponsor-tile"><span data-e="sponsors.span3">Sponsor<br />Logo</span></div>
+      <div class="sponsor-tile"><span data-e="sponsors.span4">Sponsor<br />Logo</span></div>
       <div class="sponsor-tile sponsor-tile--org">
-        <span class="sponsor-tile__badge">Organiser</span>
-        <img src="images/sponsor-forever-legend.jpg" alt="Forever Legend Foundation: Unity, Service, Sports" width="723" height="777" loading="lazy" decoding="async" />
+        <span class="sponsor-tile__badge" data-e="sponsors.span5">Organiser</span>
+        <img src="images/sponsor-forever-legend.jpg" alt="Forever Legend Foundation: Unity, Service, Sports" width="723" height="777" loading="lazy" decoding="async" data-e="sponsors.img1" />
       </div>
       <div class="sponsor-tile sponsor-tile--logo sponsor-tile--mark">
-        <span class="sponsor-tile__badge">Managed By</span>
-        <img src="images/sponsor-touch-group-events.png?v=2" alt="Touch Group Events" width="1834" height="1051" loading="lazy" decoding="async" />
+        <span class="sponsor-tile__badge" data-e="sponsors.span6">Managed By</span>
+        <img src="images/sponsor-touch-group-events.png?v=2" alt="Touch Group Events" width="1834" height="1051" loading="lazy" decoding="async" data-e="sponsors.img2" />
       </div>
       <div class="sponsor-tile sponsor-tile--logo">
-        <span class="sponsor-tile__badge">Digital Partner</span>
-        <img src="images/sponsor-prm-digital.png" alt="PRM Digital" width="1716" height="367" loading="lazy" decoding="async" />
+        <span class="sponsor-tile__badge" data-e="sponsors.span7">Digital Partner</span>
+        <img src="images/sponsor-prm-digital.png" alt="PRM Digital" width="1716" height="367" loading="lazy" decoding="async" data-e="sponsors.img3" />
       </div>
     </div>
 
     <div class="sponsors__cta">
-      <p>Want your brand behind one of Punjab and Chandigarh's most meaningful sporting events?</p>
-      <a class="btn btn--primary" href="sponsor.html">Become a Sponsor</a>
+      <p data-e="sponsors.p3">Want your brand behind one of Punjab and Chandigarh's most meaningful sporting events?</p>
+      <a class="btn btn--primary" href="sponsor.html" data-e="sponsors.a1">Become a Sponsor</a>
     </div>
   </div>
 </section>
@@ -942,33 +945,33 @@
 <!-- ============ CONTACT ============ -->
 <section class="section" id="contact">
   <div class="wrap">
-    <p class="section__eyebrow">Contact</p>
-    <h2 class="section__title">Get in <span class="accent">Touch</span></h2>
+    <p class="section__eyebrow" data-e="contact.p1">Contact</p>
+    <h2 class="section__title" data-e="contact.h21">Get in <span class="accent">Touch</span></h2>
 
     <div class="contact__grid">
       <div class="contact__card">
-        <h3>Organiser</h3>
-        <p><strong>Forever Legend Foundation</strong></p>
-        <p class="muted">Chandigarh, India</p>
+        <h3 data-e="contact.h31">Organiser</h3>
+        <p data-e="contact.p2"><strong>Forever Legend Foundation</strong></p>
+        <p class="muted" data-e="contact.p3">Chandigarh, India</p>
       </div>
 
       <div class="contact__card">
-        <h3>Email</h3>
-        <p><a href="mailto:info@milkhasinghlegacymarathon.com">info@milkhasinghlegacymarathon.com</a></p>
-        <p class="muted">For general and registration queries</p>
+        <h3 data-e="contact.h32">Email</h3>
+        <p data-e="contact.p4"><a href="mailto:info@milkhasinghlegacymarathon.com">info@milkhasinghlegacymarathon.com</a></p>
+        <p class="muted" data-e="contact.p5">For general and registration queries</p>
       </div>
 
       <div class="contact__card">
-        <h3>Phone</h3>
-        <p><a href="tel:+917340992413">+91 73409 92413</a></p>
-        <p><a href="tel:+918146702026">+91 81467 02026</a></p>
-        <p class="muted">Mon–Sat, 10:00 AM – 6:00 PM</p>
+        <h3 data-e="contact.h33">Phone</h3>
+        <p data-e="contact.p6"><a href="tel:+917340992413">+91 73409 92413</a></p>
+        <p data-e="contact.p7"><a href="tel:+918146702026">+91 81467 02026</a></p>
+        <p class="muted" data-e="contact.p8">Mon–Sat, 10:00 AM – 6:00 PM</p>
       </div>
 
       <div class="contact__card">
-        <h3>Sponsorship</h3>
-        <p><a href="mailto:sponsors@milkhasinghlegacymarathon.com">sponsors@milkhasinghlegacymarathon.com</a></p>
-        <p class="muted">Partner with the movement</p>
+        <h3 data-e="contact.h34">Sponsorship</h3>
+        <p data-e="contact.p9"><a href="mailto:sponsors@milkhasinghlegacymarathon.com">sponsors@milkhasinghlegacymarathon.com</a></p>
+        <p class="muted" data-e="contact.p10">Partner with the movement</p>
       </div>
     </div>
   </div>
@@ -977,9 +980,9 @@
 <!-- ============ PRESS COVERAGE ============ -->
 <section class="section section--alt" id="press">
   <div class="wrap">
-    <p class="section__eyebrow">Press Coverage</p>
-    <h2 class="section__title">In the <span class="accent">News</span></h2>
-    <p class="section__sub">
+    <p class="section__eyebrow" data-e="press.p1">Press Coverage</p>
+    <h2 class="section__title" data-e="press.h21">In the <span class="accent">News</span></h2>
+    <p class="section__sub" data-e="press.p2">
       Articles and media coverage of the Milkha Singh Legacy Marathon 2026 will appear here as
       they are published.
     </p>
@@ -989,22 +992,22 @@
         <div class="press-card__tba-icon" aria-hidden="true">
           <svg viewBox="0 0 24 24"><path d="M4 22h16a2 2 0 002-2V4a2 2 0 00-2-2H8a2 2 0 00-2 2v16a2 2 0 01-2 2zm0 0a2 2 0 01-2-2V9"/><path d="M10 6h8M10 10h8M10 14h5"/></svg>
         </div>
-        <h4>Press Coverage: To Be Announced</h4>
-        <p>Media stories about the marathon will be featured here.</p>
+        <h4 data-e="press.h41">Press Coverage: To Be Announced</h4>
+        <p data-e="press.p3">Media stories about the marathon will be featured here.</p>
       </article>
       <article class="press-card press-card--tba">
         <div class="press-card__tba-icon" aria-hidden="true">
           <svg viewBox="0 0 24 24"><path d="M4 22h16a2 2 0 002-2V4a2 2 0 00-2-2H8a2 2 0 00-2 2v16a2 2 0 01-2 2zm0 0a2 2 0 01-2-2V9"/><path d="M10 6h8M10 10h8M10 14h5"/></svg>
         </div>
-        <h4>Press Coverage: To Be Announced</h4>
-        <p>Media stories about the marathon will be featured here.</p>
+        <h4 data-e="press.h42">Press Coverage: To Be Announced</h4>
+        <p data-e="press.p4">Media stories about the marathon will be featured here.</p>
       </article>
       <article class="press-card press-card--tba">
         <div class="press-card__tba-icon" aria-hidden="true">
           <svg viewBox="0 0 24 24"><path d="M4 22h16a2 2 0 002-2V4a2 2 0 00-2-2H8a2 2 0 00-2 2v16a2 2 0 01-2 2zm0 0a2 2 0 01-2-2V9"/><path d="M10 6h8M10 10h8M10 14h5"/></svg>
         </div>
-        <h4>Press Coverage: To Be Announced</h4>
-        <p>Media stories about the marathon will be featured here.</p>
+        <h4 data-e="press.h43">Press Coverage: To Be Announced</h4>
+        <p data-e="press.p5">Media stories about the marathon will be featured here.</p>
       </article>
     </div>
   </div>
@@ -1019,48 +1022,48 @@
     <div class="footer__brand">
       <img class="footer__logo" src="images/logo-lockup-white.png"
            alt="The Flying Sikh Milkha Singh Legacy Marathon 2026"
-           width="600" height="200" loading="lazy" decoding="async" />
-      <p>
+           width="600" height="200" loading="lazy" decoding="async" data-e="footer.img1" />
+      <p data-e="footer.p1">
         Honouring the legacy of Milkha Singh while promoting fitness, discipline and a
         drug-free India.
       </p>
-      <p class="footer__slogan">One Run. One Pledge. One Nation.</p>
+      <p class="footer__slogan" data-e="footer.p2">One Run. One Pledge. One Nation.</p>
     </div>
 
     <nav class="footer__col" aria-label="Quick links">
-      <h4>Quick Links</h4>
-      <a href="#categories">Race Categories</a>
-      <a href="#awards">Awards</a>
-      <a href="#sponsors">Sponsors</a>
-      <a href="#contact">Contact</a>
+      <h4 data-e="footer.h41">Quick Links</h4>
+      <a href="#categories" data-e="footer.a1">Race Categories</a>
+      <a href="#awards" data-e="footer.a2">Awards</a>
+      <a href="#sponsors" data-e="footer.a3">Sponsors</a>
+      <a href="#contact" data-e="footer.a4">Contact</a>
     </nav>
 
     <nav class="footer__col" aria-label="Policies">
-      <h4>Policies</h4>
-      <a href="privacy-policy.html">Privacy Policy</a>
-      <a href="terms-conditions.html">Terms &amp; Conditions</a>
-      <a href="refund-policy.html">Refund Policy</a>
+      <h4 data-e="footer.h42">Policies</h4>
+      <a href="privacy-policy.html" data-e="footer.a5">Privacy Policy</a>
+      <a href="terms-conditions.html" data-e="footer.a6">Terms &amp; Conditions</a>
+      <a href="refund-policy.html" data-e="footer.a7">Refund Policy</a>
     </nav>
 
     <div class="footer__col">
-      <h4>Stay Connected</h4>
-      <p class="footer__connect">
+      <h4 data-e="footer.h43">Stay Connected</h4>
+      <p class="footer__connect" data-e="footer.p3">
         Get the latest updates about the marathon, training tips and announcements.
       </p>
-      <a class="footer__notify-link" href="#contact">Contact the organisers &rarr;</a>
+      <a class="footer__notify-link" href="#contact" data-e="footer.a8">Contact the organisers &rarr;</a>
       <div class="footer__social">
         <!-- TODO: replace href="#" with real profile URLs, or delete the
              icons. As-is they are dead links that do nothing when tapped. -->
-        <a href="#" aria-label="Facebook" rel="noopener noreferrer">
+        <a href="#" aria-label="Facebook" rel="noopener noreferrer" data-e="footer.a9">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
         </a>
-        <a href="#" aria-label="Instagram" rel="noopener noreferrer">
+        <a href="#" aria-label="Instagram" rel="noopener noreferrer" data-e="footer.a10">
           <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.2"/></svg>
         </a>
-        <a href="#" aria-label="X" rel="noopener noreferrer">
+        <a href="#" aria-label="X" rel="noopener noreferrer" data-e="footer.a11">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4l16 16M20 4L4 20"/></svg>
         </a>
-        <a href="#" aria-label="YouTube" rel="noopener noreferrer">
+        <a href="#" aria-label="YouTube" rel="noopener noreferrer" data-e="footer.a12">
           <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="4"/><path d="M10 9l5 3-5 3z"/></svg>
         </a>
       </div>
@@ -1069,8 +1072,8 @@
   </div>
 
   <div class="wrap footer__bottom">
-    <p>&copy; 2026 Milkha Singh Legacy Marathon. All rights reserved.</p>
-    <p class="muted">Organised by Forever Legend Foundation</p>
+    <p data-e="footer.p4">&copy; 2026 Milkha Singh Legacy Marathon. All rights reserved.</p>
+    <p class="muted" data-e="footer.p5">Organised by Forever Legend Foundation</p>
   </div>
 </footer>
 
@@ -1078,7 +1081,7 @@
   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
 </button>
 
-<script src="assets/js/main.js?v=20260916-1" defer></script>
-<script src="assets/js/register.js?v=20260916-1" defer></script>
+<script src="assets/js/main.js?v=20260917-1" defer></script>
+<script src="assets/js/register.js?v=20260917-1" defer></script>
 </body>
 </html>

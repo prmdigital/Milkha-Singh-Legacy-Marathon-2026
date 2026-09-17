@@ -622,3 +622,62 @@ code {
   font-size: .82rem; line-height: 1.55;
 }
 .sqlblock code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+
+/* ---------- Website ---------- */
+
+.sitecards {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 14px; margin-bottom: 18px;
+}
+.sitecard { display: flex; flex-direction: column; }
+.sitecard h2 { margin: 0 0 4px; }
+.sitecard .sub { display: block; font-size: .85rem; color: var(--ink-mute); }
+.sitecard__actions { display: flex; gap: 8px; flex-wrap: wrap; margin: auto 0 0; padding-top: 14px; }
+.sitecard--settings { border-top-color: var(--green); }
+
+.panel--wide + .panel--wide { margin-top: 18px; }
+.table .sub { display: block; font-size: .8rem; color: var(--ink-mute); }
+.nowrap { white-space: nowrap; }
+form.inline { display: inline; margin: 0; }
+
+/* Event, fees & media */
+.formgrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.feetable input {
+  width: 100%; max-width: 140px; min-height: 40px; padding: 8px 10px;
+  border: 1px solid var(--border); border-radius: var(--radius); font: inherit;
+}
+.feetable td { vertical-align: middle; }
+.resetform { display: block; margin-top: 12px; }
+.wrap--narrow .panel + .panel { margin-top: 18px; }
+
+.mediarow {
+  display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 16px;
+  padding: 16px 0; border-top: 1px solid var(--border);
+}
+.mediarow__preview img,
+.mediarow__preview video {
+  display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover;
+  border-radius: var(--radius); background: #0B1430;
+}
+.mediarow__body { display: grid; gap: 10px; align-content: start; }
+
+.logolist { display: grid; gap: 10px; }
+.logolist__row {
+  display: grid; grid-template-columns: 110px minmax(0, 1fr) 90px auto;
+  gap: 12px; align-items: end;
+  padding: 10px; border: 1px solid var(--border); border-radius: var(--radius);
+}
+.logolist__row img {
+  width: 110px; height: 56px; object-fit: contain;
+  background: #fff; border-radius: 4px; align-self: center;
+}
+.logolist__order input { max-width: 90px; }
+.logolist__add { margin: 6px 0 0; padding: 12px; border: 1px dashed var(--border); border-radius: var(--radius); display: grid; gap: 10px; }
+.logolist__add legend { padding: 0 6px; font-weight: 700; color: var(--navy); }
+.pwform input[type="file"] { min-height: 0; padding: 8px 0; border: 0; }
+
+@media (max-width: 720px) {
+  .formgrid, .mediarow { grid-template-columns: 1fr; }
+  .logolist__row { grid-template-columns: 80px minmax(0, 1fr); }
+  .logolist__row img { width: 80px; }
+}

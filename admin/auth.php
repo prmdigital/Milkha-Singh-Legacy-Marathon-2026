@@ -128,6 +128,7 @@ const BASE_PERMISSIONS = [
 const ADMIN_PERMISSIONS = [
     ...BASE_PERMISSIONS,
     'view_sponsors', 'manage_sponsors', 'manage_settings', 'view_audit', 'manage_users',
+    'edit_content',   // the website editor: page text, images, fees and dates
 ];
 
 const ROLE_PERMISSIONS = [
@@ -151,7 +152,7 @@ const ROLE_LABELS = [
 const ASSIGNABLE_ROLES = ['administrator', 'manager', 'editor'];
 
 const ROLE_DESCRIPTIONS = [
-    'administrator' => 'Everything: registrations, sponsors, activity log, payment settings, and adding users.',
+    'administrator' => 'Everything: registrations, sponsors, activity log, editing the website, payment settings, and adding users.',
     'manager'       => 'Registrations only: view, export, ID proofs and recording payments.',
     'editor'        => 'Registrations only: view, export, ID proofs and recording payments.',
 ];
@@ -195,7 +196,7 @@ function require_can(string $permission): void
         no_store();
         header('Content-Type: text/html; charset=utf-8');
         echo '<!doctype html><meta charset="utf-8"><title>Not allowed</title>'
-           . '<link rel="stylesheet" href="assets/admin.css?v=20260916-1">'
+           . '<link rel="stylesheet" href="assets/admin.css?v=20260917-1">'
            . '<main class="wrap"><p class="empty">'
            . 'Your account does not have access to that. '
            . '<a href="index.php">Back to registrations</a>.'

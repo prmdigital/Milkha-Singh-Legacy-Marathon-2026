@@ -33,6 +33,12 @@ cp index.html sponsor.html privacy-policy.html refund-policy.html terms-conditio
    robots.txt sitemap.xml setup.php "$OUT"/
 cp -r assets images api admin "$OUT"/
 
+# The website editor's upload folder: only its lock-down rules. Anything saved
+# from the admin panel lives on the server, and extracting the zip over the
+# site must never replace it with a local copy.
+mkdir -p "$OUT/uploads/site"
+cp uploads/site/.htaccess "$OUT/uploads/site/.htaccess"
+
 # ---- Strip anything that must not be published -----------------------------
 
 # Local-only credentials. On the server the real file lives ABOVE public_html.

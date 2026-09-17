@@ -1,0 +1,5 @@
+# Uploaded page images and the content cache. Nothing here may run.
+Options -Indexes
+<FilesMatch "\.(php[0-9]?|phtml|phar|pht|shtml|cgi|pl|py|sh|htaccess)$">
+  Require all denied
+</FilesMatch>

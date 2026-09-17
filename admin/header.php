@@ -27,6 +27,10 @@ $me      = current_user();
         <a href="users.php" <?= $current === 'users.php' ? 'aria-current="page"' : '' ?>>Users</a>
       <?php endif; ?>
 
+      <?php if (can('edit_content')): ?>
+        <a href="website.php" <?= in_array($current, ['website.php', 'event-settings.php'], true) ? 'aria-current="page"' : '' ?>>Website</a>
+      <?php endif; ?>
+
       <?php if (can('manage_settings')): ?>
         <a href="settings.php" <?= $current === 'settings.php' ? 'aria-current="page"' : '' ?>>Settings</a>
       <?php endif; ?>

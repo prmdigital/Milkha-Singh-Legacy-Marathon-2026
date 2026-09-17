@@ -13,3 +13,8 @@ marathon-config.php
 # but locally the config sits inside the repo — and they hold live credentials.
 api/config.php.*
 *.bak
+
+# Images, videos and the content cache saved from the admin website editor live
+# on the server only. The lock-down rules for the folder are committed.
+uploads/site/*
+!uploads/site/.htaccess
