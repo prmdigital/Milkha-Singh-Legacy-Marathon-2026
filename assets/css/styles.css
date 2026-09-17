@@ -1826,17 +1826,24 @@ body::before {
 
 /* Badge sits on the top-left border, like a fieldset legend, instead of
    competing with the logo for center space below it. */
+/* A small legend, not a heading: it names the partner role and should not
+   compete with the logo. 11px here, 10px on a phone, and always one line so a
+   long label never spills past a two-column tile. */
 .sponsor-tile__badge {
-  position: absolute; top: 0; left: 14px;
-  max-width: calc(100% - 28px);
+  position: absolute; top: 0; left: 12px;
+  max-width: calc(100% - 24px);
   transform: translateY(-50%);
-  padding: 4px 11px;
+  padding: 3px 9px;
   background: #fff;
   border: 1px solid var(--border);
   border-radius: 999px;
-  font-size: var(--fs-xs); font-weight: 800; letter-spacing: .06em; text-transform: uppercase;
+  font-size: .6rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase;
   line-height: 1.3;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   color: var(--green-deep);
+}
+@media (max-width: 620px) {
+  .sponsor-tile__badge { left: 8px; max-width: calc(100% - 16px); padding: 2px 7px; font-size: .55rem; letter-spacing: .04em; }
 }
 .sponsor-tile--org {
   border: 1px solid rgba(18,136,7,.35);
