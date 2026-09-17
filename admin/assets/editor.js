@@ -523,9 +523,10 @@
       name.value = item.name || '';
       name.addEventListener('input', function () { item.name = name.value; touched(); });
 
-      var badge = make('input', { type: 'text', className: 'cms-input', maxlength: '40', placeholder: 'Empty = top row' });
-      badge.value = item.badge || '';
-      badge.addEventListener('input', function () { item.badge = badge.value; touched(); });
+      // Labels are fixed: only the original partner logos have one.
+      var badge = item.badge
+        ? make('p', { className: 'cms-logo__badge', text: 'Label: ' + item.badge })
+        : make('p', { className: 'cms-logo__badge cms-logo__badge--none', text: 'Sponsor (top row, no label)' });
 
       var style = make('select', { className: 'cms-input' });
       Object.keys(STYLE_LABELS).forEach(function (k) {
@@ -568,7 +569,7 @@
         make('div', { className: 'cms-logo__thumb' }, [make('img', { src: item.src, alt: '' })]),
         make('div', { className: 'cms-logo__fields' }, [
           make('label', { className: 'cms-field' }, [make('span', { text: 'Company name' }), name]),
-          make('label', { className: 'cms-field' }, [make('span', { text: 'Partner label (optional)' }), badge]),
+          badge,
           make('label', { className: 'cms-field' }, [make('span', { text: 'Shape' }), style]),
           make('div', { className: 'cms-logo__where' }, [
             check('Show in the scrolling strip', 'slider'),
@@ -629,7 +630,7 @@
     };
 
     d = dialog('Sponsor & partner logos', make('div', {}, [
-      make('p', { className: 'cms-modal__intro', text: 'One list for the scrolling logo strip under the hero and the Sponsors & Partners section. In that section, logos without a label fill the top row of sponsor slots; logos with a partner label (Organiser, Managed By…) show in the row below. Use the arrows to change the order.' }),
+      make('p', { className: 'cms-modal__intro', text: 'One list for the scrolling logo strip under the hero and the Sponsors & Partners section. New logos fill the top row of sponsor slots, with no label. Organiser, Managed By and Digital Partner keep their labels in the row below. Use the arrows to change the order.' }),
       list,
       make('div', { className: 'cms-logos__add' }, [
         make('label', { className: 'cms-field' }, [

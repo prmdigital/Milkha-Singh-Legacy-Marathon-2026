@@ -772,6 +772,26 @@ function cms_default_logos(): array
 }
 
 /**
+ * Only the three partner logos the page ships with (Organiser, Managed By,
+ * Digital Partner) carry a label, and always their original one. Every other
+ * logo is a sponsor with no label, so it takes a slot in the top row. Applied
+ * on save and on read, whatever the browser sent.
+ */
+function cms_fix_badges(array $logos): array
+{
+    $fixed = [];
+    foreach (cms_default_logos()['logos'] as $d) {
+        if ($d['badge'] !== '') {
+            $fixed[$d['src']] = $d['badge'];
+        }
+    }
+    foreach ($logos as $i => $l) {
+        $logos[$i]['badge'] = $fixed[$l['src']] ?? '';
+    }
+    return $logos;
+}
+
+/**
  * The logo list in effect: the saved one, or the page's own.
  *
  * @return array{logos:array, placeholders:int, custom:bool}
@@ -781,7 +801,7 @@ function cms_logo_settings(array $settings): array
     $saved = json_decode((string) ($settings['sponsor_logos'] ?? ''), true);
     if (is_array($saved)) {
         return [
-            'logos'        => cms_clean_logos($saved),
+            'logos'        => cms_fix_badges(cms_clean_logos($saved)),
             'placeholders' => max(0, min(CMS_LOGO_MAX_PLACEHOLDERS, (int) ($settings['sponsor_placeholders'] ?? 0))),
             'custom'       => true,
         ];
@@ -1006,7 +1026,7 @@ function cms_editor_html(string $page, string $csrf, string $userName): string
         'uploadLimit' => cms_upload_limit_bytes(),
     ], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE);
 
-    $v = '20260917-3';
+    $v = '20260917-4';
     $inject = "\n<link rel=\"stylesheet\" href=\"admin/assets/editor.css?v={$v}\" />\n"
             . "<script>window.CMS_EDITOR = {$boot};</script>\n"
             . "<script src=\"admin/assets/editor.js?v={$v}\"></script>\n";

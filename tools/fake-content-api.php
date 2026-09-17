@@ -81,7 +81,7 @@ if ($action === 'save') {
 }
 
 if ($action === 'save_logos') {
-    $logos = cms_clean_logos(json_decode((string) ($_POST['logos'] ?? ''), true));
+    $logos = cms_fix_badges(cms_clean_logos(json_decode((string) ($_POST['logos'] ?? ''), true)));
     foreach ($logos as $l) {
         if ($l['name'] === '') {
             out(422, ['ok' => false, 'error' => 'Give every logo a company name.']);

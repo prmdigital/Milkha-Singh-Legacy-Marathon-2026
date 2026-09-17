@@ -152,6 +152,12 @@ textarea.cms-input { resize: vertical; }
 .cms-logo__thumb img { max-width: 100px; max-height: 70px; object-fit: contain; }
 .cms-logo__fields { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 10px; }
 .cms-logo__fields .cms-field { margin-bottom: 8px; }
+.cms-logo__badge {
+  align-self: center; margin: 0 0 8px; padding: 6px 10px;
+  border-radius: 999px; background: #EEF7EB; color: #0E6B06;
+  font-weight: 700; font-size: 13px; text-align: center;
+}
+.cms-logo__badge--none { background: #F1F3F7; color: #57616F; font-weight: 600; }
 .cms-logo__where { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 6px 18px; }
 .cms-check { display: inline-flex; align-items: center; gap: 7px; font-weight: 600; color: #26303F; cursor: pointer; }
 .cms-check input { width: 18px; height: 18px; accent-color: #128807; }

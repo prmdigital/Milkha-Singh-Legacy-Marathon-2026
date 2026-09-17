@@ -62,7 +62,7 @@ if (!ensure_cms_tables()) {
 }
 
 if ($action === 'save_logos') {
-    $logos = cms_clean_logos(json_decode((string) ($_POST['logos'] ?? ''), true));
+    $logos = cms_fix_badges(cms_clean_logos(json_decode((string) ($_POST['logos'] ?? ''), true)));
     $placeholders = max(0, min(CMS_LOGO_MAX_PLACEHOLDERS, (int) ($_POST['placeholders'] ?? 0)));
     foreach ($logos as $l) {
         if ($l['name'] === '') {
