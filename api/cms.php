@@ -908,20 +908,28 @@ window.SITE_CONFIG = {$config};
       track.innerHTML = html;
     }
 
+    /* Two rows. Sponsors (no label) fill the top-row slots, which show
+       "Sponsor Logo" until a sponsor takes them. Partners (with a label such as
+       Organiser or Managed By) follow underneath. */
     var grid = document.querySelector('[data-e-list="sponsors"]');
     if (grid) {
-      html = '';
-      for (i = 0; i < (placeholders || 0); i++) {
-        html += '<div class="sponsor-tile"><span>Sponsor<br />Logo</span></div>';
-      }
-      for (i = 0; i < section.length; i++) {
-        var l = section[i];
+      var sponsors = [], partners = [];
+      for (i = 0; i < section.length; i++) (section[i].badge ? partners : sponsors).push(section[i]);
+
+      var tile = function (l) {
         var cls = l.style === 'org' ? 'sponsor-tile sponsor-tile--org'
                 : 'sponsor-tile sponsor-tile--logo' + (l.style === 'mark' ? ' sponsor-tile--mark' : '');
-        html += '<div class="' + cls + '">' +
-                (l.badge ? '<span class="sponsor-tile__badge">' + esc(l.badge) + '</span>' : '') +
-                '<img src="' + esc(l.src) + '" alt="' + esc(l.name) + '" loading="lazy" decoding="async" /></div>';
+        return '<div class="' + cls + '">' +
+               (l.badge ? '<span class="sponsor-tile__badge">' + esc(l.badge) + '</span>' : '') +
+               '<img src="' + esc(l.src) + '" alt="' + esc(l.name) + '" loading="lazy" decoding="async" /></div>';
+      };
+
+      html = '';
+      for (i = 0; i < sponsors.length; i++) html += tile(sponsors[i]);
+      for (i = sponsors.length; i < (placeholders || 0); i++) {
+        html += '<div class="sponsor-tile"><span>Sponsor<br />Logo</span></div>';
       }
+      for (i = 0; i < partners.length; i++) html += tile(partners[i]);
       grid.innerHTML = html;
     }
   }
@@ -998,7 +1006,7 @@ function cms_editor_html(string $page, string $csrf, string $userName): string
         'uploadLimit' => cms_upload_limit_bytes(),
     ], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE);
 
-    $v = '20260917-2';
+    $v = '20260917-3';
     $inject = "\n<link rel=\"stylesheet\" href=\"admin/assets/editor.css?v={$v}\" />\n"
             . "<script>window.CMS_EDITOR = {$boot};</script>\n"
             . "<script src=\"admin/assets/editor.js?v={$v}\"></script>\n";

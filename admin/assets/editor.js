@@ -523,7 +523,7 @@
       name.value = item.name || '';
       name.addEventListener('input', function () { item.name = name.value; touched(); });
 
-      var badge = make('input', { type: 'text', className: 'cms-input', maxlength: '40', placeholder: 'e.g. Title Sponsor' });
+      var badge = make('input', { type: 'text', className: 'cms-input', maxlength: '40', placeholder: 'Empty = top row' });
       badge.value = item.badge || '';
       badge.addEventListener('input', function () { item.badge = badge.value; touched(); });
 
@@ -568,7 +568,7 @@
         make('div', { className: 'cms-logo__thumb' }, [make('img', { src: item.src, alt: '' })]),
         make('div', { className: 'cms-logo__fields' }, [
           make('label', { className: 'cms-field' }, [make('span', { text: 'Company name' }), name]),
-          make('label', { className: 'cms-field' }, [make('span', { text: 'Label on the tile' }), badge]),
+          make('label', { className: 'cms-field' }, [make('span', { text: 'Partner label (optional)' }), badge]),
           make('label', { className: 'cms-field' }, [make('span', { text: 'Shape' }), style]),
           make('div', { className: 'cms-logo__where' }, [
             check('Show in the scrolling strip', 'slider'),
@@ -606,7 +606,8 @@
         probe.src = res.path;
 
         function add(shape) {
-          items.push({ src: res.path, name: '', badge: 'Sponsor', style: shape, slider: true, section: true });
+          // No label: a new sponsor takes the next free slot in the top row.
+          items.push({ src: res.path, name: '', badge: '', style: shape, slider: true, section: true });
           touched();
           redraw();
           addHint.textContent = 'Added at the end. Type the company name, then Save.';
@@ -628,7 +629,7 @@
     };
 
     d = dialog('Sponsor & partner logos', make('div', {}, [
-      make('p', { className: 'cms-modal__intro', text: 'One list for the scrolling logo strip under the hero and the Sponsors & Partners section. Use the arrows to change the order.' }),
+      make('p', { className: 'cms-modal__intro', text: 'One list for the scrolling logo strip under the hero and the Sponsors & Partners section. In that section, logos without a label fill the top row of sponsor slots; logos with a partner label (Organiser, Managed By…) show in the row below. Use the arrows to change the order.' }),
       list,
       make('div', { className: 'cms-logos__add' }, [
         make('label', { className: 'cms-field' }, [
@@ -639,7 +640,7 @@
         addHint
       ]),
       make('label', { className: 'cms-field cms-field--inline' }, [
-        make('span', { text: 'Empty "Sponsor Logo" tiles to show before the logos' }),
+        make('span', { text: 'Sponsor slots in the top row (empty slots show "Sponsor Logo")' }),
         placeholders
       ])
     ]), [b.restore, b.cancel, b.save], true);
