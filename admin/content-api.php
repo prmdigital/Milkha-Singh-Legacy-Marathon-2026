@@ -69,15 +69,28 @@ if ($action === 'save_logos') {
             reply(422, ['ok' => false, 'error' => 'Give every logo a company name. It is read aloud to blind visitors and used by Google.']);
         }
     }
-    if (!cms_save_settings(['sponsor_logos' => $logos, 'sponsor_placeholders' => (string) $placeholders], $user)) {
+    $badgePx       = cms_badge_px($_POST['badge_px'] ?? null);
+    $badgePxMobile = cms_badge_px($_POST['badge_px_mobile'] ?? null);
+    if (!cms_save_settings([
+        'sponsor_logos'           => $logos,
+        'sponsor_placeholders'    => (string) $placeholders,
+        'sponsor_badge_px'        => $badgePx === null ? null : (string) $badgePx,
+        'sponsor_badge_px_mobile' => $badgePxMobile === null ? null : (string) $badgePxMobile,
+    ], $user)) {
         reply(500, ['ok' => false, 'error' => 'The logos could not be saved. Please try again.']);
     }
     audit('sponsor_logos_updated', count($logos) . ' logos');
-    reply(200, ['ok' => true, 'logos' => $logos, 'placeholders' => $placeholders]);
+    reply(200, [
+        'ok' => true, 'logos' => $logos, 'placeholders' => $placeholders,
+        'badgePx' => $badgePx, 'badgePxMobile' => $badgePxMobile,
+    ]);
 }
 
 if ($action === 'reset_logos') {
-    if (!cms_save_settings(['sponsor_logos' => null, 'sponsor_placeholders' => null], $user)) {
+    if (!cms_save_settings([
+        'sponsor_logos' => null, 'sponsor_placeholders' => null,
+        'sponsor_badge_px' => null, 'sponsor_badge_px_mobile' => null,
+    ], $user)) {
         reply(500, ['ok' => false, 'error' => 'The original logos could not be restored. Please try again.']);
     }
     audit('sponsor_logos_restored');

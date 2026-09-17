@@ -272,7 +272,7 @@ function secret_state($v): string
   .pwform .pair { display: grid; grid-template-columns: 1fr 120px; gap: 12px; }
   @media (max-width: 560px) { .pwform .pair { grid-template-columns: 1fr; } }
 </style>
-<link rel="stylesheet" href="assets/admin.css?v=20260917-5">
+<link rel="stylesheet" href="assets/admin.css?v=20260917-7">
 </head>
 <body>
 

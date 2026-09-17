@@ -371,6 +371,7 @@
     active = state;
 
     function shut() {
+      if (state.onClose) state.onClose();
       document.removeEventListener('keydown', onEsc);
       if (wrap.parentNode) wrap.parentNode.removeChild(wrap);
       if (active === state) active = null;
@@ -623,6 +624,37 @@
     placeholders.value = String(C.logos.placeholders || 0);
     placeholders.addEventListener('input', touched);
 
+    /* Label size: two sliders that resize the labels on the page as they move.
+       Cancel puts the page back; Save publishes. */
+    var BD = C.badgeDefaults || { desktop: 10.8, mobile: 9.9, min: 8, max: 16 };
+    var root = document.documentElement;
+    var startDesktop = root.style.getPropertyValue('--badge-size');
+    var startMobile = root.style.getPropertyValue('--badge-size-mobile');
+
+    function sizeSlider(label, value, prop) {
+      var out = make('output', { className: 'cms-size__value' });
+      // 0.1px steps, so the stylesheet defaults (10.8 and 9.9) are shown exactly
+      // and saving without touching the sliders changes nothing.
+      var range = make('input', { type: 'range', min: String(BD.min), max: String(BD.max), step: '0.1', 'aria-label': label });
+      range.value = String(value);
+      function show() {
+        out.textContent = (+range.value).toFixed(1) + ' px';
+        // The page's own mobile rule only applies under 620px, so preview the
+        // mobile size by setting the variable directly as well.
+        root.style.setProperty(prop, range.value + 'px');
+      }
+      range.addEventListener('input', function () { show(); touched(); });
+      out.textContent = (+range.value).toFixed(1) + ' px';
+      return { range: range, row: make('label', { className: 'cms-size' }, [make('span', { text: label }), range, out]) };
+    }
+    var sizeDesktop = sizeSlider('Computer', C.logos.badgePx || BD.desktop, '--badge-size');
+    var sizeMobile = sizeSlider('Phone', C.logos.badgePxMobile || BD.mobile, '--badge-size-mobile');
+
+    function revertSizes() {
+      if (startDesktop) root.style.setProperty('--badge-size', startDesktop); else root.style.removeProperty('--badge-size');
+      if (startMobile) root.style.setProperty('--badge-size-mobile', startMobile); else root.style.removeProperty('--badge-size-mobile');
+    }
+
     var b = {
       save: make('button', { type: 'button', className: 'cms-btn cms-btn--primary', text: 'Save' }),
       cancel: make('button', { type: 'button', className: 'cms-btn cms-btn--ghost', text: 'Cancel' }),
@@ -643,9 +675,18 @@
       make('label', { className: 'cms-field cms-field--inline' }, [
         make('span', { text: 'Sponsor slots in the top row (empty slots show "Sponsor Logo")' }),
         placeholders
+      ]),
+      make('fieldset', { className: 'cms-sizes' }, [
+        make('legend', { text: 'Label size (Organiser, Managed By, Digital Partner)' }),
+        sizeDesktop.row,
+        sizeMobile.row,
+        make('small', { text: 'The labels on the page change as you move the sliders. Scroll to the Sponsors section to see them.' })
       ])
     ]), [b.restore, b.cancel, b.save], true);
 
+    // However the dialog closes (Cancel, Escape, clicking outside), the page's
+    // label size goes back to what is saved. After a save that is the new size.
+    d.onClose = revertSizes;
     b.cancel.addEventListener('click', d.close);
 
     b.save.addEventListener('click', function () {
@@ -660,13 +701,21 @@
       b.save.textContent = 'Saving…';
       api('save_logos', {
         logos: JSON.stringify(items),
-        placeholders: String(Math.max(0, Math.min(8, parseInt(placeholders.value, 10) || 0)))
+        placeholders: String(Math.max(0, Math.min(8, parseInt(placeholders.value, 10) || 0))),
+        badge_px: sizeDesktop.range.value,
+        badge_px_mobile: sizeMobile.range.value
       }).then(function (res) {
         b.save.disabled = false;
         b.save.textContent = 'Save';
         if (!res.ok) { d.err.textContent = res.error; return; }
-        C.logos = { logos: res.logos, placeholders: res.placeholders, custom: true };
+        C.logos = {
+          logos: res.logos, placeholders: res.placeholders, custom: true,
+          badgePx: res.badgePx, badgePxMobile: res.badgePxMobile
+        };
         if (window.SITE_RENDER_LOGOS) window.SITE_RENDER_LOGOS(res.logos, res.placeholders);
+        // Keep the saved sizes on the page: they are what visitors now see.
+        startDesktop = res.badgePx ? res.badgePx + 'px' : '';
+        startMobile = res.badgePxMobile ? res.badgePxMobile + 'px' : '';
         d.close();
         status('Sponsor logos saved. They are live on the website now.', 'ok');
       });

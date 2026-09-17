@@ -168,6 +168,13 @@ textarea.cms-input { resize: vertical; }
 .cms-logos__hint { display: block; margin-top: 6px; color: #0E6B06; font-weight: 600; }
 .cms-logos__hint:empty { display: none; }
 .cms-field--inline { grid-template-columns: minmax(0, 1fr) 90px; align-items: center; }
+
+.cms-sizes { margin: 0 0 6px; padding: 12px; border: 1px solid #DBE2ED; border-radius: 10px; display: grid; gap: 10px; }
+.cms-sizes legend { padding: 0 6px; font-weight: 700; color: #12295B; }
+.cms-sizes small { color: #6B7280; }
+.cms-size { display: grid; grid-template-columns: 90px minmax(0, 1fr) 64px; gap: 10px; align-items: center; font-weight: 600; }
+.cms-size input[type="range"] { width: 100%; accent-color: #E8650B; }
+.cms-size__value { font-variant-numeric: tabular-nums; text-align: right; color: #12295B; font-weight: 700; }
 .cms-input--short { width: 90px; }
 
 @media (max-width: 720px) {

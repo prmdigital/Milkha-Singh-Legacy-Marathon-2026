@@ -90,12 +90,22 @@ if ($action === 'save_logos') {
     $ph = max(0, min(CMS_LOGO_MAX_PLACEHOLDERS, (int) ($_POST['placeholders'] ?? 0)));
     $cache['settings']['sponsor_logos'] = json_encode($logos, JSON_UNESCAPED_UNICODE);
     $cache['settings']['sponsor_placeholders'] = (string) $ph;
+    $bp  = cms_badge_px($_POST['badge_px'] ?? null);
+    $bpm = cms_badge_px($_POST['badge_px_mobile'] ?? null);
+    foreach (['sponsor_badge_px' => $bp, 'sponsor_badge_px_mobile' => $bpm] as $k => $v) {
+        if ($v === null) {
+            unset($cache['settings'][$k]);
+        } else {
+            $cache['settings'][$k] = (string) $v;
+        }
+    }
     $write($cache);
-    out(200, ['ok' => true, 'logos' => $logos, 'placeholders' => $ph]);
+    out(200, ['ok' => true, 'logos' => $logos, 'placeholders' => $ph, 'badgePx' => $bp, 'badgePxMobile' => $bpm]);
 }
 
 if ($action === 'reset_logos') {
-    unset($cache['settings']['sponsor_logos'], $cache['settings']['sponsor_placeholders']);
+    unset($cache['settings']['sponsor_logos'], $cache['settings']['sponsor_placeholders'],
+          $cache['settings']['sponsor_badge_px'], $cache['settings']['sponsor_badge_px_mobile']);
     $write($cache);
     out(200, ['ok' => true]);
 }

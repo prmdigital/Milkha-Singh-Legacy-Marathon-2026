@@ -680,6 +680,21 @@ function cms_store_upload(?array $f, string $kind): array
 const CMS_LOGO_STYLES = ['logo', 'mark', 'org'];
 const CMS_LOGO_MAX_PLACEHOLDERS = 8;
 
+/** Partner label size limits, in px, and the stylesheet's own defaults. */
+const CMS_BADGE_MIN = 8;
+const CMS_BADGE_MAX = 16;
+const CMS_BADGE_DEFAULT = 10.8;          // .6rem on the 18px root
+const CMS_BADGE_DEFAULT_MOBILE = 9.9;    // .55rem
+
+/** A saved label size in px, or null when none (or nonsense) is saved. */
+function cms_badge_px($v): ?float
+{
+    if ($v === null || $v === '' || !is_numeric($v)) {
+        return null;
+    }
+    return round(max(CMS_BADGE_MIN, min(CMS_BADGE_MAX, (float) $v)), 1);
+}
+
 /**
  * One list drives both the scrolling logo strip and the Sponsors & Partners
  * grid. Each logo:
@@ -798,15 +813,19 @@ function cms_fix_badges(array $logos): array
  */
 function cms_logo_settings(array $settings): array
 {
+    $sizes = [
+        'badgePx'       => cms_badge_px($settings['sponsor_badge_px'] ?? null),
+        'badgePxMobile' => cms_badge_px($settings['sponsor_badge_px_mobile'] ?? null),
+    ];
     $saved = json_decode((string) ($settings['sponsor_logos'] ?? ''), true);
     if (is_array($saved)) {
         return [
             'logos'        => cms_fix_badges(cms_clean_logos($saved)),
             'placeholders' => max(0, min(CMS_LOGO_MAX_PLACEHOLDERS, (int) ($settings['sponsor_placeholders'] ?? 0))),
             'custom'       => true,
-        ];
+        ] + $sizes;
     }
-    return cms_default_logos() + ['custom' => false];
+    return cms_default_logos() + ['custom' => false] + $sizes;
 }
 
 /**
@@ -862,6 +881,12 @@ function cms_client_script(string $page, array $cache): string
             $media['logos'] = $logoSet['logos'];
             $media['placeholders'] = $logoSet['placeholders'];
         }
+        if ($logoSet['badgePx'] !== null) {
+            $media['badgePx'] = $logoSet['badgePx'];
+        }
+        if ($logoSet['badgePxMobile'] !== null) {
+            $media['badgePxMobile'] = $logoSet['badgePxMobile'];
+        }
     }
 
     $flags = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE;
@@ -881,6 +906,12 @@ window.SITE_CONFIG = {$config};
     if (Object.prototype.hasOwnProperty.call(D, k) && D[k].html !== undefined && k !== 'meta.title') {
       hide.push('[data-e="' + k.replace(/"/g, '') + '"]');
     }
+  }
+  if (M.badgePx || M.badgePxMobile) {
+    var sizes = document.createElement('style');
+    sizes.textContent = (M.badgePx ? ':root{--badge-size:' + (+M.badgePx) + 'px}' : '') +
+      (M.badgePxMobile ? '@media (max-width:620px){:root{--badge-size-mobile:' + (+M.badgePxMobile) + 'px}}' : '');
+    document.head.appendChild(sizes);
   }
   if (M.heroImage) {
     var art = document.createElement('style');
@@ -1024,9 +1055,11 @@ function cms_editor_html(string $page, string $csrf, string $userName): string
         // exactly what visitors see.
         'logos'  => cms_logo_settings(is_array(cms_read_cache()['settings'] ?? null) ? cms_read_cache()['settings'] : []),
         'uploadLimit' => cms_upload_limit_bytes(),
+        'badgeDefaults' => ['desktop' => CMS_BADGE_DEFAULT, 'mobile' => CMS_BADGE_DEFAULT_MOBILE,
+                            'min' => CMS_BADGE_MIN, 'max' => CMS_BADGE_MAX],
     ], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE);
 
-    $v = '20260917-5';
+    $v = '20260917-7';
     $inject = "\n<link rel=\"stylesheet\" href=\"admin/assets/editor.css?v={$v}\" />\n"
             . "<script>window.CMS_EDITOR = {$boot};</script>\n"
             . "<script src=\"admin/assets/editor.js?v={$v}\"></script>\n";
