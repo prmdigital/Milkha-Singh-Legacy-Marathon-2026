@@ -1797,12 +1797,15 @@ body::before {
 }
 
 /* ---------- Sponsors ---------- */
+/* minmax(0, 1fr), not 1fr: a sized sponsor logo must never widen its column,
+   or the tiles in a row end up different widths. */
 .sponsors__grid {
-  display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px;
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px;
   margin-bottom: 40px;
 }
 .sponsor-tile {
   position: relative;
+  min-width: 0;
   min-height: 168px;
   display: flex; align-items: center; justify-content: center;
   padding: 26px 20px 20px;
@@ -1823,6 +1826,14 @@ body::before {
 .sponsor-tile--org img,
 .sponsor-tile--mark img { height: 112px; }
 .sponsor-tile--logo { background: #fff; border: 1px solid var(--border); }
+
+/* Sponsor logos added in the website editor are sized by what is actually
+   drawn in them (api/site.php measures and sets these boxes), so a logo with a
+   wide empty margin is not shrunk to a speck. The span clips the margin. */
+.sponsor-tile__fit, .marquee__fit { display: block; flex: none; overflow: hidden; }
+.sponsor-tile .sponsor-tile__fit img,
+.marquee__set .marquee__fit img { display: block; max-width: none; max-height: none; height: auto; }
+.sponsor-tile--sponsor { padding-top: 20px; }
 
 /* Badge sits on the top-left border, like a fieldset legend, instead of
    competing with the logo for center space below it. */
@@ -1908,7 +1919,7 @@ body::before {
   .press__grid     { grid-template-columns: repeat(2, 1fr); }
   .reasons         { grid-template-columns: repeat(2, 1fr); }
   .reg__cats       { grid-template-columns: repeat(2, 1fr); }
-  .sponsors__grid  { grid-template-columns: repeat(3, 1fr); }
+  .sponsors__grid  { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .ambassadors__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
@@ -1962,7 +1973,7 @@ body::before {
   .cards .card,
   .cards .card:nth-child(4),
   .cards .card:nth-child(5) { grid-column: auto; }
-  .sponsors__grid  { grid-template-columns: repeat(2, 1fr); }
+  .sponsors__grid  { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   /* minmax(0,1fr), not 1fr: the letter-spaced MARATHON AMBASSADORS label set a
      minimum wider than its share and pushed the columns to 145px and 168px. */
   .ambassadors__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }

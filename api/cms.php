@@ -934,9 +934,90 @@ window.SITE_CONFIG = {$config};
     });
   }
 
+  /* Sizes an uploaded logo by what is actually drawn in it, not by its file.
+     Logos arrive with very different amounts of empty margin and very
+     different shapes, so a fixed height made some tiny. This finds the visible
+     part of the picture (ignoring transparent and near-white margins), then
+     sizes that part to the same visual weight: equal area, capped by the box,
+     so a wide wordmark and a square crest look equally prominent. The image
+     sits inside a clipping span that hides the trimmed margins. */
+  function fitLogo(img, box) {
+    function run() {
+      var nw = img.naturalWidth, nh = img.naturalHeight;
+      if (!nw || !nh) return;
+      var bx = 0, by = 0, bw = nw, bh = nh;
+      try {
+        var k = Math.min(1, 240 / Math.max(nw, nh));
+        var cw = Math.max(1, Math.round(nw * k)), ch = Math.max(1, Math.round(nh * k));
+        var c = document.createElement('canvas');
+        c.width = cw; c.height = ch;
+        var g = c.getContext('2d');
+        g.drawImage(img, 0, 0, cw, ch);
+        var d = g.getImageData(0, 0, cw, ch).data;
+        var x0 = cw, y0 = ch, x1 = -1, y1 = -1, x, y, p;
+        for (y = 0; y < ch; y++) {
+          for (x = 0; x < cw; x++) {
+            p = (y * cw + x) * 4;
+            if (d[p + 3] > 16 && !(d[p] > 238 && d[p + 1] > 238 && d[p + 2] > 238)) {
+              if (x < x0) x0 = x;
+              if (x > x1) x1 = x;
+              if (y < y0) y0 = y;
+              if (y > y1) y1 = y;
+            }
+          }
+        }
+        if (x1 >= x0 && y1 >= y0) {
+          bx = x0 / k; by = y0 / k; bw = (x1 - x0 + 1) / k; bh = (y1 - y0 + 1) / k;
+        }
+      } catch (e) { /* pixels unreadable: size the whole picture instead */ }
+
+      var b = box();
+      var ratio = bw / bh;
+      var h = Math.min(b.maxH, Math.sqrt(b.area / ratio));
+      var w = h * ratio;
+      if (w > b.maxW) { w = b.maxW; h = w / ratio; }
+      var s = h / bh;
+
+      var wrap = img.parentNode;
+      wrap.style.width = Math.round(w) + 'px';
+      wrap.style.height = Math.round(h) + 'px';
+      img.style.width = Math.round(nw * s) + 'px';
+      img.style.height = Math.round(nh * s) + 'px';
+      img.style.marginLeft = -Math.round(bx * s) + 'px';
+      img.style.marginTop = -Math.round(by * s) + 'px';
+    }
+    img._fit = run;
+    if (img.complete && img.naturalWidth) run();
+    else img.addEventListener('load', run);
+  }
+
+  function tileBox(tile) {
+    return function () {
+      var tw = tile.clientWidth || 300;
+      var inner = Math.max(60, tw - 40);     // the tile has 20px padding each side
+      return { maxW: inner * 0.9, maxH: tw < 250 ? 88 : 112, area: tw * 0.55 * tw * 0.28 };
+    };
+  }
+  function stripBox() {
+    var small = window.matchMedia('(max-width: 620px)').matches;
+    return small ? { maxW: 118, maxH: 46, area: 2600 } : { maxW: 146, maxH: 58, area: 3900 };
+  }
+
+  var fitted = [];
+  var refitTimer = null;
+  window.addEventListener('resize', function () {
+    clearTimeout(refitTimer);
+    refitTimer = setTimeout(function () {
+      for (var i = 0; i < fitted.length; i++) if (fitted[i]._fit) fitted[i]._fit();
+    }, 150);
+  });
+
+  function isUpload(src) { return String(src).indexOf('uploads/site/') === 0; }
+
   /* Draws the scrolling strip and the Sponsors & Partners grid from one list.
      Also used by the website editor to show a saved list straight away. */
   function renderLogos(logos, placeholders) {
+    fitted = [];
     var slider = [], section = [], i, j, html;
     for (i = 0; i < logos.length; i++) {
       if (logos[i].slider) slider.push(logos[i]);
@@ -951,12 +1032,15 @@ window.SITE_CONFIG = {$config};
       for (i = 0; i < 8 && slider.length; i++) {
         html += '<ul class="marquee__set"' + (i ? ' aria-hidden="true"' : '') + '>';
         for (j = 0; j < slider.length; j++) {
-          html += '<li><img src="' + esc(slider[j].src) + '" alt="' + (i ? '' : esc(slider[j].name)) + '"' +
-                  (i ? ' aria-hidden="true"' : '') + ' loading="lazy" decoding="async" /></li>';
+          var stripImg = '<img src="' + esc(slider[j].src) + '" alt="' + (i ? '' : esc(slider[j].name)) + '"' +
+                         (i ? ' aria-hidden="true"' : '') + ' loading="lazy" decoding="async" />';
+          html += '<li>' + (isUpload(slider[j].src) ? '<span class="marquee__fit">' + stripImg + '</span>' : stripImg) + '</li>';
         }
         html += '</ul>';
       }
       track.innerHTML = html;
+      var stripImgs = track.querySelectorAll('.marquee__fit img');
+      for (i = 0; i < stripImgs.length; i++) { fitLogo(stripImgs[i], stripBox); fitted.push(stripImgs[i]); }
     }
 
     /* Two rows. Sponsors (no label) fill the top-row slots, which show
@@ -970,9 +1054,12 @@ window.SITE_CONFIG = {$config};
       var tile = function (l) {
         var cls = l.style === 'org' ? 'sponsor-tile sponsor-tile--org'
                 : 'sponsor-tile sponsor-tile--logo' + (l.style === 'mark' ? ' sponsor-tile--mark' : '');
-        return '<div class="' + cls + '">' +
-               (l.badge ? '<span class="sponsor-tile__badge">' + esc(l.badge) + '</span>' : '') +
-               '<img src="' + esc(l.src) + '" alt="' + esc(l.name) + '" loading="lazy" decoding="async" /></div>';
+        var img = '<img src="' + esc(l.src) + '" alt="' + esc(l.name) + '" loading="lazy" decoding="async" />';
+        // Sponsors are sized automatically; the partner tiles keep their own look.
+        if (!l.badge) {
+          return '<div class="' + cls + ' sponsor-tile--sponsor"><span class="sponsor-tile__fit">' + img + '</span></div>';
+        }
+        return '<div class="' + cls + '"><span class="sponsor-tile__badge">' + esc(l.badge) + '</span>' + img + '</div>';
       };
 
       html = '';
@@ -982,6 +1069,12 @@ window.SITE_CONFIG = {$config};
       }
       for (i = 0; i < partners.length; i++) html += tile(partners[i]);
       grid.innerHTML = html;
+
+      var tileImgs = grid.querySelectorAll('.sponsor-tile__fit img');
+      for (i = 0; i < tileImgs.length; i++) {
+        fitLogo(tileImgs[i], tileBox(tileImgs[i].parentNode.parentNode));
+        fitted.push(tileImgs[i]);
+      }
     }
   }
   window.SITE_RENDER_LOGOS = renderLogos;
@@ -1059,7 +1152,7 @@ function cms_editor_html(string $page, string $csrf, string $userName): string
                             'min' => CMS_BADGE_MIN, 'max' => CMS_BADGE_MAX],
     ], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE);
 
-    $v = '20260917-7';
+    $v = '20260917-9';
     $inject = "\n<link rel=\"stylesheet\" href=\"admin/assets/editor.css?v={$v}\" />\n"
             . "<script>window.CMS_EDITOR = {$boot};</script>\n"
             . "<script src=\"admin/assets/editor.js?v={$v}\"></script>\n";
