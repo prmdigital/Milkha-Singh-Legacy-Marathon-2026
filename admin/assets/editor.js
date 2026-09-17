@@ -112,6 +112,12 @@
   var seoBtn = make('button', { type: 'button', className: 'cms-btn cms-btn--ghost', text: 'Page title & description' });
   seoBtn.addEventListener('click', openPageSettings);
 
+  var logosBtn = null;
+  if (C.page === 'index') {
+    logosBtn = make('button', { type: 'button', className: 'cms-btn cms-btn--ghost', text: 'Sponsor logos' });
+    logosBtn.addEventListener('click', function () { openLogos(); });
+  }
+
   var bar = make('div', { className: 'cms-bar cms-ui' }, [
     make('div', { className: 'cms-bar__left' }, [
       make('b', { text: 'Website editor' }),
@@ -120,6 +126,7 @@
     ]),
     statusEl,
     make('div', { className: 'cms-bar__right' }, [
+      logosBtn,
       seoBtn,
       make('a', { className: 'cms-btn cms-btn--ghost', href: C.events, text: 'Event, fees & media' }),
       make('a', { className: 'cms-btn cms-btn--ghost', href: C.page + '.html', target: '_blank', rel: 'noopener', text: 'View live page' }),
@@ -144,6 +151,14 @@
     // Inside the element being edited: place the caret, never follow a link.
     if (active && active.el && active.el.contains(e.target)) {
       if (e.target.closest('a')) e.preventDefault();
+      return;
+    }
+
+    // Either logo area opens the sponsor logo list.
+    if (e.target.closest('[data-e-list]')) {
+      e.preventDefault();
+      e.stopPropagation();
+      openLogos();
       return;
     }
 
@@ -335,9 +350,12 @@
 
   /* ---------- Dialogs: images, icon links, page settings ---------- */
 
-  function dialog(title, body, actions) {
+  function dialog(title, body, actions, wide) {
     var err = make('p', { className: 'cms-modal__err', role: 'alert' });
-    var box = make('div', { className: 'cms-modal__box', role: 'dialog', 'aria-modal': 'true', 'aria-label': title }, [
+    var box = make('div', {
+      className: 'cms-modal__box' + (wide ? ' cms-modal__box--wide' : ''),
+      role: 'dialog', 'aria-modal': 'true', 'aria-label': title
+    }, [
       make('h2', { text: title }),
       body,
       err,
@@ -479,6 +497,188 @@
     if (b.restore) {
       b.restore.addEventListener('click', function () {
         if (confirm('Put the original link back?')) restore(key, b.restore);
+      });
+    }
+  }
+
+  /* ---------- Sponsor logos: one list for the strip and the Sponsors grid ---------- */
+
+  var STYLE_LABELS = { logo: 'Wide logo', mark: 'Square logo', org: 'Full tile (green)' };
+
+  function openLogos() {
+    if (C.page !== 'index' || !C.logos) return;
+    if (active) {
+      if (active.dirty && !confirm('You have an unsaved change. Discard it?')) return;
+      active.cancel();
+    }
+
+    var items = JSON.parse(JSON.stringify(C.logos.logos || []));
+    var list = make('div', { className: 'cms-logos' });
+    var d;
+
+    function touched() { if (d) d.dirty = true; }
+
+    function row(item, i) {
+      var name = make('input', { type: 'text', className: 'cms-input', maxlength: '120', placeholder: 'Company name' });
+      name.value = item.name || '';
+      name.addEventListener('input', function () { item.name = name.value; touched(); });
+
+      var badge = make('input', { type: 'text', className: 'cms-input', maxlength: '40', placeholder: 'e.g. Title Sponsor' });
+      badge.value = item.badge || '';
+      badge.addEventListener('input', function () { item.badge = badge.value; touched(); });
+
+      var style = make('select', { className: 'cms-input' });
+      Object.keys(STYLE_LABELS).forEach(function (k) {
+        var o = make('option', { value: k, text: STYLE_LABELS[k] });
+        if (item.style === k) o.selected = true;
+        style.appendChild(o);
+      });
+      style.addEventListener('change', function () { item.style = style.value; touched(); });
+
+      function check(label, prop) {
+        var box = make('input', { type: 'checkbox' });
+        box.checked = !!item[prop];
+        box.addEventListener('change', function () { item[prop] = box.checked; touched(); });
+        return make('label', { className: 'cms-check' }, [box, make('span', { text: label })]);
+      }
+
+      function move(delta) {
+        var j = i + delta;
+        if (j < 0 || j >= items.length) return;
+        items.splice(j, 0, items.splice(i, 1)[0]);
+        touched();
+        redraw();
+      }
+
+      var up = make('button', { type: 'button', className: 'cms-tool', title: 'Move up', 'aria-label': 'Move ' + (item.name || 'logo') + ' up', text: '↑' });
+      var down = make('button', { type: 'button', className: 'cms-tool', title: 'Move down', 'aria-label': 'Move ' + (item.name || 'logo') + ' down', text: '↓' });
+      var remove = make('button', { type: 'button', className: 'cms-btn cms-btn--link', text: 'Remove' });
+      up.disabled = i === 0;
+      down.disabled = i === items.length - 1;
+      up.addEventListener('click', function () { move(-1); });
+      down.addEventListener('click', function () { move(1); });
+      remove.addEventListener('click', function () {
+        if (!confirm('Remove ' + (item.name || 'this logo') + ' from the website?')) return;
+        items.splice(i, 1);
+        touched();
+        redraw();
+      });
+
+      return make('div', { className: 'cms-logo' }, [
+        make('div', { className: 'cms-logo__thumb' }, [make('img', { src: item.src, alt: '' })]),
+        make('div', { className: 'cms-logo__fields' }, [
+          make('label', { className: 'cms-field' }, [make('span', { text: 'Company name' }), name]),
+          make('label', { className: 'cms-field' }, [make('span', { text: 'Label on the tile' }), badge]),
+          make('label', { className: 'cms-field' }, [make('span', { text: 'Shape' }), style]),
+          make('div', { className: 'cms-logo__where' }, [
+            check('Show in the scrolling strip', 'slider'),
+            check('Show in Sponsors & Partners', 'section')
+          ])
+        ]),
+        make('div', { className: 'cms-logo__order' }, [up, down, remove])
+      ]);
+    }
+
+    function redraw() {
+      list.innerHTML = '';
+      items.forEach(function (item, i) { list.appendChild(row(item, i)); });
+      if (!items.length) list.appendChild(make('p', { className: 'cms-logos__empty', text: 'No logos yet. Add one below.' }));
+    }
+    redraw();
+
+    var file = make('input', { type: 'file', accept: 'image/png,image/jpeg,image/webp' });
+    file.addEventListener('change', function () {
+      var f = file.files[0];
+      if (!f) return;
+      d.err.textContent = '';
+      addHint.textContent = 'Uploading…';
+      api('upload', { kind: 'image' }, f).then(function (res) {
+        file.value = '';
+        if (!res.ok) { addHint.textContent = ''; d.err.textContent = res.error; return; }
+        // Pick the tile shape from the picture itself: tall or square artwork
+        // needs the larger square tile to read at the same weight as a wordmark.
+        var probe = new Image();
+        probe.onload = function () {
+          var ratio = probe.naturalWidth / Math.max(1, probe.naturalHeight);
+          add(ratio < 1.6 ? 'mark' : 'logo');
+        };
+        probe.onerror = function () { add('logo'); };
+        probe.src = res.path;
+
+        function add(shape) {
+          items.push({ src: res.path, name: '', badge: 'Sponsor', style: shape, slider: true, section: true });
+          touched();
+          redraw();
+          addHint.textContent = 'Added at the end. Type the company name, then Save.';
+          var inputs = list.querySelectorAll('.cms-logo:last-child input[type="text"]');
+          if (inputs[0]) inputs[0].focus();
+        }
+      });
+    });
+    var addHint = make('small', { className: 'cms-logos__hint', role: 'status' });
+
+    var placeholders = make('input', { type: 'number', className: 'cms-input cms-input--short', min: '0', max: '8' });
+    placeholders.value = String(C.logos.placeholders || 0);
+    placeholders.addEventListener('input', touched);
+
+    var b = {
+      save: make('button', { type: 'button', className: 'cms-btn cms-btn--primary', text: 'Save' }),
+      cancel: make('button', { type: 'button', className: 'cms-btn cms-btn--ghost', text: 'Cancel' }),
+      restore: C.logos.custom ? make('button', { type: 'button', className: 'cms-btn cms-btn--link', text: 'Restore original logos' }) : null
+    };
+
+    d = dialog('Sponsor & partner logos', make('div', {}, [
+      make('p', { className: 'cms-modal__intro', text: 'One list for the scrolling logo strip under the hero and the Sponsors & Partners section. Use the arrows to change the order.' }),
+      list,
+      make('div', { className: 'cms-logos__add' }, [
+        make('label', { className: 'cms-field' }, [
+          make('span', { text: 'Add a logo' }),
+          file,
+          make('small', { text: 'PNG with a transparent background works best. Up to 8 MB.' })
+        ]),
+        addHint
+      ]),
+      make('label', { className: 'cms-field cms-field--inline' }, [
+        make('span', { text: 'Empty "Sponsor Logo" tiles to show before the logos' }),
+        placeholders
+      ])
+    ]), [b.restore, b.cancel, b.save], true);
+
+    b.cancel.addEventListener('click', d.close);
+
+    b.save.addEventListener('click', function () {
+      d.err.textContent = '';
+      for (var i = 0; i < items.length; i++) {
+        if (!String(items[i].name || '').trim()) {
+          d.err.textContent = 'Give every logo a company name.';
+          return;
+        }
+      }
+      b.save.disabled = true;
+      b.save.textContent = 'Saving…';
+      api('save_logos', {
+        logos: JSON.stringify(items),
+        placeholders: String(Math.max(0, Math.min(8, parseInt(placeholders.value, 10) || 0)))
+      }).then(function (res) {
+        b.save.disabled = false;
+        b.save.textContent = 'Save';
+        if (!res.ok) { d.err.textContent = res.error; return; }
+        C.logos = { logos: res.logos, placeholders: res.placeholders, custom: true };
+        if (window.SITE_RENDER_LOGOS) window.SITE_RENDER_LOGOS(res.logos, res.placeholders);
+        d.close();
+        status('Sponsor logos saved. They are live on the website now.', 'ok');
+      });
+    });
+
+    if (b.restore) {
+      b.restore.addEventListener('click', function () {
+        if (!confirm('Put the original sponsor logos back on the website?')) return;
+        b.restore.disabled = true;
+        api('reset_logos', {}).then(function (res) {
+          if (!res.ok) { b.restore.disabled = false; d.err.textContent = res.error; return; }
+          d.dirty = false;
+          reloadHere();
+        });
       });
     }
   }

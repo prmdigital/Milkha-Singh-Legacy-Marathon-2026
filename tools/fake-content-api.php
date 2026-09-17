@@ -80,6 +80,26 @@ if ($action === 'save') {
     out(200, ['ok' => true, 'fields' => $clean]);
 }
 
+if ($action === 'save_logos') {
+    $logos = cms_clean_logos(json_decode((string) ($_POST['logos'] ?? ''), true));
+    foreach ($logos as $l) {
+        if ($l['name'] === '') {
+            out(422, ['ok' => false, 'error' => 'Give every logo a company name.']);
+        }
+    }
+    $ph = max(0, min(CMS_LOGO_MAX_PLACEHOLDERS, (int) ($_POST['placeholders'] ?? 0)));
+    $cache['settings']['sponsor_logos'] = json_encode($logos, JSON_UNESCAPED_UNICODE);
+    $cache['settings']['sponsor_placeholders'] = (string) $ph;
+    $write($cache);
+    out(200, ['ok' => true, 'logos' => $logos, 'placeholders' => $ph]);
+}
+
+if ($action === 'reset_logos') {
+    unset($cache['settings']['sponsor_logos'], $cache['settings']['sponsor_placeholders']);
+    $write($cache);
+    out(200, ['ok' => true]);
+}
+
 if ($action === 'restore') {
     unset($cache['pages'][$page][$key]);
     $write($cache);

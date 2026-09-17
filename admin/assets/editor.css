@@ -133,6 +133,45 @@ textarea.cms-input { resize: vertical; }
 .cms-modal__err:empty { display: none; }
 .cms-modal__actions { display: flex; justify-content: flex-end; align-items: center; gap: 8px; flex-wrap: wrap; }
 
+/* ---------- Logo areas and the sponsor logo dialog ---------- */
+
+.cms-editing [data-e-list] { cursor: pointer; }
+.cms-editing [data-e-list]:hover { outline: 2px dashed #128807 !important; outline-offset: 4px; }
+
+.cms-modal__box--wide { width: min(820px, 100%); }
+.cms-logos { display: grid; gap: 10px; margin: 0 0 14px; }
+.cms-logos__empty { margin: 0; padding: 14px; border: 1px dashed #C7D0DF; border-radius: 8px; color: #6B7280; text-align: center; }
+.cms-logo {
+  display: grid; grid-template-columns: 120px minmax(0, 1fr) auto; gap: 14px; align-items: start;
+  padding: 12px; border: 1px solid #DBE2ED; border-radius: 10px; background: #FAFBFD;
+}
+.cms-logo__thumb {
+  display: grid; place-items: center; height: 90px;
+  background: #fff; border: 1px solid #E3E7EF; border-radius: 8px;
+}
+.cms-logo__thumb img { max-width: 100px; max-height: 70px; object-fit: contain; }
+.cms-logo__fields { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 10px; }
+.cms-logo__fields .cms-field { margin-bottom: 8px; }
+.cms-logo__where { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 6px 18px; }
+.cms-check { display: inline-flex; align-items: center; gap: 7px; font-weight: 600; color: #26303F; cursor: pointer; }
+.cms-check input { width: 18px; height: 18px; accent-color: #128807; }
+.cms-logo__order { display: flex; flex-direction: column; gap: 6px; align-items: stretch; }
+.cms-tool:disabled { opacity: .35; cursor: default; }
+.cms-logos__add { padding: 12px; margin: 0 0 14px; border: 1px dashed #C7D0DF; border-radius: 10px; }
+.cms-logos__add .cms-field { margin: 0; }
+.cms-logos__hint { display: block; margin-top: 6px; color: #0E6B06; font-weight: 600; }
+.cms-logos__hint:empty { display: none; }
+.cms-field--inline { grid-template-columns: minmax(0, 1fr) 90px; align-items: center; }
+.cms-input--short { width: 90px; }
+
+@media (max-width: 720px) {
+  .cms-logo { grid-template-columns: 80px minmax(0, 1fr); }
+  .cms-logo__thumb { height: 64px; }
+  .cms-logo__thumb img { max-width: 70px; max-height: 50px; }
+  .cms-logo__fields { grid-template-columns: 1fr; }
+  .cms-logo__order { grid-column: 1 / -1; flex-direction: row; }
+}
+
 /* An empty status line should not hold a row open. */
 .cms-bar__status:empty { display: none; }
 

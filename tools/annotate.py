@@ -125,7 +125,9 @@ def excluded(n):
     if any(k in n.attrs for k in ("data-cd", "data-err", "aria-live")):
         return True
     cls = n.classes()
-    return "marquee" in cls or "reg__err" in cls
+    # The logo strip and the sponsors grid are rendered from the sponsor logo
+    # list managed in the editor, not edited tile by tile.
+    return "marquee" in cls or "sponsors__grid" in cls or "reg__err" in cls
 
 
 def subtree(n):

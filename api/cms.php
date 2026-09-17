@@ -673,18 +673,120 @@ function cms_store_upload(?array $f, string $kind): array
 // Page script
 // ---------------------------------------------------------------------------
 
-/** The logos in the scrolling strip when none have been saved: the page's own. */
-function cms_default_marquee(): array
+// ---------------------------------------------------------------------------
+// Sponsor logos
+// ---------------------------------------------------------------------------
+
+const CMS_LOGO_STYLES = ['logo', 'mark', 'org'];
+const CMS_LOGO_MAX_PLACEHOLDERS = 8;
+
+/**
+ * One list drives both the scrolling logo strip and the Sponsors & Partners
+ * grid. Each logo:
+ *   src      file on this site
+ *   name     company name (also the image description)
+ *   badge    label on the tile, e.g. "Title Sponsor" (may be empty)
+ *   style    logo = wide wordmark, mark = square crest, org = full green tile
+ *   slider   shown in the scrolling strip
+ *   section  shown in the Sponsors & Partners grid
+ *
+ * @return array<int, array{src:string,name:string,badge:string,style:string,slider:bool,section:bool}>
+ */
+function cms_clean_logos($input): array
 {
-    $html = cms_template('index');
-    if (!preg_match('#<ul class="marquee__set">(.*?)</ul>#s', $html, $m)) {
+    if (!is_array($input)) {
         return [];
     }
-    preg_match_all('#<img[^>]*\bsrc="([^"]+)"[^>]*\balt="([^"]*)"#', $m[1], $imgs, PREG_SET_ORDER);
-    return array_map(
-        static fn(array $i): array => ['src' => $i[1], 'alt' => html_entity_decode($i[2], ENT_QUOTES, 'UTF-8')],
-        $imgs
-    );
+    $out = [];
+    foreach (array_slice(array_values($input), 0, 40) as $l) {
+        if (!is_array($l)) {
+            continue;
+        }
+        $src = cms_clean_src((string) ($l['src'] ?? ''));
+        if ($src === null) {
+            continue;
+        }
+        $style = (string) ($l['style'] ?? 'logo');
+        $out[] = [
+            'src'     => $src,
+            'name'    => cms_clean_text((string) ($l['name'] ?? ''), 120),
+            'badge'   => cms_clean_text((string) ($l['badge'] ?? ''), 40),
+            'style'   => in_array($style, CMS_LOGO_STYLES, true) ? $style : 'logo',
+            'slider'  => !empty($l['slider']),
+            'section' => !empty($l['section']),
+        ];
+    }
+    return $out;
+}
+
+/**
+ * The logos as the page ships them: every logo tile in the Sponsors grid (with
+ * its badge and shape), then any logo that is only in the strip, and the
+ * number of empty "Sponsor Logo" tiles.
+ *
+ * @return array{logos:array, placeholders:int}
+ */
+function cms_default_logos(): array
+{
+    $html = cms_template('index');
+
+    $strip = [];
+    if (preg_match('#<ul class="marquee__set">(.*?)</ul>#s', $html, $m)) {
+        preg_match_all('#<img[^>]*\bsrc="([^"]+)"[^>]*\balt="([^"]*)"#', $m[1], $imgs, PREG_SET_ORDER);
+        foreach ($imgs as $i) {
+            $strip[$i[1]] = html_entity_decode($i[2], ENT_QUOTES, 'UTF-8');
+        }
+    }
+
+    $logos = [];
+    $placeholders = 0;
+    $start = strpos($html, 'data-e-list="sponsors"');
+    $end   = $start === false ? false : strpos($html, 'sponsors__cta', $start);
+    if ($start !== false && $end !== false) {
+        $grid = substr($html, $start, $end - $start);
+        preg_match_all('#<div class="sponsor-tile([^"]*)"[^>]*>(.*?)</div>#s', $grid, $tiles, PREG_SET_ORDER);
+        foreach ($tiles as $t) {
+            if (!preg_match('#<img[^>]*\bsrc="([^"]+)"[^>]*\balt="([^"]*)"#', $t[2], $img)) {
+                $placeholders++;
+                continue;
+            }
+            $badge = preg_match('#sponsor-tile__badge">(.*?)</span>#s', $t[2], $b)
+                ? html_entity_decode(trim(strip_tags($b[1])), ENT_QUOTES, 'UTF-8') : '';
+            $style = str_contains($t[1], '--org') ? 'org' : (str_contains($t[1], '--mark') ? 'mark' : 'logo');
+            $logos[] = [
+                'src'     => $img[1],
+                'name'    => $strip[$img[1]] ?? html_entity_decode($img[2], ENT_QUOTES, 'UTF-8'),
+                'badge'   => $badge,
+                'style'   => $style,
+                'slider'  => isset($strip[$img[1]]),
+                'section' => true,
+            ];
+            unset($strip[$img[1]]);
+        }
+    }
+    foreach ($strip as $src => $name) {
+        $logos[] = ['src' => $src, 'name' => $name, 'badge' => '', 'style' => 'logo', 'slider' => true, 'section' => false];
+    }
+
+    return ['logos' => cms_clean_logos($logos), 'placeholders' => min($placeholders, CMS_LOGO_MAX_PLACEHOLDERS)];
+}
+
+/**
+ * The logo list in effect: the saved one, or the page's own.
+ *
+ * @return array{logos:array, placeholders:int, custom:bool}
+ */
+function cms_logo_settings(array $settings): array
+{
+    $saved = json_decode((string) ($settings['sponsor_logos'] ?? ''), true);
+    if (is_array($saved)) {
+        return [
+            'logos'        => cms_clean_logos($saved),
+            'placeholders' => max(0, min(CMS_LOGO_MAX_PLACEHOLDERS, (int) ($settings['sponsor_placeholders'] ?? 0))),
+            'custom'       => true,
+        ];
+    }
+    return cms_default_logos() + ['custom' => false];
 }
 
 /**
@@ -735,12 +837,10 @@ function cms_client_script(string $page, array $cache): string
         if ($heroVideo !== null) {
             $media['heroVideo'] = $heroVideo;
         }
-        $logos = json_decode((string) ($settings['marquee_logos'] ?? ''), true);
-        if (is_array($logos)) {
-            $media['marquee'] = array_values(array_filter(array_map(static function ($l) {
-                $src = is_array($l) ? cms_clean_src((string) ($l['src'] ?? '')) : null;
-                return $src === null ? null : ['src' => $src, 'alt' => cms_clean_text((string) ($l['alt'] ?? ''), 120)];
-            }, $logos)));
+        $logoSet = cms_logo_settings($settings);
+        if ($logoSet['custom']) {
+            $media['logos'] = $logoSet['logos'];
+            $media['placeholders'] = $logoSet['placeholders'];
         }
     }
 
@@ -767,6 +867,9 @@ window.SITE_CONFIG = {$config};
     art.textContent = '.hero__bg{background-image:url("' + M.heroImage + '")!important}';
     document.head.appendChild(art);
   }
+  // A saved logo list replaces both logo areas: keep the old logos out of sight
+  // until the new ones are in.
+  if (M.logos) hide.push('[data-e-list]');
   if (hide.length) {
     var veil = document.createElement('style');
     veil.id = 'site-content-veil';
@@ -779,6 +882,50 @@ window.SITE_CONFIG = {$config};
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
     });
   }
+
+  /* Draws the scrolling strip and the Sponsors & Partners grid from one list.
+     Also used by the website editor to show a saved list straight away. */
+  function renderLogos(logos, placeholders) {
+    var slider = [], section = [], i, j, html;
+    for (i = 0; i < logos.length; i++) {
+      if (logos[i].slider) slider.push(logos[i]);
+      if (logos[i].section) section.push(logos[i]);
+    }
+
+    var strip = document.querySelector('.marquee');
+    var track = document.querySelector('[data-e-list="marquee"]');
+    if (track) {
+      if (strip) strip.style.display = slider.length ? '' : 'none';
+      html = '';
+      for (i = 0; i < 8 && slider.length; i++) {
+        html += '<ul class="marquee__set"' + (i ? ' aria-hidden="true"' : '') + '>';
+        for (j = 0; j < slider.length; j++) {
+          html += '<li><img src="' + esc(slider[j].src) + '" alt="' + (i ? '' : esc(slider[j].name)) + '"' +
+                  (i ? ' aria-hidden="true"' : '') + ' loading="lazy" decoding="async" /></li>';
+        }
+        html += '</ul>';
+      }
+      track.innerHTML = html;
+    }
+
+    var grid = document.querySelector('[data-e-list="sponsors"]');
+    if (grid) {
+      html = '';
+      for (i = 0; i < (placeholders || 0); i++) {
+        html += '<div class="sponsor-tile"><span>Sponsor<br />Logo</span></div>';
+      }
+      for (i = 0; i < section.length; i++) {
+        var l = section[i];
+        var cls = l.style === 'org' ? 'sponsor-tile sponsor-tile--org'
+                : 'sponsor-tile sponsor-tile--logo' + (l.style === 'mark' ? ' sponsor-tile--mark' : '');
+        html += '<div class="' + cls + '">' +
+                (l.badge ? '<span class="sponsor-tile__badge">' + esc(l.badge) + '</span>' : '') +
+                '<img src="' + esc(l.src) + '" alt="' + esc(l.name) + '" loading="lazy" decoding="async" /></div>';
+      }
+      grid.innerHTML = html;
+    }
+  }
+  window.SITE_RENDER_LOGOS = renderLogos;
 
   function apply() {
     try {
@@ -797,21 +944,7 @@ window.SITE_CONFIG = {$config};
         if (f.label !== undefined) el.setAttribute('aria-label', f.label);
       }
 
-      if (M.marquee && M.marquee.length) {
-        var track = document.querySelector('[data-e-list="marquee"]');
-        if (track) {
-          var sets = '';
-          for (var s = 0; s < 8; s++) {
-            sets += '<ul class="marquee__set"' + (s ? ' aria-hidden="true"' : '') + '>';
-            for (var j = 0; j < M.marquee.length; j++) {
-              sets += '<li><img src="' + esc(M.marquee[j].src) + '" alt="' + (s ? '' : esc(M.marquee[j].alt)) +
-                      '"' + (s ? ' aria-hidden="true"' : '') + ' loading="lazy" decoding="async" /></li>';
-            }
-            sets += '</ul>';
-          }
-          track.innerHTML = sets;
-        }
-      }
+      if (M.logos) renderLogos(M.logos, M.placeholders);
 
       if (M.heroVideo) {
         var v = document.getElementById('heroVideo');
@@ -859,9 +992,13 @@ function cms_editor_html(string $page, string $csrf, string $userName): string
         'api'    => 'admin/content-api.php',
         'hub'    => 'admin/website.php',
         'events' => 'admin/event-settings.php',
+        // Read from the same cache the public pages use, so the dialog opens on
+        // exactly what visitors see.
+        'logos'  => cms_logo_settings(is_array(cms_read_cache()['settings'] ?? null) ? cms_read_cache()['settings'] : []),
+        'uploadLimit' => cms_upload_limit_bytes(),
     ], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE);
 
-    $v = '20260917-1';
+    $v = '20260917-2';
     $inject = "\n<link rel=\"stylesheet\" href=\"admin/assets/editor.css?v={$v}\" />\n"
             . "<script>window.CMS_EDITOR = {$boot};</script>\n"
             . "<script src=\"admin/assets/editor.js?v={$v}\"></script>\n";

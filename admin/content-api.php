@@ -61,6 +61,29 @@ if (!ensure_cms_tables()) {
     reply(500, ['ok' => false, 'error' => 'The website content tables could not be created. Open Admin › Website for the SQL to run.']);
 }
 
+if ($action === 'save_logos') {
+    $logos = cms_clean_logos(json_decode((string) ($_POST['logos'] ?? ''), true));
+    $placeholders = max(0, min(CMS_LOGO_MAX_PLACEHOLDERS, (int) ($_POST['placeholders'] ?? 0)));
+    foreach ($logos as $l) {
+        if ($l['name'] === '') {
+            reply(422, ['ok' => false, 'error' => 'Give every logo a company name. It is read aloud to blind visitors and used by Google.']);
+        }
+    }
+    if (!cms_save_settings(['sponsor_logos' => $logos, 'sponsor_placeholders' => (string) $placeholders], $user)) {
+        reply(500, ['ok' => false, 'error' => 'The logos could not be saved. Please try again.']);
+    }
+    audit('sponsor_logos_updated', count($logos) . ' logos');
+    reply(200, ['ok' => true, 'logos' => $logos, 'placeholders' => $placeholders]);
+}
+
+if ($action === 'reset_logos') {
+    if (!cms_save_settings(['sponsor_logos' => null, 'sponsor_placeholders' => null], $user)) {
+        reply(500, ['ok' => false, 'error' => 'The original logos could not be restored. Please try again.']);
+    }
+    audit('sponsor_logos_restored');
+    reply(200, ['ok' => true]);
+}
+
 if (!isset(CMS_PAGES[$page])) {
     reply(400, ['ok' => false, 'error' => 'Unknown page.']);
 }

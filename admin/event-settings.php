@@ -93,56 +93,6 @@ if ($ready && ($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
         }
     }
 
-    // ---- Sponsor strip logos -------------------------------------------------
-    if ($section === 'logos') {
-        $rows = [];
-        foreach ((array) ($_POST['logos'] ?? []) as $row) {
-            if (!is_array($row) || !empty($row['remove'])) {
-                continue;
-            }
-            $src = cms_clean_src((string) ($row['src'] ?? ''));
-            if ($src === null) {
-                continue;
-            }
-            $rows[] = [
-                'src'   => $src,
-                'alt'   => cms_clean_text((string) ($row['alt'] ?? ''), 120),
-                'order' => (int) ($row['order'] ?? 0),
-            ];
-        }
-
-        $new = $_FILES['new_logo'] ?? null;
-        if ($new && ($new['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE) {
-            $r = cms_store_upload($new, 'image');
-            if ($r['ok']) {
-                $rows[] = [
-                    'src'   => $r['path'],
-                    'alt'   => cms_clean_text((string) ($_POST['new_logo_alt'] ?? ''), 120),
-                    'order' => PHP_INT_MAX,
-                ];
-            } else {
-                $errors[] = 'New logo: ' . $r['error'];
-            }
-        }
-
-        if (!$errors) {
-            if (!$rows) {
-                $errors[] = 'Keep at least one logo in the strip, or use "Restore the original logos".';
-            } else {
-                usort($rows, static fn($a, $b) => $a['order'] <=> $b['order']);
-                $saved = cms_save_settings([
-                    'marquee_logos' => array_map(static fn($r) => ['src' => $r['src'], 'alt' => $r['alt']], $rows),
-                ], $user);
-                $done = 'logos';
-            }
-        }
-    }
-
-    if ($section === 'logos_reset') {
-        $saved = cms_save_settings(['marquee_logos' => null], $user);
-        $done  = 'logos_reset';
-    }
-
     if ($saved === false) {
         $errors[] = 'The settings could not be saved. Please try again.';
     } elseif ($saved === true) {
@@ -161,9 +111,6 @@ $fees      = category_fees();
 $heroImage = cms_clean_src((string) site_setting('hero_image', ''));
 $heroVideo = cms_clean_src((string) site_setting('hero_video', ''));
 
-$logosSaved = json_decode((string) site_setting('marquee_logos', ''), true);
-$logos      = is_array($logosSaved) && $logosSaved ? $logosSaved : cms_default_marquee();
-
 $limit = cms_upload_limit_bytes();
 
 $messages = [
@@ -173,8 +120,6 @@ $messages = [
     'hero_image_reset' => 'The original hero image is back.',
     'hero_video'       => 'The new hero video is live.',
     'hero_video_reset' => 'The original hero video is back.',
-    'logos'            => 'The sponsor strip has been updated.',
-    'logos_reset'      => 'The original sponsor strip logos are back.',
 ];
 $flash = $messages[(string) ($_GET['done'] ?? '')] ?? '';
 ?>
@@ -185,7 +130,7 @@ $flash = $messages[(string) ($_GET['done'] ?? '')] ?? '';
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>Event, fees &amp; media &middot; Marathon Admin</title>
-<link rel="stylesheet" href="assets/admin.css?v=20260917-1">
+<link rel="stylesheet" href="assets/admin.css?v=20260917-2">
 </head>
 <body>
 
@@ -335,56 +280,13 @@ $flash = $messages[(string) ($_GET['done'] ?? '')] ?? '';
   </section>
 
   <section class="panel">
-    <h2>Sponsor strip logos</h2>
-    <p class="muted">The logos scrolling under the hero on the home page, in this order.</p>
-
-    <form method="post" enctype="multipart/form-data" class="pwform">
-      <input type="hidden" name="csrf" value="<?= h(csrf_token()) ?>">
-      <input type="hidden" name="section" value="logos">
-
-      <div class="logolist">
-        <?php foreach ($logos as $i => $logo): ?>
-          <div class="logolist__row">
-            <img src="../<?= h((string) $logo['src']) ?>" alt="">
-            <input type="hidden" name="logos[<?= $i ?>][src]" value="<?= h((string) $logo['src']) ?>">
-            <label>
-              <span>Name</span>
-              <input type="text" name="logos[<?= $i ?>][alt]" maxlength="120" value="<?= h((string) ($logo['alt'] ?? '')) ?>">
-            </label>
-            <label class="logolist__order">
-              <span>Position</span>
-              <input type="number" name="logos[<?= $i ?>][order]" value="<?= $i + 1 ?>" min="1">
-            </label>
-            <label class="checkline">
-              <input type="checkbox" name="logos[<?= $i ?>][remove]" value="1">
-              <span>Remove</span>
-            </label>
-          </div>
-        <?php endforeach; ?>
-      </div>
-
-      <fieldset class="logolist__add">
-        <legend>Add a logo</legend>
-        <label>
-          <span>Logo image (PNG with a transparent background works best)</span>
-          <input type="file" name="new_logo" accept="image/jpeg,image/png,image/webp">
-        </label>
-        <label>
-          <span>Company name</span>
-          <input type="text" name="new_logo_alt" maxlength="120">
-        </label>
-      </fieldset>
-
-      <button type="submit" class="btn btn--primary">Save the sponsor strip</button>
-    </form>
-    <?php if (is_array($logosSaved) && $logosSaved): ?>
-      <form method="post" class="inline resetform"
-            onsubmit="return confirm('Put the original sponsor strip logos back?');">
-        <input type="hidden" name="csrf" value="<?= h(csrf_token()) ?>">
-        <input type="hidden" name="section" value="logos_reset">
-        <button type="submit" class="btn btn--sm btn--ghost">Restore the original logos</button>
-      </form>
-    <?php endif; ?>
+    <h2>Sponsor &amp; partner logos</h2>
+    <p class="muted">
+      The logos in the scrolling strip and in the Sponsors &amp; Partners section are managed
+      from one list in the page editor: open the home page and click either logo area, or use
+      <b>Sponsor logos</b> in the editor bar.
+    </p>
+    <p><a class="btn btn--primary" href="editor.php?page=index#sponsors">Manage sponsor logos</a></p>
   </section>
 
   <?php endif; ?>

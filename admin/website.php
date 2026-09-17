@@ -80,7 +80,7 @@ $done = (string) ($_GET['done'] ?? '');
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>Website &middot; Marathon Admin</title>
-<link rel="stylesheet" href="assets/admin.css?v=20260917-1">
+<link rel="stylesheet" href="assets/admin.css?v=20260917-2">
 </head>
 <body>
 
@@ -129,7 +129,7 @@ $done = (string) ($_GET['done'] ?? '');
 
       <article class="panel sitecard sitecard--settings">
         <h2>Event, fees &amp; media</h2>
-        <p class="sub">Race start time, early bird end date, entry fees, hero image and video, sponsor strip logos.</p>
+        <p class="sub">Race start time, early bird end date, entry fees, hero image and video. Sponsor logos are managed in the home page editor.</p>
         <p class="sitecard__actions">
           <a class="btn btn--primary" href="event-settings.php">Open</a>
         </p>
