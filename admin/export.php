@@ -9,6 +9,7 @@
 declare(strict_types=1);
 require_once __DIR__ . '/auth.php';
 require_once __DIR__ . '/query.php';
+require_once __DIR__ . '/../api/refunds.php';
 
 require_admin();
 require_can('export_csv');
@@ -64,6 +65,11 @@ $csv([
     'Paid at',
     'Razorpay order ID',
     'Razorpay payment ID',
+    'Refund status',
+    'Refund amount (INR)',
+    'Refund ID',
+    'Refunded at',
+    'Postponement email sent',
 ]);
 
 while ($r = $st->fetch()) {
@@ -95,6 +101,11 @@ while ($r = $st->fetch()) {
         $r['paid_at'],
         $r['razorpay_order_id'],
         $r['razorpay_payment_id'],
+        refund_csv_status($r),
+        csv_rupees($r['refund_paise'] ?? null),
+        (string) ($r['refund_id'] ?? ''),
+        (string) ($r['refunded_at'] ?? ''),
+        (string) ($r['notice_sent_at'] ?? ''),
     ]);
 }
 

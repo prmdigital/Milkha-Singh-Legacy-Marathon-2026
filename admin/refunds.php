@@ -87,6 +87,56 @@ if ($ready && ($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
     exit;
 }
 
+// ---- Refund report download ------------------------------------------------
+if ($ready && ($_GET['export'] ?? '') === 'csv') {
+    require_can('export_csv');
+    $st = db()->query(
+        "SELECT * FROM registrations
+          WHERE status IN ('paid','free','awaiting')
+          ORDER BY FIELD(status,'paid','awaiting','free'), created_at"
+    );
+    audit('export_csv', 'refunds');
+
+    no_store();
+    header('Content-Type: text/csv; charset=utf-8');
+    header('Content-Disposition: attachment; filename="marathon-refunds-' . date('Y-m-d-Hi') . '.csv"');
+
+    $out = fopen('php://output', 'w');
+    $csv = static function (array $row) use ($out): void {
+        fputcsv($out, $row, ',', '"', '');   // see export.php for why $escape is ''
+    };
+    fwrite($out, "\xEF\xBB\xBF");          // so Excel reads Indian names correctly
+
+    $csv([
+        'Registration ID', 'Full name', 'Email', 'Mobile', 'Category',
+        'Entry status', 'Fee paid (INR)', 'Paid through', 'Razorpay payment ID',
+        'Refund status', 'Refund amount (INR)', 'Refund ID', 'Refunded at', 'Refund problem',
+        'Postponement email sent',
+    ]);
+    while ($r = $st->fetch()) {
+        $paid = $r['status'] === 'paid';
+        $csv([
+            $r['registration_id'],
+            $r['full_name'],
+            $r['email'],
+            "'" . $r['mobile'],
+            cat_label((string) $r['category']),
+            status_label((string) $r['status']),
+            $paid ? csv_rupees($r['amount_paise']) : '0.00',
+            !$paid ? '' : ((string) $r['razorpay_payment_id'] !== '' ? 'Razorpay' : 'Outside Razorpay (cash/UPI)'),
+            (string) ($r['razorpay_payment_id'] ?? ''),
+            refund_csv_status($r),
+            csv_rupees($r['refund_paise'] ?? null),
+            (string) ($r['refund_id'] ?? ''),
+            (string) ($r['refunded_at'] ?? ''),
+            ($r['refund_status'] ?? '') === 'failed' ? (string) ($r['refund_error'] ?? '') : '',
+            (string) ($r['notice_sent_at'] ?? 'Not sent'),
+        ]);
+    }
+    fclose($out);
+    exit;
+}
+
 function reg_ref(int $id): string
 {
     $st = db()->prepare('SELECT registration_id FROM registrations WHERE id = ?');
@@ -163,7 +213,7 @@ $messageNow = (string) site_setting('notice_message', '');
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>Refunds &amp; notice &middot; Marathon Admin</title>
-<link rel="stylesheet" href="assets/admin.css?v=20260921-3">
+<link rel="stylesheet" href="assets/admin.css?v=20260921-4">
 </head>
 <body>
 
@@ -277,7 +327,12 @@ $messageNow = (string) site_setting('notice_message', '');
     <button type="button" class="btn btn--sm" id="runstop">Stop</button>
   </div>
 
-  <h2 class="listtitle">Runners <span class="muted">(<?= count($rows) ?>)</span></h2>
+  <div class="listhead">
+    <h2 class="listtitle">Runners <span class="muted">(<?= count($rows) ?>)</span></h2>
+    <?php if ($rows && can('export_csv')): ?>
+      <a class="btn btn--primary" href="refunds.php?export=csv">Download refund report (CSV)</a>
+    <?php endif; ?>
+  </div>
   <?php if (!$rows): ?>
     <p class="empty">No registered runners.</p>
   <?php else: ?>

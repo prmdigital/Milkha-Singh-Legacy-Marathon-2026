@@ -80,6 +80,31 @@ function refund_label(?string $s): string
     ][(string) $s] ?? 'Not refunded';
 }
 
+/**
+ * Refund position as one line for spreadsheets, covering entries that were
+ * never meant to be refunded (free, unpaid) as well as paid ones.
+ */
+function refund_csv_status(array $r): string
+{
+    if ($r['status'] === 'free') {
+        return 'No refund needed (free entry)';
+    }
+    if ($r['status'] !== 'paid') {
+        return 'No refund needed (not paid)';
+    }
+    $rs = (string) ($r['refund_status'] ?? '');
+    if ($rs === '' && (string) ($r['razorpay_payment_id'] ?? '') === '') {
+        return 'Not refunded (paid outside Razorpay: refund by hand)';
+    }
+    return refund_label($rs);
+}
+
+/** Rupees for a CSV cell: a plain number Excel can add up. */
+function csv_rupees($paise): string
+{
+    return $paise === null || $paise === '' ? '' : number_format((int) $paise / 100, 2, '.', '');
+}
+
 // ---------------------------------------------------------------------------
 // Razorpay
 // ---------------------------------------------------------------------------
