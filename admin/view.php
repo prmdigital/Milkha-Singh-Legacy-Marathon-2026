@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 require_once __DIR__ . '/auth.php';
+require_once __DIR__ . '/../api/refunds.php';
 
 require_admin();
 
@@ -61,7 +62,7 @@ if (!$r) {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title><?= isset($notFound) ? 'Not found' : h($r['full_name']) ?> &middot; Marathon Admin</title>
-<link rel="stylesheet" href="assets/admin.css?v=20260921-1">
+<link rel="stylesheet" href="assets/admin.css?v=20260921-3">
 </head>
 <body>
 
@@ -140,6 +141,18 @@ if (!$r) {
         <dd><?= $r['razorpay_payment_id'] ? '<code>' . h($r['razorpay_payment_id']) . '</code>' : '<span class="muted">&mdash;</span>' ?></dd>
         <dt>Receipt emailed</dt>
         <dd><?= ((int) $r['receipt_emailed'] === 1) ? 'Yes' : 'No' ?></dd>
+        <?php if (!empty($r['refund_status'])): ?>
+          <dt>Refund</dt>
+          <dd>
+            <span class="pill pill--r-<?= h($r['refund_status']) ?>"><?= h(refund_label((string) $r['refund_status'])) ?></span>
+            <?php if (!empty($r['refund_id'])): ?> <code><?= h($r['refund_id']) ?></code><?php endif; ?>
+            <?php if (!empty($r['refunded_at'])): ?><span class="muted"> &middot; <?= h(when($r['refunded_at'])) ?></span><?php endif; ?>
+            <?php if ($r['refund_status'] === 'failed' && !empty($r['refund_error'])): ?><br><span class="muted"><?= h($r['refund_error']) ?></span><?php endif; ?>
+          </dd>
+        <?php endif; ?>
+        <?php if (!empty($r['notice_sent_at'])): ?>
+          <dt>Postponement email</dt><dd>Sent <?= h(when($r['notice_sent_at'])) ?></dd>
+        <?php endif; ?>
       </dl>
 
       <?php if (($_GET['done'] ?? '') === 'paid'): ?>

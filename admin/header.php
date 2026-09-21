@@ -19,6 +19,10 @@ $me      = current_user();
         <a href="sponsors.php" <?= $current === 'sponsors.php' ? 'aria-current="page"' : '' ?>>Sponsors</a>
       <?php endif; ?>
 
+      <?php if (can('manage_refunds')): ?>
+        <a href="refunds.php" <?= $current === 'refunds.php' ? 'aria-current="page"' : '' ?>>Refunds</a>
+      <?php endif; ?>
+
       <?php if (can('view_audit')): ?>
         <a href="audit.php" <?= $current === 'audit.php' ? 'aria-current="page"' : '' ?>>Activity</a>
       <?php endif; ?>

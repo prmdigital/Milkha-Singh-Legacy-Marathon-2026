@@ -21,6 +21,10 @@ $labels = [
     'user_deactivated'    => 'Deactivated a user',
     'user_password_reset' => 'Reset a user password',
     'settings_updated'    => 'Changed payment settings',
+    'refund_issued'       => 'Refunded an entry fee through Razorpay',
+    'refund_manual'       => 'Recorded a fee as refunded by hand',
+    'notice_sent'         => 'Emailed the postponement notice',
+    'notice_saved'        => 'Edited the postponement email',
 ];
 ?>
 <!doctype html>
@@ -30,7 +34,7 @@ $labels = [
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>Activity &middot; Marathon Admin</title>
-<link rel="stylesheet" href="assets/admin.css?v=20260921-1">
+<link rel="stylesheet" href="assets/admin.css?v=20260921-3">
 </head>
 <body>
 

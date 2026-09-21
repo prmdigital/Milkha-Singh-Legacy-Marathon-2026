@@ -2,6 +2,7 @@
 declare(strict_types=1);
 require_once __DIR__ . '/auth.php';
 require_once __DIR__ . '/query.php';
+require_once __DIR__ . '/../api/refunds.php';
 
 require_admin();
 
@@ -78,7 +79,7 @@ foreach (['gender', 'tshirt', 'city', 'age_min', 'age_max', 'id_proof'] as $k) {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>Registrations &middot; Marathon Admin</title>
-<link rel="stylesheet" href="assets/admin.css?v=20260921-1">
+<link rel="stylesheet" href="assets/admin.css?v=20260921-3">
 </head>
 <body>
 
@@ -280,7 +281,10 @@ foreach (['gender', 'tshirt', 'city', 'age_min', 'age_max', 'id_proof'] as $k) {
               <?= money((int) $r['amount_paise']) ?>
               <?php if ((int) $r['early_bird'] === 1): ?><span class="sub">early bird</span><?php endif; ?>
             </td>
-            <td><span class="pill pill--<?= h($r['status']) ?>"><?= h(status_label((string) $r['status'])) ?></span></td>
+            <td>
+              <span class="pill pill--<?= h($r['status']) ?>"><?= h(status_label((string) $r['status'])) ?></span>
+              <?php if (!empty($r['refund_status'])): ?><span class="sub"><?= h(refund_label((string) $r['refund_status'])) ?></span><?php endif; ?>
+            </td>
             <td class="nowrap"><a class="btn btn--sm" href="view.php?id=<?= (int) $r['id'] ?>">Open</a></td>
           </tr>
         <?php endforeach; ?>

@@ -12,7 +12,7 @@
  *
  * Set it up: Razorpay dashboard > Settings > Webhooks
  *   URL     https://milkhasinghlegacymarathon.com/api/webhook.php
- *   Events  payment.captured, payment.failed
+ *   Events  payment.captured, payment.failed, refund.processed, refund.failed
  *   Secret  paste into RAZORPAY_WEBHOOK_SECRET in marathon-config.php
  */
 
@@ -55,6 +55,37 @@ if (!is_array($event)) {
 
 $type    = (string) ($event['event'] ?? '');
 $payment = $event['payload']['payment']['entity'] ?? null;
+
+// ---- Refunds reaching (or bouncing from) the runner's bank ----------------
+// Started from Admin > Refunds. Subscribe to refund.processed and
+// refund.failed in the Razorpay webhook settings for these to arrive.
+if ($type === 'refund.processed' || $type === 'refund.failed') {
+    $refund = $event['payload']['refund']['entity'] ?? null;
+    if (is_array($refund) && !empty($refund['payment_id'])) {
+        try {
+            $failed = $type === 'refund.failed';
+            db()->prepare(
+                'UPDATE registrations
+                    SET refund_status = :st, refund_id = :rid, refund_paise = :amt,
+                        refund_error = :err,
+                        refunded_at = COALESCE(refunded_at, CURRENT_TIMESTAMP)
+                  WHERE razorpay_payment_id = :pid AND status = "paid"'
+            )->execute([
+                ':st'  => $failed ? 'failed' : 'processed',
+                ':rid' => (string) ($refund['id'] ?? ''),
+                ':amt' => (int) ($refund['amount'] ?? 0),
+                ':err' => $failed ? 'Razorpay reported the refund failed.' : null,
+                ':pid' => (string) $refund['payment_id'],
+            ]);
+        } catch (Throwable $e) {
+            // Most likely the refund columns do not exist yet because nobody
+            // has opened the Refunds page. Acknowledge; the page's Check
+            // button reads the same status from Razorpay.
+            error_log('[marathon-webhook] refund update: ' . $e->getMessage());
+        }
+    }
+    exit(json_encode(['ok' => true]));
+}
 
 if (!is_array($payment)) {
     // Nothing to act on, but it was a valid signed call — acknowledge it so
