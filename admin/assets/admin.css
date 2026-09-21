@@ -634,6 +634,7 @@ code {
 .sitecard .sub { display: block; font-size: .85rem; color: var(--ink-mute); }
 .sitecard__actions { display: flex; gap: 8px; flex-wrap: wrap; margin: auto 0 0; padding-top: 14px; }
 .sitecard--settings { border-top-color: var(--green); }
+.panel--alert { border-top-color: #B42318; }
 
 .panel--wide + .panel--wide { margin-top: 18px; }
 .table .sub { display: block; font-size: .8rem; color: var(--ink-mute); }

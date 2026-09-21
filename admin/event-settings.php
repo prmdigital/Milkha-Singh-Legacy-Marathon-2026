@@ -27,6 +27,13 @@ if ($ready && ($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
     $section = (string) ($_POST['section'] ?? '');
     $saved   = null;
 
+    // ---- Postponed / on ------------------------------------------------------
+    if ($section === 'status') {
+        $postponed = !empty($_POST['postponed']);
+        $saved = cms_save_settings(['event_status' => $postponed ? 'postponed' : 'scheduled'], $user);
+        $done  = $postponed ? 'postponed' : 'scheduled';
+    }
+
     // ---- Dates and fees ----------------------------------------------------
     if ($section === 'event') {
         $raceDate  = (string) ($_POST['race_date'] ?? '');
@@ -104,6 +111,7 @@ if ($ready && ($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
 
 // ---- Current values ---------------------------------------------------------
 
+$postponed = !registration_open();
 $raceStart = race_start();
 $earlyEnd  = early_bird_until();
 $fees      = category_fees();
@@ -114,6 +122,8 @@ $heroVideo = cms_clean_src((string) site_setting('hero_video', ''));
 $limit = cms_upload_limit_bytes();
 
 $messages = [
+    'postponed'        => 'The event is marked postponed. The date, countdown and registration form are hidden, and registration is closed.',
+    'scheduled'        => 'The event is back on. The date, countdown and registration form are showing, and registration is open.',
     'event'            => 'Dates and fees saved. The website and the registration form use them now.',
     'event_reset'      => 'Dates and fees are back to the original values.',
     'hero_image'       => 'The new hero image is live.',
@@ -130,7 +140,7 @@ $flash = $messages[(string) ($_GET['done'] ?? '')] ?? '';
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>Event, fees &amp; media &middot; Marathon Admin</title>
-<link rel="stylesheet" href="assets/admin.css?v=20260917-9">
+<link rel="stylesheet" href="assets/admin.css?v=20260921-1">
 </head>
 <body>
 
@@ -155,6 +165,30 @@ $flash = $messages[(string) ($_GET['done'] ?? '')] ?? '';
       The website editor's database tables are missing. Open <a href="website.php">Website</a> for the one-time setup.
     </p>
   <?php else: ?>
+
+  <section class="panel<?= $postponed ? ' panel--alert' : '' ?>">
+    <h2>Event status</h2>
+    <p class="muted">
+      Currently: <b><?= $postponed ? 'Postponed. Registration is closed.' : 'On. Registration is open.' ?></b>
+    </p>
+    <form method="post" class="pwform">
+      <input type="hidden" name="csrf" value="<?= h(csrf_token()) ?>">
+      <input type="hidden" name="section" value="status">
+      <label class="checkline">
+        <input type="checkbox" name="postponed" value="1" <?= $postponed ? 'checked' : '' ?>>
+        <span>
+          <b>Event postponed</b>
+          <small>
+            Ticked: the date, countdown and registration form are hidden, the site shows
+            "The event has been postponed; The next date will be announced soon.", and no
+            one can register. Untick it once the new date is set below, and change the date
+            written on the page in the <a href="editor.php?page=index">page editor</a>.
+          </small>
+        </span>
+      </label>
+      <button type="submit" class="btn btn--primary">Save event status</button>
+    </form>
+  </section>
 
   <section class="panel">
     <h2>Dates and entry fees</h2>

@@ -369,6 +369,20 @@ function payments_enabled(): bool
     return (bool) cfg('PAYMENTS_ENABLED', false);
 }
 
+const REGISTRATION_CLOSED_MESSAGE =
+    'Registration is closed. The event has been postponed; the next date will be announced soon.';
+
+/**
+ * Whether the site takes registrations. Closed while the event is postponed,
+ * which is the default until an admin unticks "Event postponed" in Admin ›
+ * Website › Event, fees & media. Checked by every registration endpoint, so a
+ * cached page or a direct request cannot get an entry in either.
+ */
+function registration_open(): bool
+{
+    return site_setting('event_status', 'postponed') === 'scheduled';
+}
+
 /** Race day. Age is judged on this date, not on the day someone registers. */
 const RACE_DAY = '2026-12-20';
 const RACE_START_DEFAULT = RACE_DAY . ' 06:00';   // IST; the countdown runs to this

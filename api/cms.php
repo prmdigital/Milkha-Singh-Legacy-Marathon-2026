@@ -844,6 +844,8 @@ function cms_public_config(array $settings): array
     $until = early_bird_until((string) ($settings['early_until'] ?? ''));
 
     return [
+        // Postponed until an admin says otherwise; see registration_open().
+        'postponed'  => ($settings['event_status'] ?? 'postponed') !== 'scheduled',
         'raceStart'  => str_replace(' ', 'T', $start) . ':00+05:30',
         'raceDay'    => substr($start, 0, 10),
         'earlyUntil' => str_replace(' ', 'T', $until) . '+05:30',
@@ -897,6 +899,9 @@ function cms_client_script(string $page, array $cache): string
     return <<<JS
 /* Milkha Singh Legacy Marathon: content saved in the admin panel. */
 window.SITE_CONFIG = {$config};
+// The page ships marked postponed; lift that before first paint once the
+// event is back on, so the date, countdown and form show without a flash.
+if (window.SITE_CONFIG.postponed === false) document.documentElement.classList.remove('is-postponed');
 (function () {
   var D = {$data}, M = {$mediaJ};
   window.SITE_CONTENT = D;
@@ -1152,7 +1157,7 @@ function cms_editor_html(string $page, string $csrf, string $userName): string
                             'min' => CMS_BADGE_MIN, 'max' => CMS_BADGE_MAX],
     ], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE);
 
-    $v = '20260917-9';
+    $v = '20260921-1';
     $inject = "\n<link rel=\"stylesheet\" href=\"admin/assets/editor.css?v={$v}\" />\n"
             . "<script>window.CMS_EDITOR = {$boot};</script>\n"
             . "<script src=\"admin/assets/editor.js?v={$v}\"></script>\n";

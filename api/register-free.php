@@ -16,6 +16,10 @@ require_once __DIR__ . '/mailer.php';
 send_cors();
 require_post();
 
+if (!registration_open()) {
+    fail(403, REGISTRATION_CLOSED_MESSAGE);
+}
+
 $in = json_body();
 [$runner, $errors] = validate_runner($in);
 

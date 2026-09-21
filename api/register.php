@@ -23,6 +23,10 @@ require_once __DIR__ . '/mailer.php';
 send_cors();
 require_post();
 
+if (!registration_open()) {
+    fail(403, REGISTRATION_CLOSED_MESSAGE);
+}
+
 // Checked BEFORE the upload is stored, so a rejected request does not leave an
 // orphaned ID scan on disk.
 if (payments_enabled()) {

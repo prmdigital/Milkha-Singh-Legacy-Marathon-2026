@@ -1864,6 +1864,53 @@ body::before {
 }
 .sponsor-tile--org .sponsor-tile__badge { color: var(--navy); border-color: rgba(18,136,7,.35); }
 
+/* ---------- Event postponed ----------
+   html.is-postponed (set in index.html, removed by api/site.php once the admin
+   unticks "Event postponed") hides everything tied to the old date and shows
+   the notices. !important because some of these elements have id- or
+   section-scoped display rules of their own. */
+.postponed-note, .when-postponed { display: none; }
+.is-postponed .postponed-note, .is-postponed .when-postponed { display: block; }
+.is-postponed .hero__meta,
+.is-postponed .countdown,
+.is-postponed .when-scheduled,
+.is-postponed #regForm,
+.is-postponed .fees__deal,
+.is-postponed .offer { display: none !important; }
+
+.is-postponed .hero__postponed {
+  display: grid; gap: 4px;
+  margin: 0 auto clamp(14px, 2.4vh, 24px);
+  text-shadow: 0 1px 0 rgba(3, 6, 14, .4), 0 2px 12px rgba(3, 6, 14, .5);
+}
+.hero__postponed span:first-child {
+  font-weight: 800; font-size: clamp(1.1rem, 2.3vw, 1.4rem); color: #fff;
+}
+.hero__postponed span + span {
+  font-weight: 700; font-size: clamp(.95rem, 1.8vw, 1.12rem); color: #FFC680;
+}
+
+.reg-closed {
+  max-width: 640px; margin: 0 auto;
+  padding: clamp(24px, 4vw, 36px) clamp(20px, 4vw, 40px);
+  background: #fff;
+  border: 1px solid var(--border); border-top: 4px solid var(--saffron);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+  text-align: center;
+}
+.reg-closed__icon {
+  display: inline-grid; place-items: center;
+  width: 56px; height: 56px; margin-bottom: 12px;
+  border-radius: 50%; background: var(--bg-saffron); color: var(--saffron-deep);
+}
+.reg-closed__icon svg {
+  width: 28px; height: 28px; fill: none; stroke: currentColor; stroke-width: 2;
+  stroke-linecap: round; stroke-linejoin: round;
+}
+.reg-closed__title { margin: 0 0 8px; font-size: clamp(1.2rem, 2.4vw, 1.5rem); color: var(--navy); }
+.reg-closed__text { margin: 0; font-size: var(--fs-lg); line-height: 1.6; color: var(--ink); }
+
 .sponsors__cta { text-align: center; }
 .sponsors__cta p { color: var(--ink-dim); margin-bottom: 18px; }
 
