@@ -26,6 +26,15 @@ if (!preg_match('/^[a-z\-]{1,40}$/', $page)) {
 try {
     require_once __DIR__ . '/cms.php';
 
+    // Website closed: the .htaccess normally serves offline.html before a page
+    // loads at all. This is the fallback should the host ignore those rules.
+    // The admin editor shows pages under /admin/, so it is never sent away.
+    if (!site_online()) {
+        echo "if (!/\\/admin\\//.test(location.pathname)) location.replace('/offline.html');\n";
+        echo "window.SITE_CONFIG = window.SITE_CONFIG || {};\n";
+        exit;
+    }
+
     $file = cms_cache_file();
 
     // No cache yet (nothing saved since this was deployed): build one if the

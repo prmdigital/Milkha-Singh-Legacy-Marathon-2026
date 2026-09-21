@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<!-- Shown for every public page while the website is closed (see .htaccess).
+     noindex tells Google to drop the site from its results; robots.txt must
+     keep allowing crawling, or Google never sees this. -->
+<meta name="robots" content="noindex, nofollow" />
+<title>Event postponed | Milkha Singh Legacy Marathon</title>
+<meta name="description" content="The event has been postponed; the next date will be announced soon." />
+<link rel="icon" href="/images/favicon.png?v=2026" type="image/png" sizes="512x512" />
+<link rel="apple-touch-icon" href="/images/apple-touch-icon.png?v=2026" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --navy: #0D2150; --saffron: #FF9933; --saffron-soft: #FFC680; --green: #128807;
+    --font: 'Archivo', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    min-height: 100vh; min-height: 100svh;
+    display: flex; flex-direction: column;
+    font-family: var(--font); color: #fff; background: #081634;
+    -webkit-font-smoothing: antialiased;
+  }
+  .bg {
+    position: fixed; inset: 0; z-index: -1;
+    background:
+      linear-gradient(180deg, rgba(8, 22, 52, .78) 0%, rgba(8, 22, 52, .88) 55%, rgba(8, 22, 52, .97) 100%),
+      url('/images/hero-bg.jpg') center / cover no-repeat;
+  }
+  .flag { height: 5px; background: linear-gradient(90deg, var(--saffron) 0 33.3%, #fff 33.3% 66.6%, var(--green) 66.6% 100%); }
+  main {
+    flex: 1; display: grid; place-items: center;
+    padding: clamp(40px, 8vh, 96px) 20px;
+  }
+  .card { width: 100%; max-width: 680px; text-align: center; }
+  .logo { display: block; width: min(340px, 78vw); height: auto; margin: 0 auto clamp(28px, 5vh, 44px); }
+  .eyebrow {
+    display: inline-block; margin: 0 0 18px; padding: 6px 14px;
+    border: 1px solid rgba(255, 198, 128, .45); border-radius: 999px;
+    font-size: .76rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase;
+    color: var(--saffron-soft);
+  }
+  h1 {
+    margin: 0; font-weight: 800; letter-spacing: -.01em; text-wrap: balance;
+    font-size: clamp(1.7rem, 5.2vw, 2.9rem); line-height: 1.15;
+  }
+  .next {
+    margin: 14px 0 0; font-weight: 600; text-wrap: balance;
+    font-size: clamp(1.1rem, 3vw, 1.45rem); line-height: 1.4;
+    color: var(--saffron-soft);
+  }
+  .rule { width: 72px; height: 3px; margin: clamp(28px, 5vh, 40px) auto; border-radius: 3px; background: var(--saffron); opacity: .85; }
+  .contact { margin: 0; font-size: .98rem; line-height: 1.7; color: rgba(255, 255, 255, .78); }
+  .contact .line { display: block; margin-bottom: 4px; }
+  .contact a { white-space: nowrap; color: #fff; font-weight: 600; text-decoration: none; border-bottom: 1px solid rgba(255, 255, 255, .35); }
+  .contact a:hover, .contact a:focus-visible { border-bottom-color: var(--saffron-soft); outline: none; }
+  .contact .sep { margin: 0 8px; opacity: .45; }
+  footer { padding: 18px 20px 24px; text-align: center; font-size: .8rem; color: rgba(255, 255, 255, .55); }
+  @media (max-width: 480px) {
+    .contact .sep { display: none; }
+    .contact a { display: inline-block; margin: 2px 0; }
+  }
+</style>
+</head>
+<body>
+<div class="bg" aria-hidden="true"></div>
+<div class="flag" aria-hidden="true"></div>
+
+<main>
+  <div class="card">
+    <img class="logo" src="/images/logo-lockup-white.png"
+         alt="The Flying Sikh Milkha Singh Legacy Marathon" width="600" height="200" />
+
+    <p class="eyebrow">Important update</p>
+    <h1>The event has been postponed;</h1>
+    <p class="next">The next date will be announced soon.</p>
+
+    <div class="rule" aria-hidden="true"></div>
+
+    <p class="contact">
+      <span class="line">Questions about your registration or refund?</span>
+      <a href="mailto:info@milkhasinghlegacymarathon.com">info@milkhasinghlegacymarathon.com</a><span class="sep">|</span><a href="tel:+917340992413">+91 73409 92413</a>
+    </p>
+  </div>
+</main>
+
+<footer>&copy; 2026 Forever Legend Foundation</footer>
+</body>
+</html>

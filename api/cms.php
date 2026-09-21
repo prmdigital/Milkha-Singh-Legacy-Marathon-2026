@@ -92,6 +92,30 @@ function cms_ensure_dir(): bool
     return is_writable($dir);
 }
 
+/**
+ * Whether the public website is open. While closed, the root .htaccess shows
+ * offline.html for every public page. The switch is a file, not a database
+ * setting, because the web server has to read it before any PHP runs.
+ */
+function site_online_flag(): string
+{
+    return cms_dir() . '/online.flag';
+}
+
+function site_online(): bool
+{
+    return is_file(site_online_flag());
+}
+
+function set_site_online(bool $on): bool
+{
+    if ($on) {
+        return cms_ensure_dir() && @file_put_contents(site_online_flag(), date('c') . "
+") !== false;
+    }
+    return !is_file(site_online_flag()) || @unlink(site_online_flag());
+}
+
 function cms_htaccess(): string
 {
     return "# Uploaded page images and the content cache. Nothing here may run.\n"

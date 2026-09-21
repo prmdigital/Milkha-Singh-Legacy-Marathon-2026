@@ -27,6 +27,20 @@ if ($ready && ($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
     $section = (string) ($_POST['section'] ?? '');
     $saved   = null;
 
+    // ---- Website open / closed ---------------------------------------------
+    // A file switch the web server reads (see the root .htaccess), so it takes
+    // effect on the very next page request. No page, setting or registration
+    // is deleted either way.
+    if ($section === 'visibility') {
+        $on = !empty($_POST['online']);
+        if (set_site_online($on)) {
+            audit('site_settings_updated', $on ? 'site_online' : 'site_offline');
+            header('Location: event-settings.php?done=' . ($on ? 'site_online' : 'site_offline'));
+            exit;
+        }
+        $errors[] = 'The website switch could not be changed: the uploads/site folder is not writable.';
+    }
+
     // ---- Postponed / on ------------------------------------------------------
     if ($section === 'status') {
         $postponed = !empty($_POST['postponed']);
@@ -112,6 +126,7 @@ if ($ready && ($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
 // ---- Current values ---------------------------------------------------------
 
 $postponed = !registration_open();
+$online    = site_online();
 $raceStart = race_start();
 $earlyEnd  = early_bird_until();
 $fees      = category_fees();
@@ -122,6 +137,8 @@ $heroVideo = cms_clean_src((string) site_setting('hero_video', ''));
 $limit = cms_upload_limit_bytes();
 
 $messages = [
+    'site_online'      => 'The website is live again. Ask Google to re-index it in Search Console (URL inspection > Request indexing).',
+    'site_offline'     => 'The website is closed. Visitors see the postponement page, and Google is told to drop it from search results.',
     'postponed'        => 'The event is marked postponed. The date, countdown and registration form are hidden, and registration is closed.',
     'scheduled'        => 'The event is back on. The date, countdown and registration form are showing, and registration is open.',
     'event'            => 'Dates and fees saved. The website and the registration form use them now.',
@@ -165,6 +182,31 @@ $flash = $messages[(string) ($_GET['done'] ?? '')] ?? '';
       The website editor's database tables are missing. Open <a href="website.php">Website</a> for the one-time setup.
     </p>
   <?php else: ?>
+
+  <section class="panel<?= $online ? '' : ' panel--alert' ?>">
+    <h2>Website</h2>
+    <p class="muted">
+      Currently: <b><?= $online ? 'Live. Visitors see the full website.' : 'Closed. Every page shows the postponement notice and is hidden from Google.' ?></b>
+    </p>
+    <form method="post" class="pwform">
+      <input type="hidden" name="csrf" value="<?= h(csrf_token()) ?>">
+      <input type="hidden" name="section" value="visibility">
+      <label class="checkline">
+        <input type="checkbox" name="online" value="1" <?= $online ? 'checked' : '' ?>>
+        <span>
+          <b>Website is live</b>
+          <small>
+            Unticked: every page of the website shows only "The event has been postponed;
+            The next date will be announced soon." (<a href="../offline.html" target="_blank" rel="noopener">see it</a>),
+            and Google is told to remove the site from its results. This admin panel, the
+            page editor, refunds and all registration data keep working and nothing is
+            deleted. Tick it to bring the whole website back exactly as it was.
+          </small>
+        </span>
+      </label>
+      <button type="submit" class="btn btn--primary">Save website status</button>
+    </form>
+  </section>
 
   <section class="panel<?= $postponed ? ' panel--alert' : '' ?>">
     <h2>Event status</h2>

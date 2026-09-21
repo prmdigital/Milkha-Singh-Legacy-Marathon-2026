@@ -1,0 +1,29 @@
+# Milkha Singh Legacy Marathon — site root (public_html)
+
+Options -Indexes
+DirectoryIndex index.html index.php
+
+# ---- Website closed switch ---------------------------------------------------
+# While uploads/site/online.flag does not exist, every public page shows
+# offline.html ("The event has been postponed"), marked noindex so Google drops
+# the site from its results. The flag is created and removed by
+# Admin > Website > Event, fees & media > "Website is live", and it lives in
+# uploads/, which a new upload never replaces.
+#
+# Left working while closed: the admin panel, the API (the Razorpay webhook
+# reports refunds there), and the images and styles the holding page uses.
+# The registrations database is never touched by any of this.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{DOCUMENT_ROOT}/uploads/site/online.flag !-f
+  RewriteCond %{REQUEST_URI} !^/(admin|api|assets|images|uploads)(/|$)
+  RewriteCond %{REQUEST_URI} !^/(offline\.html|robots\.txt|favicon\.ico)$
+  RewriteRule ^ offline.html [L]
+</IfModule>
+
+<IfModule mod_headers.c>
+  <Files "offline.html">
+    Header set X-Robots-Tag "noindex, nofollow"
+    Header set Cache-Control "no-cache, must-revalidate"
+  </Files>
+</IfModule>
